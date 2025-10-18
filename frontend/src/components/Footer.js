@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -9,11 +9,13 @@ const Footer = () => {
           {/* Brand */}
           <div data-testid="footer-brand">
             <div className="flex items-center space-x-2 mb-4">
-              <ShieldCheck className="h-8 w-8 text-blue-400" />
-              <span className="text-2xl font-bold">SecureTech</span>
+              <div className="vigiloc-logo-footer" aria-label="VigiLoc">
+                <span className="vigiloc-v-footer">V</span>
+              </div>
+              <span className="text-2xl font-bold">VigiLoc</span>
             </div>
             <p className="text-gray-400">
-              Soluções em segurança eletrônica para condomínios e empresas.
+              Soluções inteligentes em segurança eletrônica: câmeras, controle de acesso e totens de monitoramento.
             </p>
           </div>
 
@@ -29,6 +31,11 @@ const Footer = () => {
               <li>
                 <Link to="/produtos" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Produtos
+                </Link>
+              </li>
+              <li>
+                <Link to="/totens" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Totens
                 </Link>
               </li>
               <li>
@@ -58,6 +65,11 @@ const Footer = () => {
                   Fechaduras Inteligentes
                 </Link>
               </li>
+              <li>
+                <Link to="/totens" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Totens de Monitoramento
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -66,7 +78,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contato</h3>
             <ul className="space-y-2 text-gray-400">
               <li>(11) 9999-9999</li>
-              <li>contato@securetech.com.br</li>
+              <li>contato@vigiloc.com.br</li>
               <li>Av. Paulista, 1000<br />São Paulo, SP</li>
             </ul>
             <div className="flex space-x-4 mt-4">
@@ -84,7 +96,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400" data-testid="footer-copyright">
-          <p>&copy; 2025 SecureTech. Todos os direitos reservados.</p>
+          <p>&copy; 2025 VigiLoc. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

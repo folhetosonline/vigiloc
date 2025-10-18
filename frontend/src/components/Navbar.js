@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShieldCheck, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
@@ -12,6 +12,7 @@ const Navbar = () => {
   const navLinks = [
     { path: "/", label: "Início" },
     { path: "/produtos", label: "Produtos" },
+    { path: "/totens", label: "Totens" },
     { path: "/contato", label: "Contato" }
   ];
 
@@ -21,8 +22,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
-            <ShieldCheck className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">SecureTech</span>
+            <div className="vigiloc-logo" aria-label="VigiLoc">
+              <span className="vigiloc-v">V</span>
+            </div>
+            <span className="text-2xl font-bold text-gray-900">VigiLoc</span>
           </Link>
 
           {/* Desktop Navigation */}

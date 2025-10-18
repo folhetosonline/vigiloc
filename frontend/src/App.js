@@ -5,6 +5,7 @@ import axios from "axios";
 import Home from "@/pages/Home";
 import Products from "@/pages/Products";
 import ProductDetail from "@/pages/ProductDetail";
+import Totens from "@/pages/Totens";
 import Contact from "@/pages/Contact";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/produtos" element={<Products />} />
           <Route path="/produto/:id" element={<ProductDetail />} />
+          <Route path="/totens" element={<Totens />} />
           <Route path="/contato" element={<Contact />} />
         </Routes>
         <Footer />

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
-import { ShieldCheck, Camera, KeyRound, Lock, CheckCircle, Users } from "lucide-react";
+import { Camera, KeyRound, Lock, CheckCircle, Users, Landmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -23,7 +23,7 @@ const Home = () => {
 
   const features = [
     {
-      icon: <ShieldCheck className="w-12 h-12 text-blue-600" />,
+      icon: <CheckCircle className="w-12 h-12 text-blue-600" />,
       title: "Segurança Garantida",
       description: "Soluções certificadas e testadas para máxima proteção"
     },
@@ -57,6 +57,12 @@ const Home = () => {
       title: "Fechaduras Inteligentes",
       description: "Fechaduras digitais e eletrônicas",
       link: "/produtos?category=fechaduras"
+    },
+    {
+      icon: <Landmark className="w-8 h-8" />,
+      title: "Totens de Monitoramento",
+      description: "Postes inteligentes com câmeras e alertas",
+      link: "/totens"
     }
   ];
 
@@ -67,12 +73,12 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center text-white fade-in-up">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-              Soluções em Segurança
+              Soluções Inteligentes em Segurança
               <br />
               <span className="text-blue-200">Para Condomínios e Empresas</span>
             </h1>
             <p className="text-lg sm:text-xl mb-8 max-w-3xl mx-auto opacity-90">
-              Sistemas de vigilância, controle de acesso e fechaduras inteligentes para proteger o que é mais importante
+              Sistemas de vigilância, controle de acesso, fechaduras inteligentes e totens de monitoramento para proteger o que é mais importante
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/produtos">
@@ -80,9 +86,9 @@ const Home = () => {
                   Ver Produtos
                 </Button>
               </Link>
-              <Link to="/contato">
-                <Button data-testid="solicitar-orcamento-btn" size="lg" variant="outline" className="btn-secondary text-lg px-8 py-6 bg-white hover:bg-blue-700 hover:text-white">
-                  Solicitar Orçamento
+              <Link to="/totens">
+                <Button data-testid="ver-totens-btn" size="lg" variant="outline" className="btn-secondary text-lg px-8 py-6 bg-white hover:bg-blue-700 hover:text-white">
+                  Conheça os Totens
                 </Button>
               </Link>
             </div>
@@ -97,7 +103,7 @@ const Home = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Nossas Soluções</h2>
             <p className="text-lg text-gray-600">Produtos de alta qualidade para cada necessidade</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category, index) => (
               <Link to={category.link} key={index}>
                 <Card className="card-hover h-full" data-testid={`category-card-${index}`}>
@@ -147,7 +153,7 @@ const Home = () => {
       <section className="py-16 bg-white" data-testid="features-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Por Que Escolher a SecureTech?</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Por Que Escolher a VigiLoc?</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -170,7 +176,9 @@ const Home = () => {
           <p className="text-lg mb-8 opacity-90">
             Entre em contato conosco via WhatsApp e receba um orçamento personalizado
           </p>
-          <Button data-testid="fale-conosco-btn" size="lg" className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-8 py-6">
+          <Button data-testid="fale-conosco-btn" size="lg" className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-8 py-6"
+            onClick={() => window.open("https://wa.me/5511999999999", "_blank")}
+          >
             Fale Conosco Agora
           </Button>
         </div>
