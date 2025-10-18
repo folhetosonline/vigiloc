@@ -1,0 +1,94 @@
+import { Link } from "react-router-dom";
+import { ShieldCheck, Facebook, Instagram, Linkedin } from "lucide-react";
+
+const Footer = () => {
+  return (
+    <footer className="bg-gray-900 text-white" data-testid="footer">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div data-testid="footer-brand">
+            <div className="flex items-center space-x-2 mb-4">
+              <ShieldCheck className="h-8 w-8 text-blue-400" />
+              <span className="text-2xl font-bold">SecureTech</span>
+            </div>
+            <p className="text-gray-400">
+              Soluções em segurança eletrônica para condomínios e empresas.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div data-testid="footer-links">
+            <h3 className="text-lg font-semibold mb-4">Links Rápidos</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Início
+                </Link>
+              </li>
+              <li>
+                <Link to="/produtos" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Produtos
+                </Link>
+              </li>
+              <li>
+                <Link to="/contato" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Contato
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Products */}
+          <div data-testid="footer-products">
+            <h3 className="text-lg font-semibold mb-4">Produtos</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/produtos?category=cameras" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Câmeras de Vigilância
+                </Link>
+              </li>
+              <li>
+                <Link to="/produtos?category=controle-acesso" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Controle de Acesso
+                </Link>
+              </li>
+              <li>
+                <Link to="/produtos?category=fechaduras" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Fechaduras Inteligentes
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div data-testid="footer-contact">
+            <h3 className="text-lg font-semibold mb-4">Contato</h3>
+            <ul className="space-y-2 text-gray-400">
+              <li>(11) 9999-9999</li>
+              <li>contato@securetech.com.br</li>
+              <li>Av. Paulista, 1000<br />São Paulo, SP</li>
+            </ul>
+            <div className="flex space-x-4 mt-4">
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="facebook-link">
+                <Facebook className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="instagram-link">
+                <Instagram className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="linkedin-link">
+                <Linkedin className="h-6 w-6" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400" data-testid="footer-copyright">
+          <p>&copy; 2025 SecureTech. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
