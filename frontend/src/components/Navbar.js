@@ -44,6 +44,11 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            <Link to="/carrinho">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-6 w-6" />
+              </Button>
+            </Link>
             <Button
               data-testid="nav-whatsapp-btn"
               onClick={() => window.open("https://wa.me/5511999999999", "_blank")}
