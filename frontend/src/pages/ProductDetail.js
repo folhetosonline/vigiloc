@@ -33,6 +33,26 @@ const ProductDetail = () => {
     window.open(whatsappUrl, "_blank");
   };
 
+  const handleAddToCart = async () => {
+    try {
+      const sessionId = localStorage.getItem("cart_session_id") || generateSessionId();
+      await axios.post(`${API}/cart/add?session_id=${sessionId}`, {
+        product_id: product.id,
+        quantity: 1,
+        price: product.price
+      });
+      toast.success("Produto adicionado ao carrinho!");
+    } catch (error) {
+      toast.error("Erro ao adicionar ao carrinho");
+    }
+  };
+
+  const generateSessionId = () => {
+    const id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem("cart_session_id", id);
+    return id;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" data-testid="loading-spinner">
