@@ -134,10 +134,20 @@ const ProductDetail = () => {
             {/* CTA Buttons */}
             <div className="space-y-4">
               <Button
+                data-testid="add-to-cart-btn"
+                onClick={handleAddToCart}
+                size="lg"
+                className="w-full btn-primary text-lg py-6"
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Adicionar ao Carrinho
+              </Button>
+              <Button
                 data-testid="whatsapp-contact-btn"
                 onClick={handleWhatsAppContact}
                 size="lg"
-                className="w-full btn-primary text-lg py-6"
+                variant="outline"
+                className="w-full text-lg py-6"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
                 Consultar via WhatsApp
