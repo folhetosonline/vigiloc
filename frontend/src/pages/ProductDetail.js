@@ -4,7 +4,7 @@ import axios from "axios";
 import { API } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, ArrowLeft, MessageCircle } from "lucide-react";
+import { CheckCircle, ArrowLeft, MessageCircle, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
