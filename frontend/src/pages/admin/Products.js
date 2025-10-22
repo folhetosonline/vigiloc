@@ -321,12 +321,13 @@ const Products = () => {
                 <TableHead>Categoria</TableHead>
                 <TableHead>Preço</TableHead>
                 <TableHead>Estoque</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product.id} className={!product.published ? "bg-gray-50" : ""}>
                   <TableCell>
                     <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                   </TableCell>
@@ -335,7 +336,20 @@ const Products = () => {
                   <TableCell>R$ {product.price.toFixed(2)}</TableCell>
                   <TableCell>{product.quantity || 0}</TableCell>
                   <TableCell>
+                    <Badge className={product.published ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                      {product.published ? "🟢 Publicado" : "⚪ Rascunho"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex space-x-2">
+                      <Button 
+                        size="icon" 
+                        variant={product.published ? "outline" : "default"}
+                        onClick={() => handleTogglePublish(product.id, product.published)}
+                        title={product.published ? "Despublicar" : "Publicar"}
+                      >
+                        {product.published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
                       <Button size="icon" variant="outline" onClick={() => handleEdit(product)}>
                         <Pencil className="w-4 h-4" />
                       </Button>
