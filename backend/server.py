@@ -1760,3 +1760,6 @@ async def send_suspension_warnings(current_user: User = Depends(get_current_admi
     
     return {"message": f"{sent} avisos de suspensão enviados"}
 
+
+# Include the router in the main app (after all routes are defined)
+app.include_router(api_router)
