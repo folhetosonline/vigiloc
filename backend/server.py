@@ -1537,3 +1537,46 @@ async def get_notifications(current_user: User = Depends(get_current_admin)):
             if notif.get(field) and isinstance(notif[field], str):
                 notif[field] = datetime.fromisoformat(notif[field])
     return notifications
+
+# ==================== CRM SETTINGS ROUTES ====================
+
+@api_router.get("/admin/crm/settings")
+async def get_crm_settings(current_user: User = Depends(get_current_admin)):
+    """Get CRM settings (triggers and templates)"""
+    settings = await db.crm_settings.find_one({"id": "crm_settings"}, {"_id": 0})
+    if not settings:
+        # Return default settings
+        default_settings = CRMSettings()
+        return default_settings.model_dump()
+    return settings
+
+@api_router.put("/admin/crm/settings/triggers")
+async def update_trigger_settings(trigger_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update notification trigger settings"""
+    await db.crm_settings.update_one(
+        {"id": "crm_settings"},
+        {"$set": {"trigger_settings": trigger_data}},
+        upsert=True
+    )
+    return {"message": "Configurações de gatilhos atualizadas"}
+
+@api_router.put("/admin/crm/settings/email-templates")
+async def update_email_templates(templates: dict, current_user: User = Depends(get_current_admin)):
+    """Update email templates"""
+    await db.crm_settings.update_one(
+        {"id": "crm_settings"},
+        {"$set": {"email_templates": templates}},
+        upsert=True
+    )
+    return {"message": "Templates de email atualizados"}
+
+@api_router.put("/admin/crm/settings/whatsapp-templates")
+async def update_whatsapp_templates(templates: dict, current_user: User = Depends(get_current_admin)):
+    """Update WhatsApp templates"""
+    await db.crm_settings.update_one(
+        {"id": "crm_settings"},
+        {"$set": {"whatsapp_templates": templates}},
+        upsert=True
+    )
+    return {"message": "Templates de WhatsApp atualizados"}
+
