@@ -43,3 +43,4 @@ class BannerCreate(BaseModel):
     link_url: Optional[str] = None
     order: int = 0
     active: bool = True
+    published: bool = False
