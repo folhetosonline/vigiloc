@@ -1428,30 +1428,47 @@ async def update_page_content(page_name: str, content_data: dict, current_user: 
 
 @api_router.post("/admin/notifications/send-payment-reminders")
 async def send_payment_reminders(current_user: User = Depends(get_current_admin)):
-    """Send payment reminders 1 day before due date"""
-    tomorrow = datetime.now() + timedelta(days=1)
-    tomorrow_start = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
-    tomorrow_end = tomorrow.replace(hour=23, minute=59, second=59)
+    """Send payment reminders based on configurable days before due date"""
+    # Get settings
+    settings = await db.crm_settings.find_one({"id": "crm_settings"}, {"_id": 0})
+    if not settings:
+        settings = CRMSettings().model_dump()
+    
+    days_before = settings.get('trigger_settings', {}).get('payment_reminder_days', 1)
+    target_date = datetime.now() + timedelta(days=days_before)
+    target_start = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    target_end = target_date.replace(hour=23, minute=59, second=59)
     
     payments = await db.payments.find({
         "status": "pending",
         "reminder_sent": False,
         "due_date": {
-            "$gte": tomorrow_start.isoformat(),
-            "$lte": tomorrow_end.isoformat()
+            "$gte": target_start.isoformat(),
+            "$lte": target_end.isoformat()
         }
     }, {"_id": 0}).to_list(1000)
     
     sent = 0
+    whatsapp_template = settings.get('whatsapp_templates', {}).get('payment_reminder', 
+        "Olá {customer_name}! Lembrete: Seu pagamento de R$ {amount} vence em {due_date}. PIX: {pix_key}")
+    
     for payment in payments:
         customer = await db.customers.find_one({"id": payment['customer_id']}, {"_id": 0})
         if customer:
+            # Format message with template
+            message = whatsapp_template.format(
+                customer_name=customer['name'],
+                amount=f"{payment['amount']:.2f}",
+                due_date=payment['due_date'][:10],
+                pix_key=payment.get('pix_key', 'Ver fatura')
+            )
+            
             # Create notification
             notification = Notification(
                 customer_id=customer['id'],
                 type="payment_reminder",
                 channel="whatsapp",
-                message=f"Olá {customer['name']}! Lembrete: Seu pagamento de R$ {payment['amount']:.2f} vence amanhã ({payment['due_date'][:10]}). PIX: {payment.get('pix_key', 'Ver fatura')}"
+                message=message
             )
             
             notif_doc = notification.model_dump()
