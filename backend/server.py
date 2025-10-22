@@ -960,10 +960,13 @@ class BannerCreate(BaseModel):
 
 @api_router.get("/banners", response_model=List[Banner])
 async def get_banners():
-    banners = await db.banners.find({"active": True}, {"_id": 0}).sort("order", 1).to_list(100)
+    # Public route - only show PUBLISHED banners
+    banners = await db.banners.find({"active": True, "published": True}, {"_id": 0}).sort("order", 1).to_list(100)
     for banner in banners:
         if isinstance(banner.get('created_at'), str):
             banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+        if isinstance(banner.get('published_at'), str):
+            banner['published_at'] = datetime.fromisoformat(banner['published_at'])
     return banners
 
 @api_router.post("/admin/banners", response_model=Banner)
