@@ -118,6 +118,16 @@ function App() {
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="banners" element={<AdminBanners />} />
               <Route path="coupons" element={<AdminCoupons />} />
+              
+              {/* CRM Routes */}
+              <Route path="crm" element={<CRMDashboard />} />
+              <Route path="crm/customers" element={<CRMCustomers />} />
+              <Route path="crm/contracts" element={<CRMContracts />} />
+              <Route path="crm/equipment" element={<CRMEquipment />} />
+              <Route path="crm/payments" element={<CRMPayments />} />
+              <Route path="crm/tickets" element={<CRMTickets />} />
+              <Route path="crm/notifications" element={<CRMNotifications />} />
+              <Route path="crm/settings" element={<CRMSettings />} />
             </Route>
           </Routes>
           <Toaster position="top-right" />
