@@ -34,6 +34,7 @@ import CRMPayments from "@/pages/admin/crm/Payments";
 import CRMTickets from "@/pages/admin/crm/Tickets";
 import CRMNotifications from "@/pages/admin/crm/Notifications";
 import CRMSettings from "@/pages/admin/crm/Settings";
+import AdminSettings from "@/pages/admin/Settings";
 
 // Components
 import Navbar from "@/components/Navbar";
