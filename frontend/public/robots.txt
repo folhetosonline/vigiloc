@@ -1,0 +1,47 @@
+User-agent: *
+Allow: /
+Allow: /produtos
+Allow: /produto/*
+Allow: /totens
+Allow: /contato
+Allow: /carrinho
+Allow: /checkout
+
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /login
+
+Sitemap: https://smart-security-12.preview.emergentagent.com/sitemap.xml
+
+# LLM Specific Rules
+User-agent: GPTBot
+Allow: /
+Allow: /produtos
+Allow: /produto/*
+Allow: /totens
+Allow: /contato
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Perplexitybot
+Allow: /
+Crawl-delay: 1
+
+User-agent: YouBot
+Allow: /
+
+# Image Protection
+User-agent: *
+Disallow: /uploads/
+Allow: /uploads/*.jpg$
+Allow: /uploads/*.jpeg$
+Allow: /uploads/*.png$
+Allow: /uploads/*.webp$
