@@ -83,35 +83,37 @@ function PrivateRoute({ children }) {
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<><Navbar /><Home /><Footer /><WhatsAppButton /></>} />
-          <Route path="/produtos" element={<><Navbar /><Products /><Footer /><WhatsAppButton /></>} />
-          <Route path="/produto/:id" element={<><Navbar /><ProductDetail /><Footer /><WhatsAppButton /></>} />
-          <Route path="/totens" element={<><Navbar /><Totens /><Footer /><WhatsAppButton /></>} />
-          <Route path="/contato" element={<><Navbar /><Contact /><Footer /><WhatsAppButton /></>} />
-          <Route path="/carrinho" element={<><Navbar /><Cart /><Footer /><WhatsAppButton /></>} />
-          <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /><WhatsAppButton /></>} />
-          <Route path="/login" element={<Login />} />
+    <HelmetProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<><Navbar /><Home /><Footer /><WhatsAppButton /></>} />
+            <Route path="/produtos" element={<><Navbar /><Products /><Footer /><WhatsAppButton /></>} />
+            <Route path="/produto/:id" element={<><Navbar /><ProductDetail /><Footer /><WhatsAppButton /></>} />
+            <Route path="/totens" element={<><Navbar /><Totens /><Footer /><WhatsAppButton /></>} />
+            <Route path="/contato" element={<><Navbar /><Contact /><Footer /><WhatsAppButton /></>} />
+            <Route path="/carrinho" element={<><Navbar /><Cart /><Footer /><WhatsAppButton /></>} />
+            <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /><WhatsAppButton /></>} />
+            <Route path="/login" element={<Login />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="orders" element={<AdminOrders />} />
-            <Route path="shipping" element={<AdminShipping />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="content" element={<AdminContent />} />
-            <Route path="contacts" element={<AdminContacts />} />
-            <Route path="banners" element={<AdminBanners />} />
-            <Route path="coupons" element={<AdminCoupons />} />
-          </Route>
-        </Routes>
-        <Toaster position="top-right" />
-      </BrowserRouter>
-    </div>
+            {/* Admin Routes */}
+            <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="shipping" element={<AdminShipping />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="content" element={<AdminContent />} />
+              <Route path="contacts" element={<AdminContacts />} />
+              <Route path="banners" element={<AdminBanners />} />
+              <Route path="coupons" element={<AdminCoupons />} />
+            </Route>
+          </Routes>
+          <Toaster position="top-right" />
+        </BrowserRouter>
+      </div>
+    </HelmetProvider>
   );
 }
 
