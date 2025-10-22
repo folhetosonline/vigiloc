@@ -52,6 +52,56 @@ const Settings = () => {
   useEffect(() => {
     fetchUsers();
     fetchSiteSettings();
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      toast.error("Erro ao carregar configurações do site");
+    }
+  };
+
+  const handleSaveSiteSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`${API}/admin/site-settings`, siteSettings);
+      toast.success("Configurações do site atualizadas!");
+      // Reload page to show new logo
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      toast.error("Erro ao salvar configurações");
+    }
+  };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error("Por favor, selecione uma imagem");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setUploadingLogo(true);
+      const response = await axios.post(`${API}/admin/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const logoUrl = response.data.file_url;
+      setSiteSettings({...siteSettings, logo_url: logoUrl});
+      toast.success("Logo enviado! Clique em Salvar para aplicar");
+    } catch (error) {
+      toast.error("Erro ao fazer upload do logo");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   }, []);
 
   const fetchUsers = async () => {
