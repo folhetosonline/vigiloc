@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { API } from "@/App";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({ site_name: "VigiLoc", logo_url: null });
   const location = useLocation();
+
+  useEffect(() => {
+    fetchSiteSettings();
+  }, []);
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar configurações do site");
+    }
+  };
 
   const isActive = (path) => location.pathname === path;
 
