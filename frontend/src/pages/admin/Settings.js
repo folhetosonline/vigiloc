@@ -52,6 +52,7 @@ const Settings = () => {
   useEffect(() => {
     fetchUsers();
     fetchSiteSettings();
+  }, []);
 
   const fetchSiteSettings = async () => {
     try {
@@ -101,8 +102,6 @@ const Settings = () => {
       setUploadingLogo(false);
     }
   };
-
-  }, []);
 
   const fetchUsers = async () => {
     try {
