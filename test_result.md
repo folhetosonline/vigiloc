@@ -208,11 +208,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Settings for trigger days (payment_reminder_days, overdue_notice_days, suspension_warning_days)"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /admin/crm/settings returns default settings. PUT /admin/crm/settings/triggers successfully updated trigger days (payment_reminder_days: 2, overdue_notice_days: 5, suspension_warning_days: 15). Settings persist correctly and are used by notification system. All configurable trigger settings working as expected."
 
   - task: "Email Template Management APIs"
     implemented: true
