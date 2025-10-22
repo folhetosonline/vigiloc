@@ -31,7 +31,9 @@ class Banner(BaseModel):
     link_url: Optional[str] = None
     order: int = 0
     active: bool = True
+    published: bool = False  # Controls if banner is live on website
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    published_at: Optional[datetime] = None
 
 class BannerCreate(BaseModel):
     title: str
