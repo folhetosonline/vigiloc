@@ -40,9 +40,14 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
             {siteSettings.logo_url ? (
               <img 
-                src={siteSettings.logo_url.startsWith('http') ? siteSettings.logo_url : `${API}${siteSettings.logo_url}`} 
+                src={siteSettings.logo_url.startsWith('http') ? siteSettings.logo_url : siteSettings.logo_url} 
                 alt={siteSettings.site_name} 
                 className="h-12 w-auto object-contain" 
+                onError={(e) => {
+                  console.error('Logo load error, trying backend URL');
+                  e.target.onerror = null;
+                  e.target.src = `${API.replace('/api', '')}${siteSettings.logo_url}`;
+                }}
               />
             ) : (
               <div className="vigiloc-logo" aria-label={siteSettings.site_name}>
