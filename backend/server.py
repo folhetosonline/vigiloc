@@ -33,6 +33,33 @@ JWT_SECRET = os.environ.get('JWT_SECRET_KEY', 'your-secret-key')
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 7
 
+# SendGrid
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
+SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL', 'noreply@vigiloc.com')
+
+def send_email(to_email: str, subject: str, html_content: str):
+    """Send email using SendGrid"""
+    try:
+        message = Mail(
+            from_email=SENDGRID_FROM_EMAIL,
+            to_emails=to_email,
+            subject=subject,
+            html_content=html_content
+        )
+        
+        if SENDGRID_API_KEY:
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            response = sg.send(message)
+            return {"success": True, "status_code": response.status_code}
+        else:
+            # Log instead of sending if no API key
+            logger.info(f"EMAIL (no API key): To: {to_email}, Subject: {subject}")
+            return {"success": False, "message": "SendGrid API key not configured"}
+    except Exception as e:
+        logger.error(f"Error sending email: {e}")
+        return {"success": False, "error": str(e)}
+
+
 # Upload directory
 UPLOAD_DIR = Path(os.environ.get('UPLOAD_DIR', '/app/backend/uploads'))
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
