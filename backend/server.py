@@ -626,11 +626,25 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
     updated_doc = product_data.model_dump()
     updated_doc['timestamp'] = datetime.now(timezone.utc).isoformat()
     
+    # Handle published_at timestamp
+    if updated_doc.get('published') and not existing.get('published'):
+        # Product is being published for the first time
+        updated_doc['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not updated_doc.get('published'):
+        # Product is being unpublished
+        updated_doc['published_at'] = None
+    elif updated_doc.get('published_at'):
+        # Convert datetime to ISO string if needed
+        if isinstance(updated_doc['published_at'], datetime):
+            updated_doc['published_at'] = updated_doc['published_at'].isoformat()
+    
     await db.products.update_one({"id": product_id}, {"$set": updated_doc})
     
     product = await db.products.find_one({"id": product_id}, {"_id": 0})
     if isinstance(product.get('timestamp'), str):
         product['timestamp'] = datetime.fromisoformat(product['timestamp'])
+    if isinstance(product.get('published_at'), str):
+        product['published_at'] = datetime.fromisoformat(product['published_at'])
     return Product(**product)
 
 @api_router.delete("/admin/products/{product_id}")
