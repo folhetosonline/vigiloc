@@ -226,3 +226,58 @@ h1, h2, h3, h4, h5, h6 {
     padding: 60px 20px;
   }
 }
+
+/* Disable copy/download protection for images and videos */
+img, video {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: auto;
+}
+
+img::selection,
+video::selection {
+  background: transparent;
+}
+
+img::-moz-selection,
+video::-moz-selection {
+  background: transparent;
+}
+
+/* Swiper carousel styles */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 30px;
+  border-radius: 50%;
+}
+
+.swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.7;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+}
