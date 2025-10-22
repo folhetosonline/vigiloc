@@ -77,9 +77,12 @@ class User(BaseModel):
     name: str
     password_hash: Optional[str] = None
     is_admin: bool = False
+    role: str = "viewer"  # admin, manager, editor, viewer
     google_id: Optional[str] = None
     picture: Optional[str] = None
+    active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
 
 class UserCreate(BaseModel):
     email: EmailStr
