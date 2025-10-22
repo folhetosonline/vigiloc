@@ -1556,8 +1556,18 @@ async def get_page_content_admin(page_name: str, current_user: User = Depends(ge
 
 @api_router.put("/admin/page-content/{page_name}")
 async def update_page_content(page_name: str, content_data: dict, current_user: User = Depends(get_current_admin)):
+    existing = await db.page_content.find_one({"page_name": page_name}, {"_id": 0})
+    
     content_data['page_name'] = page_name
     content_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    # Handle published_at timestamp
+    if existing and content_data.get('published') and not existing.get('published'):
+        # Content is being published for the first time
+        content_data['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not content_data.get('published'):
+        # Content is being unpublished
+        content_data['published_at'] = None
     
     await db.page_content.update_one(
         {"page_name": page_name},
@@ -1565,6 +1575,25 @@ async def update_page_content(page_name: str, content_data: dict, current_user: 
         upsert=True
     )
     return {"message": "Conteúdo atualizado"}
+
+@api_router.patch("/admin/page-content/{page_name}/publish")
+async def toggle_page_content_publication(page_name: str, published: bool, current_user: User = Depends(get_current_admin)):
+    """Toggle page content publication status"""
+    existing = await db.page_content.find_one({"page_name": page_name}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Page content not found")
+    
+    update_data = {"published": published, "updated_at": datetime.now(timezone.utc).isoformat()}
+    if published and not existing.get('published'):
+        # Content is being published for the first time
+        update_data['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not published:
+        # Content is being unpublished
+        update_data['published_at'] = None
+    
+    await db.page_content.update_one({"page_name": page_name}, {"$set": update_data})
+    
+    return {"message": f"Page content {'published' if published else 'unpublished'} successfully"}
 
 # ==================== NOTIFICATION/AUTOMATION ROUTES ====================
 
