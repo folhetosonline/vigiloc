@@ -1524,6 +1524,23 @@ async def update_payment_pix(payment_id: str, pix_data: dict, current_user: User
 
 @api_router.get("/page-content/{page_name}")
 async def get_page_content(page_name: str):
+    # Public route - only show PUBLISHED content
+    content = await db.page_content.find_one({"page_name": page_name, "published": True}, {"_id": 0})
+    if not content:
+        # Return default empty structure for unpublished/non-existent pages
+        content = {
+            "id": page_name,
+            "page_name": page_name,
+            "sections": {},
+            "images": {},
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "published": False
+        }
+    return content
+
+@api_router.get("/admin/page-content/{page_name}")
+async def get_page_content_admin(page_name: str, current_user: User = Depends(get_current_admin)):
+    # Admin route - show content regardless of published status
     content = await db.page_content.find_one({"page_name": page_name}, {"_id": 0})
     if not content:
         # Return default empty structure
@@ -1532,7 +1549,8 @@ async def get_page_content(page_name: str):
             "page_name": page_name,
             "sections": {},
             "images": {},
-            "updated_at": datetime.now(timezone.utc).isoformat()
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "published": False
         }
     return content
 
