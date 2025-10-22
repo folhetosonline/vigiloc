@@ -576,7 +576,7 @@ async def upload_file(file: UploadFile = File(...), current_user: User = Depends
 
 @api_router.get("/products", response_model=List[Product])
 async def get_products(category: Optional[str] = None):
-    query = {}
+    query = {"published": True}  # Only show published products
     if category:
         query["category"] = category
     
@@ -584,6 +584,8 @@ async def get_products(category: Optional[str] = None):
     for product in products:
         if isinstance(product.get('timestamp'), str):
             product['timestamp'] = datetime.fromisoformat(product['timestamp'])
+        if isinstance(product.get('published_at'), str):
+            product['published_at'] = datetime.fromisoformat(product['published_at'])
     return products
 
 @api_router.get("/products/{product_id}", response_model=Product)
