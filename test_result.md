@@ -193,11 +193,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Ticket CRUD with priority, status, assignment tracking"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Created 3 maintenance tickets with auto-generated ticket numbers (TKT-2025-00001, TKT-2025-00002, TKT-2025-00003). GET /admin/tickets returns all tickets. Status filtering (?status=open) works correctly. PUT /admin/tickets/{id} updates ticket status (tested changing to in_progress). Priority levels, equipment linking, assignment tracking all working correctly."
 
   - task: "Configurable Notification Settings APIs"
     implemented: true
