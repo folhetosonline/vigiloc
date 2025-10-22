@@ -599,6 +599,16 @@ async def get_product(product_id: str):
         product['published_at'] = datetime.fromisoformat(product['published_at'])
     return product
 
+@api_router.get("/admin/products", response_model=List[Product])
+async def get_all_products_admin(current_user: User = Depends(get_current_admin)):
+    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    for product in products:
+        if isinstance(product.get('timestamp'), str):
+            product['timestamp'] = datetime.fromisoformat(product['timestamp'])
+        if isinstance(product.get('published_at'), str):
+            product['published_at'] = datetime.fromisoformat(product['published_at'])
+    return products
+
 @api_router.post("/admin/products", response_model=Product)
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_admin)):
     product = Product(**product_data.model_dump())
