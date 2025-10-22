@@ -120,6 +120,8 @@ class Product(BaseModel):
     sku: Optional[str] = None
     weight: Optional[float] = None
     dimensions: Optional[dict] = None
+    published: bool = False  # Controls if product is visible on website
+    published_at: Optional[datetime] = None
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
