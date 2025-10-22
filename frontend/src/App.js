@@ -25,6 +25,16 @@ import AdminContacts from "@/pages/admin/Contacts";
 import AdminBanners from "@/pages/admin/Banners";
 import AdminCoupons from "@/pages/admin/Coupons";
 
+// CRM pages
+import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
+import CRMCustomers from "@/pages/admin/crm/Customers";
+import CRMContracts from "@/pages/admin/crm/Contracts";
+import CRMEquipment from "@/pages/admin/crm/Equipment";
+import CRMPayments from "@/pages/admin/crm/Payments";
+import CRMTickets from "@/pages/admin/crm/Tickets";
+import CRMNotifications from "@/pages/admin/crm/Notifications";
+import CRMSettings from "@/pages/admin/crm/Settings";
+
 // Components
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
