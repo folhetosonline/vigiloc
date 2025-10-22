@@ -141,6 +141,104 @@ class ShippingRate(BaseModel):
     name: str
     type: str  # 'cep', 'fixed', 'free'
     regions: Optional[List[str]] = None
+
+# ==================== CRM/ERP MODELS ====================
+
+class Customer(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    phone: str
+    whatsapp: str
+    cpf_cnpj: Optional[str] = None
+    address: dict
+    customer_type: str = "residential"  # residential, commercial, industrial
+    status: str = "active"  # active, suspended, cancelled
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Contract(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    contract_number: str
+    service_type: str  # totem, camera, access_control, complete
+    monthly_value: float
+    installation_value: float
+    start_date: datetime
+    end_date: Optional[datetime] = None
+    payment_day: int  # Day of month for payment
+    status: str = "active"
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Equipment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    contract_id: str
+    equipment_type: str
+    brand: str
+    model: str
+    serial_number: str
+    installation_date: datetime
+    warranty_until: Optional[datetime] = None
+    status: str = "active"  # active, maintenance, inactive
+    location: str
+    notes: Optional[str] = None
+
+class MaintenanceTicket(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    ticket_number: str
+    customer_id: str
+    equipment_id: Optional[str] = None
+    title: str
+    description: str
+    priority: str = "medium"  # low, medium, high, urgent
+    status: str = "open"  # open, in_progress, resolved, closed
+    assigned_to: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    resolved_at: Optional[datetime] = None
+
+class Payment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    contract_id: str
+    invoice_number: str
+    amount: float
+    due_date: datetime
+    paid_at: Optional[datetime] = None
+    payment_method: Optional[str] = None
+    status: str = "pending"  # pending, paid, overdue, cancelled
+    pix_key: Optional[str] = None
+    pix_qrcode: Optional[str] = None
+    reminder_sent: bool = False
+    overdue_notice_sent: bool = False
+    suspension_notice_sent: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Notification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    type: str  # payment_reminder, overdue, suspension, order, ticket
+    channel: str = "whatsapp"  # whatsapp, email, sms
+    message: str
+    status: str = "pending"  # pending, sent, failed
+    sent_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PageContent(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    page_name: str
+    sections: dict
+    images: dict
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
     price: float = 0.0
     min_days: int = 0
     max_days: int = 0
