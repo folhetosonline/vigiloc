@@ -69,8 +69,12 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      {/* Hero Section */}
-      <section className="hero-gradient relative py-24 lg:py-32" data-testid="hero-section">
+      {/* Banner Carousel */}
+      <BannerCarousel />
+
+      {/* Hero Section - Alternative if no banners */}
+      <section className="hero-gradient relative py-24 lg:py-32" data-testid="hero-section"
+        style={{ display: 'none' }} id="default-hero">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center text-white fade-in-up">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
