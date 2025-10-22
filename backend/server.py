@@ -1295,6 +1295,25 @@ async def create_equipment(equipment_data: dict, current_user: User = Depends(ge
     await db.equipment.insert_one(doc)
     return equipment
 
+
+@api_router.put("/admin/equipment/{equipment_id}", response_model=Equipment)
+async def update_equipment(equipment_id: str, equipment_data: dict, current_user: User = Depends(get_current_admin)):
+    # Convert dates to ISO format
+    if 'installation_date' in equipment_data and isinstance(equipment_data['installation_date'], str):
+        equipment_data['installation_date'] = equipment_data['installation_date']
+    if 'warranty_until' in equipment_data and equipment_data['warranty_until']:
+        equipment_data['warranty_until'] = equipment_data['warranty_until']
+    
+    result = await db.equipment.update_one({"id": equipment_id}, {"$set": equipment_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Equipamento não encontrado")
+    
+    equipment = await db.equipment.find_one({"id": equipment_id}, {"_id": 0})
+    for field in ['installation_date', 'warranty_until']:
+        if equipment.get(field) and isinstance(equipment[field], str):
+            equipment[field] = datetime.fromisoformat(equipment[field])
+    return Equipment(**equipment)
+
 # ==================== MAINTENANCE TICKET ROUTES ====================
 
 @api_router.get("/admin/tickets", response_model=List[MaintenanceTicket])
