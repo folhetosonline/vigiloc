@@ -101,3 +101,305 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Implement complete ERP/CRM system with:
+  - Customer, Contract, Equipment, Payment, and Maintenance Ticket management
+  - Configurable notification triggers (days before/after due dates)
+  - Editable email and WhatsApp templates
+  - Manual WhatsApp workflow (copy message/number)
+  - Automated payment reminders (configurable days before due)
+  - Overdue notices (configurable days after due)
+  - Suspension warnings (configurable days after due)
+  - PIX payment information storage
+  - SendGrid email integration (logs when no API key present)
+
+backend:
+  - task: "CRM Models (Customer, Contract, Equipment, Payment, MaintenanceTicket, Notification, CRMSettings)"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "All CRM Pydantic models added with UUID-based IDs, proper datetime handling"
+
+  - task: "Customer CRUD APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET, POST, PUT routes for customers with WhatsApp number collection"
+
+  - task: "Contract CRUD APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Contract management with auto-generated contract numbers"
+
+  - task: "Equipment CRUD APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Equipment tracking with installation dates, warranty, status"
+
+  - task: "Payment Management APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Payment CRUD, generate monthly payments, mark as paid, PIX info update"
+
+  - task: "Maintenance Ticket APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Ticket CRUD with priority, status, assignment tracking"
+
+  - task: "Configurable Notification Settings APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Settings for trigger days (payment_reminder_days, overdue_notice_days, suspension_warning_days)"
+
+  - task: "Email Template Management APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Editable email templates with variable substitution ({customer_name}, {amount}, {due_date}, {pix_key})"
+
+  - task: "WhatsApp Template Management APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Editable WhatsApp message templates with variable substitution"
+
+  - task: "Automated Notification Triggers"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Payment reminders, overdue notices, suspension warnings using configurable days and templates"
+
+frontend:
+  - task: "CRM Dashboard Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/CRMDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Stats overview with quick actions and automation status"
+
+  - task: "Customers Management Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Customers.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Full CRUD with address management, WhatsApp field, status badges"
+
+  - task: "Contracts Management Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Contracts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Contract CRUD with customer selection, service types, payment day configuration"
+
+  - task: "Equipment Management Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Equipment.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Equipment tracking with customer/contract linking, warranty dates"
+
+  - task: "Payments Management Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Payments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Payment list with filters, generate monthly payments, mark as paid, PIX key display"
+
+  - task: "Maintenance Tickets Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Tickets.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Ticket CRUD with priority/status filters, equipment linking"
+
+  - task: "Notifications Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Notifications.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Manual trigger buttons, notification history, WhatsApp dialog with copy/open functionality"
+
+  - task: "CRM Settings Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/admin/crm/Settings.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Tabbed interface for trigger days, email templates, WhatsApp templates with variable hints"
+
+  - task: "Admin Layout CRM Menu"
+    implemented: true
+    working: true
+    file: "frontend/src/components/admin/AdminLayout.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Sidebar updated with E-commerce and CRM/ERP sections"
+
+  - task: "App.js CRM Routes"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "All CRM routes added and working"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Backend: All CRM APIs (Customers, Contracts, Equipment, Payments, Tickets, Notifications, Settings)"
+    - "Frontend: All CRM pages and navigation"
+    - "Notification system with configurable triggers and templates"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Complete CRM/ERP system implemented with:
+      
+      ✅ Backend (server.py):
+      - All CRM models with UUID-based IDs
+      - Customer, Contract, Equipment, Payment, Ticket CRUD APIs
+      - Configurable notification triggers (payment_reminder_days, overdue_notice_days, suspension_warning_days)
+      - Editable email & WhatsApp templates with variable substitution
+      - Automated notification routes using configurable settings
+      - PIX payment info storage and update
+      - SendGrid integration (logs when no API key)
+      
+      ✅ Frontend:
+      - CRMDashboard: Stats overview with quick actions
+      - Customers: Full CRUD with WhatsApp field required
+      - Contracts: Contract management with customer linking
+      - Equipment: Equipment tracking with warranty dates
+      - Payments: Payment management, generate monthly, mark paid, PIX display
+      - Tickets: Maintenance ticket management
+      - Notifications: Manual send buttons + WhatsApp dialog (copy/open)
+      - Settings: Configurable trigger days + editable templates (email & WhatsApp)
+      - AdminLayout: Updated menu with CRM section
+      
+      🔔 Notification System Features:
+      - Configurable days for each trigger type
+      - Template variables: {customer_name}, {amount}, {due_date}, {pix_key}
+      - Manual WhatsApp workflow (opens WhatsApp Web with pre-filled message)
+      - Email templates ready for SendGrid (logs for now, will send when API key added)
+      
+      Ready for testing!
