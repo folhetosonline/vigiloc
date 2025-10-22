@@ -125,6 +125,18 @@ const Products = () => {
     }
   };
 
+  const handleTogglePublish = async (id, currentStatus) => {
+    try {
+      const newStatus = !currentStatus;
+      await axios.patch(`${API}/admin/products/${id}/publish?published=${newStatus}`);
+      toast.success(newStatus ? "Produto publicado!" : "Produto despublicado!");
+      fetchProducts();
+    } catch (error) {
+      toast.error("Erro ao atualizar status de publicação");
+    }
+  };
+
+
   const resetForm = () => {
     setFormData({
       name: "",
