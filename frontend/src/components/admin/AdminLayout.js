@@ -42,9 +42,9 @@ const AdminLayout = () => {
     { path: "/admin/crm/settings", icon: <Settings />, label: "Configurações" },
   ];
 
-  const isActive = (path) => {
-    if (path === "/admin") {
-      return location.pathname === "/admin";
+  const isActive = (path, exact) => {
+    if (exact) {
+      return location.pathname === path;
     }
     return location.pathname.startsWith(path);
   };
@@ -52,22 +52,41 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg">
+      <aside className="w-64 bg-white shadow-lg overflow-y-auto">
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold text-blue-600">Admin VigiLoc</h1>
         </div>
         <nav className="p-4 space-y-2">
-          {menuItems.map((item) => (
-            <Link key={item.path} to={item.path}>
-              <Button
-                variant={isActive(item.path) ? "default" : "ghost"}
-                className="w-full justify-start"
-              >
-                <span className="mr-2">{item.icon}</span>
-                {item.label}
-              </Button>
-            </Link>
-          ))}
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">E-commerce</p>
+            {menuItems.map((item) => (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant={isActive(item.path, item.exact) ? "default" : "ghost"}
+                  className="w-full justify-start mb-1"
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                </Button>
+              </Link>
+            ))}
+          </div>
+          
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">CRM/ERP</p>
+            {crmMenuItems.map((item) => (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  className="w-full justify-start mb-1"
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                </Button>
+              </Link>
+            ))}
+          </div>
+
           <Button
             variant="ghost"
             className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
