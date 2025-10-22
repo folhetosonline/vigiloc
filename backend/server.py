@@ -1083,6 +1083,8 @@ class Banner(BaseModel):
     link_url: Optional[str] = None
     order: int = 0
     active: bool = True
+    published: bool = False  # Controls if banner is visible on website
+    published_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BannerCreate(BaseModel):
