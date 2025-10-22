@@ -238,11 +238,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Editable WhatsApp message templates with variable substitution"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PUT /admin/crm/settings/whatsapp-templates successfully updates WhatsApp templates. Templates support variable substitution with {customer_name}, {amount}, {due_date}, {pix_key}. Updated templates persist correctly and are used by notification system. WhatsApp template management fully functional."
 
   - task: "Automated Notification Triggers"
     implemented: true
