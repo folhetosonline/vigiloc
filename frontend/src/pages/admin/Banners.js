@@ -106,7 +106,8 @@ const Banners = () => {
       media_url: banner.media_url,
       link_url: banner.link_url || "",
       order: banner.order,
-      active: banner.active
+      active: banner.active,
+      published: banner.published || false  // IMPORTANTE: preservar o status de publicação
     });
     setOpen(true);
   };
