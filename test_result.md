@@ -163,11 +163,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Equipment tracking with installation dates, warranty, status"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Created 3 equipment items (Totem de Segurança, Câmera IP, Central de Alarme) linked to customers/contracts. GET /admin/equipment returns all equipment. PUT updates equipment status (tested changing to maintenance). Customer filtering works correctly (?customer_id=X). Serial numbers, warranty dates, installation dates all properly handled."
 
   - task: "Payment Management APIs"
     implemented: true
