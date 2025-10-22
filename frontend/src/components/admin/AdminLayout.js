@@ -25,6 +25,8 @@ const AdminLayout = () => {
     { path: "/admin/categories", icon: <FolderOpen />, label: "Categorias" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
     { path: "/admin/shipping", icon: <Truck />, label: "Frete" },
+    { path: "/admin/banners", icon: <FileText />, label: "Banners" },
+    { path: "/admin/coupons", icon: <FileText />, label: "Cupons" },
     { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
   ];
