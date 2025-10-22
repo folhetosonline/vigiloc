@@ -122,6 +122,18 @@ const Banners = () => {
     }
   };
 
+  const handleTogglePublish = async (id, currentStatus) => {
+    try {
+      const newStatus = !currentStatus;
+      await axios.patch(`${API}/admin/banners/${id}/publish?published=${newStatus}`);
+      toast.success(newStatus ? "Banner publicado no site!" : "Banner removido do site!");
+      fetchBanners();
+    } catch (error) {
+      toast.error("Erro ao atualizar status de publicação");
+    }
+  };
+
+
   const resetForm = () => {
     setFormData({
       title: "",
