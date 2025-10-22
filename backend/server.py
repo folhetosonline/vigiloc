@@ -1748,6 +1748,33 @@ async def toggle_page_content_publication(page_name: str, published: bool, curre
     
     return {"message": f"Page content {'published' if published else 'unpublished'} successfully"}
 
+# ==================== SITE SETTINGS ROUTES ====================
+
+@api_router.get("/site-settings")
+async def get_site_settings():
+    """Get site settings (public)"""
+    settings = await db.site_settings.find_one({"id": "site_settings"}, {"_id": 0})
+    if not settings:
+        # Return default settings
+        default_settings = SiteSettings()
+        return default_settings.model_dump()
+    return settings
+
+@api_router.put("/admin/site-settings")
+async def update_site_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update site settings - Admin only"""
+    settings_data['id'] = "site_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.site_settings.update_one(
+        {"id": "site_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Configurações do site atualizadas com sucesso"}
+
+
+
 # ==================== NOTIFICATION/AUTOMATION ROUTES ====================
 
 @api_router.post("/admin/notifications/send-payment-reminders")
