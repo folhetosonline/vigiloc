@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, ShoppingCart, Truck, FolderOpen, FileText, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Truck, FolderOpen, FileText, MessageSquare, LogOut, Users, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { API } from "@/App";
@@ -20,7 +20,7 @@ const AdminLayout = () => {
   };
 
   const menuItems = [
-    { path: "/admin", icon: <LayoutDashboard />, label: "Dashboard" },
+    { path: "/admin", icon: <LayoutDashboard />, label: "Dashboard", exact: true },
     { path: "/admin/products", icon: <Package />, label: "Produtos" },
     { path: "/admin/categories", icon: <FolderOpen />, label: "Categorias" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
@@ -29,6 +29,17 @@ const AdminLayout = () => {
     { path: "/admin/coupons", icon: <FileText />, label: "Cupons" },
     { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
+  ];
+
+  const crmMenuItems = [
+    { path: "/admin/crm", icon: <Users />, label: "CRM Dashboard" },
+    { path: "/admin/crm/customers", icon: <Users />, label: "Clientes" },
+    { path: "/admin/crm/contracts", icon: <FileText />, label: "Contratos" },
+    { path: "/admin/crm/equipment", icon: <Package />, label: "Equipamentos" },
+    { path: "/admin/crm/payments", icon: <ShoppingCart />, label: "Pagamentos" },
+    { path: "/admin/crm/tickets", icon: <MessageSquare />, label: "Chamados" },
+    { path: "/admin/crm/notifications", icon: <MessageSquare />, label: "Notificações" },
+    { path: "/admin/crm/settings", icon: <Settings />, label: "Configurações" },
   ];
 
   const isActive = (path) => {
