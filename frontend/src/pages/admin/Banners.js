@@ -145,7 +145,8 @@ const Banners = () => {
       media_url: "",
       link_url: "",
       order: 0,
-      active: true
+      active: true,
+      published: false  // Novo banner começa como rascunho
     });
     setEditingBanner(null);
   };
