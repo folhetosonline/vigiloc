@@ -223,11 +223,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Editable email templates with variable substitution ({customer_name}, {amount}, {due_date}, {pix_key})"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PUT /admin/crm/settings/email-templates successfully updates email templates. Templates support variable substitution with {customer_name}, {amount}, {due_date}, {pix_key}. Updated templates persist correctly and are available for notification system. Email template management fully functional."
 
   - task: "WhatsApp Template Management APIs"
     implemented: true
