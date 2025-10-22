@@ -262,6 +262,21 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: All notification triggers working correctly. POST /admin/notifications/send-payment-reminders, send-overdue-notices, send-suspension-warnings all functional. Notifications use configurable trigger days and templates. Template variable substitution working ({customer_name}, {amount}, etc.). GET /admin/notifications returns created notifications. Notification system fully operational with configurable settings."
 
+  - task: "Site Settings Management APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Site settings endpoints for managing site name, contact info, colors, etc."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Site settings endpoints working perfectly. GET /api/site-settings returns default settings (site_name: VigiLoc). PUT /admin/site-settings successfully updates site name, contact email, phone, WhatsApp, and address. GET /api/site-settings verification confirms all updates saved correctly. Admin authentication required and working. Site configuration management fully functional."
+
 frontend:
   - task: "CRM Dashboard Page"
     implemented: true
