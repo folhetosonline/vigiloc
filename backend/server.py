@@ -1415,6 +1415,21 @@ async def mark_payment_paid(payment_id: str, payment_method: str, current_user: 
         raise HTTPException(status_code=404, detail="Pagamento não encontrado")
     return {"message": "Pagamento marcado como pago"}
 
+
+@api_router.put("/admin/payments/{payment_id}/pix")
+async def update_payment_pix(payment_id: str, pix_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update PIX information for a payment"""
+    result = await db.payments.update_one(
+        {"id": payment_id},
+        {"$set": {
+            "pix_key": pix_data.get("pix_key", ""),
+            "pix_qrcode": pix_data.get("pix_qrcode", "")
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado")
+    return {"message": "Informações PIX atualizadas"}
+
 # ==================== PAGE CONTENT ROUTES ====================
 
 @api_router.get("/page-content/{page_name}")
