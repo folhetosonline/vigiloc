@@ -1665,3 +1665,99 @@ async def update_whatsapp_templates(templates: dict, current_user: User = Depend
     )
     return {"message": "Templates de WhatsApp atualizados"}
 
+@api_router.post("/admin/notifications/send-overdue-notices")
+async def send_overdue_notices(current_user: User = Depends(get_current_admin)):
+    """Send overdue notices based on configurable days after due date"""
+    # Get settings
+    settings = await db.crm_settings.find_one({"id": "crm_settings"}, {"_id": 0})
+    if not settings:
+        settings = CRMSettings().model_dump()
+    
+    days_overdue = settings.get('trigger_settings', {}).get('overdue_notice_days', 3)
+    target_date = datetime.now() - timedelta(days=days_overdue)
+    
+    payments = await db.payments.find({
+        "status": "pending",
+        "overdue_notice_sent": False,
+        "due_date": {"$lt": target_date.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    
+    sent = 0
+    whatsapp_template = settings.get('whatsapp_templates', {}).get('overdue_notice',
+        "⚠️ {customer_name}, seu pagamento de R$ {amount} está atrasado. Por favor, regularize para evitar suspensão do serviço. PIX: {pix_key}")
+    
+    for payment in payments:
+        customer = await db.customers.find_one({"id": payment['customer_id']}, {"_id": 0})
+        if customer:
+            # Format message with template
+            message = whatsapp_template.format(
+                customer_name=customer['name'],
+                amount=f"{payment['amount']:.2f}",
+                due_date=payment['due_date'][:10],
+                pix_key=payment.get('pix_key', 'Ver fatura')
+            )
+            
+            notification = Notification(
+                customer_id=customer['id'],
+                type="overdue",
+                channel="whatsapp",
+                message=message
+            )
+            
+            notif_doc = notification.model_dump()
+            notif_doc['created_at'] = notif_doc['created_at'].isoformat()
+            await db.notifications.insert_one(notif_doc)
+            
+            await db.payments.update_one({"id": payment['id']}, {"$set": {"overdue_notice_sent": True, "status": "overdue"}})
+            sent += 1
+    
+    return {"message": f"{sent} avisos de atraso enviados"}
+
+@api_router.post("/admin/notifications/send-suspension-warnings")
+async def send_suspension_warnings(current_user: User = Depends(get_current_admin)):
+    """Send suspension warnings based on configurable days after due date"""
+    # Get settings
+    settings = await db.crm_settings.find_one({"id": "crm_settings"}, {"_id": 0})
+    if not settings:
+        settings = CRMSettings().model_dump()
+    
+    days_overdue = settings.get('trigger_settings', {}).get('suspension_warning_days', 10)
+    target_date = datetime.now() - timedelta(days=days_overdue)
+    
+    payments = await db.payments.find({
+        "status": "overdue",
+        "suspension_notice_sent": False,
+        "due_date": {"$lt": target_date.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    
+    sent = 0
+    whatsapp_template = settings.get('whatsapp_templates', {}).get('suspension_warning',
+        "🚨 AVISO FINAL {customer_name}: Seu serviço será suspenso em 24h por falta de pagamento. Valor: R$ {amount}. Regularize URGENTE! PIX: {pix_key}")
+    
+    for payment in payments:
+        customer = await db.customers.find_one({"id": payment['customer_id']}, {"_id": 0})
+        if customer:
+            # Format message with template
+            message = whatsapp_template.format(
+                customer_name=customer['name'],
+                amount=f"{payment['amount']:.2f}",
+                due_date=payment['due_date'][:10],
+                pix_key=payment.get('pix_key', 'Ver fatura')
+            )
+            
+            notification = Notification(
+                customer_id=customer['id'],
+                type="suspension",
+                channel="whatsapp",
+                message=message
+            )
+            
+            notif_doc = notification.model_dump()
+            notif_doc['created_at'] = notif_doc['created_at'].isoformat()
+            await db.notifications.insert_one(notif_doc)
+            
+            await db.payments.update_one({"id": payment['id']}, {"$set": {"suspension_notice_sent": True}})
+            sent += 1
+    
+    return {"message": f"{sent} avisos de suspensão enviados"}
+
