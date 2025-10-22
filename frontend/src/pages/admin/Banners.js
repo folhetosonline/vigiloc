@@ -25,6 +25,7 @@ const Banners = () => {
     active: true
   });
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     fetchBanners();
