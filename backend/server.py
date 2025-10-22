@@ -548,6 +548,137 @@ async def logout(response: Response, current_user: User = Depends(get_current_us
     await db.sessions.delete_many({"user_id": current_user.id})
     return {"message": "Logged out successfully"}
 
+
+# ==================== USER MANAGEMENT ROUTES ====================
+
+@api_router.get("/admin/users", response_model=List[User])
+async def get_all_users(current_user: User = Depends(get_current_admin)):
+    """Get all users - Admin only"""
+    users = await db.users.find({}, {"_id": 0}).to_list(1000)
+    for user in users:
+        if isinstance(user.get('created_at'), str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'])
+        if isinstance(user.get('updated_at'), str):
+            user['updated_at'] = datetime.fromisoformat(user['updated_at'])
+    return users
+
+@api_router.post("/admin/users")
+async def create_user(user_data: dict, current_user: User = Depends(get_current_admin)):
+    """Create new user - Admin only"""
+    # Check if email already exists
+    existing = await db.users.find_one({"email": user_data['email']})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email já cadastrado")
+    
+    # Create user
+    user = User(
+        email=user_data['email'],
+        name=user_data['name'],
+        password_hash=pwd_context.hash(user_data['password']),
+        is_admin=user_data.get('is_admin', False),
+        role=user_data.get('role', 'viewer'),
+        active=user_data.get('active', True)
+    )
+    
+    doc = user.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.users.insert_one(doc)
+    
+    return {"message": "Usuário criado com sucesso", "user_id": user.id}
+
+@api_router.put("/admin/users/{user_id}")
+async def update_user(user_id: str, user_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update user - Admin only"""
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    # Don't allow updating password through this route
+    if 'password' in user_data:
+        del user_data['password']
+    if 'password_hash' in user_data:
+        del user_data['password_hash']
+    
+    user_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.users.update_one({"id": user_id}, {"$set": user_data})
+    return {"message": "Usuário atualizado com sucesso"}
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete user - Admin only"""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Você não pode deletar sua própria conta")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    # Also delete user's sessions
+    await db.sessions.delete_many({"user_id": user_id})
+    
+    return {"message": "Usuário deletado com sucesso"}
+
+@api_router.post("/admin/users/{user_id}/change-password")
+async def admin_change_user_password(user_id: str, password_data: dict, current_user: User = Depends(get_current_admin)):
+    """Change user password - Admin only"""
+    new_password = password_data.get('new_password')
+    if not new_password or len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Senha deve ter no mínimo 6 caracteres")
+    
+    result = await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "password_hash": pwd_context.hash(new_password),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    # Logout all sessions of this user
+    await db.sessions.delete_many({"user_id": user_id})
+    
+    return {"message": "Senha alterada com sucesso"}
+
+@api_router.post("/auth/change-password")
+async def change_own_password(password_data: dict, current_user: User = Depends(get_current_user)):
+    """Change own password - Any authenticated user"""
+    current_password = password_data.get('current_password')
+    new_password = password_data.get('new_password')
+    
+    if not current_password or not new_password:
+        raise HTTPException(status_code=400, detail="Senha atual e nova senha são obrigatórias")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Nova senha deve ter no mínimo 6 caracteres")
+    
+    # Verify current password
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    if not user or not pwd_context.verify(current_password, user['password_hash']):
+        raise HTTPException(status_code=400, detail="Senha atual incorreta")
+    
+    # Update password
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {
+            "password_hash": pwd_context.hash(new_password),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Logout all sessions except current
+    session_token = password_data.get('session_token')
+    if session_token:
+        await db.sessions.delete_many({
+            "user_id": current_user.id,
+            "session_token": {"$ne": session_token}
+        })
+    
+    return {"message": "Senha alterada com sucesso"}
+
+
 # ==================== UPLOAD ROUTES ====================
 
 @api_router.post("/upload")
