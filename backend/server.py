@@ -137,6 +137,8 @@ class ProductCreate(BaseModel):
     sku: Optional[str] = None
     weight: Optional[float] = None
     dimensions: Optional[dict] = None
+    published: bool = False  # Controls if product is visible on website
+    published_at: Optional[datetime] = None
 
 class Category(BaseModel):
     model_config = ConfigDict(extra="ignore")
