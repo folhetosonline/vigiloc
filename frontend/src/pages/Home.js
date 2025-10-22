@@ -6,6 +6,7 @@ import { Camera, KeyRound, Lock, CheckCircle, Users, Landmark } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BannerCarousel from "@/components/BannerCarousel";
+import SEO from "@/components/SEO";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
