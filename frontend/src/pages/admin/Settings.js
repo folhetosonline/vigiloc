@@ -254,11 +254,105 @@ const Settings = () => {
         <h1 className="text-3xl font-bold">Configurações</h1>
       </div>
 
-      <Tabs defaultValue="users" className="w-full">
+      <Tabs defaultValue="site" className="w-full">
         <TabsList>
+          <TabsTrigger value="site">Configurações do Site</TabsTrigger>
           <TabsTrigger value="users">Gerenciar Usuários</TabsTrigger>
           <TabsTrigger value="profile">Meu Perfil</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="site">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Globe className="mr-2 h-5 w-5" />
+                Configurações do Site
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveSiteSettings} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Logo do Site</label>
+                  {siteSettings.logo_url && (
+                    <div className="mb-4">
+                      <img src={siteSettings.logo_url} alt="Logo atual" className="h-20 w-auto border rounded p-2" />
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      id="logo-upload"
+                    />
+                    <label htmlFor="logo-upload">
+                      <Button type="button" variant="outline" disabled={uploadingLogo} onClick={() => document.getElementById('logo-upload').click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {uploadingLogo ? "Enviando..." : "Fazer Upload do Logo"}
+                      </Button>
+                    </label>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1">Recomendado: PNG transparente, 200x60px</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Nome do Site</label>
+                  <Input
+                    value={siteSettings.site_name}
+                    onChange={(e) => setSiteSettings({...siteSettings, site_name: e.target.value})}
+                    placeholder="VigiLoc"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email de Contato</label>
+                    <Input
+                      type="email"
+                      value={siteSettings.contact_email}
+                      onChange={(e) => setSiteSettings({...siteSettings, contact_email: e.target.value})}
+                      placeholder="contato@vigiloc.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Telefone</label>
+                    <Input
+                      value={siteSettings.contact_phone}
+                      onChange={(e) => setSiteSettings({...siteSettings, contact_phone: e.target.value})}
+                      placeholder="(11) 98888-8888"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">WhatsApp (com código do país)</label>
+                  <Input
+                    value={siteSettings.whatsapp_number}
+                    onChange={(e) => setSiteSettings({...siteSettings, whatsapp_number: e.target.value})}
+                    placeholder="5511988888888"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Endereço</label>
+                  <textarea
+                    className="w-full p-2 border rounded"
+                    rows="3"
+                    value={siteSettings.address}
+                    onChange={(e) => setSiteSettings({...siteSettings, address: e.target.value})}
+                    placeholder="Rua, Número, Bairro, Cidade - Estado"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full">
+                  Salvar Configurações do Site
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="users">
           <Card>
