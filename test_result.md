@@ -391,9 +391,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Backend: All CRM APIs (Customers, Contracts, Equipment, Payments, Tickets, Notifications, Settings)"
     - "Frontend: All CRM pages and navigation"
-    - "Notification system with configurable triggers and templates"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
