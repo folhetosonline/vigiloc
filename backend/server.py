@@ -312,6 +312,21 @@ class PageContent(BaseModel):
     max_days: int = 0
     active: bool = True
 
+class SiteSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "site_settings"
+    site_name: str = "VigiLoc"
+    logo_url: Optional[str] = None
+    favicon_url: Optional[str] = None
+    primary_color: str = "#3B82F6"
+    secondary_color: str = "#1E40AF"
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    whatsapp_number: Optional[str] = None
+    address: Optional[str] = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 class ShippingRateCreate(BaseModel):
     name: str
     type: str
