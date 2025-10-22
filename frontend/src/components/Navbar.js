@@ -39,7 +39,11 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
             {siteSettings.logo_url ? (
-              <img src={siteSettings.logo_url} alt={siteSettings.site_name} className="h-10 w-auto" />
+              <img 
+                src={siteSettings.logo_url.startsWith('http') ? siteSettings.logo_url : `${API}${siteSettings.logo_url}`} 
+                alt={siteSettings.site_name} 
+                className="h-12 w-auto object-contain" 
+              />
             ) : (
               <div className="vigiloc-logo" aria-label={siteSettings.site_name}>
                 <span className="vigiloc-v">V</span>
