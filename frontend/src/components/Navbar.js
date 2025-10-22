@@ -38,10 +38,14 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
-            <div className="vigiloc-logo" aria-label="VigiLoc">
-              <span className="vigiloc-v">V</span>
-            </div>
-            <span className="text-2xl font-bold text-gray-900">VigiLoc</span>
+            {siteSettings.logo_url ? (
+              <img src={siteSettings.logo_url} alt={siteSettings.site_name} className="h-10 w-auto" />
+            ) : (
+              <div className="vigiloc-logo" aria-label={siteSettings.site_name}>
+                <span className="vigiloc-v">V</span>
+              </div>
+            )}
+            <span className="text-2xl font-bold text-gray-900">{siteSettings.site_name}</span>
           </Link>
 
           {/* Desktop Navigation */}
