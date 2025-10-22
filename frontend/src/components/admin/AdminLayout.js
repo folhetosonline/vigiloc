@@ -29,6 +29,7 @@ const AdminLayout = () => {
     { path: "/admin/coupons", icon: <FileText />, label: "Cupons" },
     { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
+    { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
 
   const crmMenuItems = [
