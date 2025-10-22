@@ -1095,6 +1095,8 @@ class BannerCreate(BaseModel):
     link_url: Optional[str] = None
     order: int = 0
     active: bool = True
+    published: bool = False  # Controls if banner is visible on website
+    published_at: Optional[datetime] = None
 
 @api_router.get("/banners", response_model=List[Banner])
 async def get_banners():
