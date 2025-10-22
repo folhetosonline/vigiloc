@@ -715,6 +715,314 @@ async def get_stats(current_user: User = Depends(get_current_admin)):
         "total_revenue": total_revenue
     }
 
+
+# ==================== BANNER ROUTES ====================
+
+class Banner(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    subtitle: Optional[str] = None
+    media_type: str
+    media_url: str
+    link_url: Optional[str] = None
+    order: int = 0
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BannerCreate(BaseModel):
+    title: str
+    subtitle: Optional[str] = None
+    media_type: str
+    media_url: str
+    link_url: Optional[str] = None
+    order: int = 0
+    active: bool = True
+
+@api_router.get("/banners", response_model=List[Banner])
+async def get_banners():
+    banners = await db.banners.find({"active": True}, {"_id": 0}).sort("order", 1).to_list(100)
+    for banner in banners:
+        if isinstance(banner.get('created_at'), str):
+            banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+    return banners
+
+@api_router.post("/admin/banners", response_model=Banner)
+async def create_banner(banner_data: BannerCreate, current_user: User = Depends(get_current_admin)):
+    banner = Banner(**banner_data.model_dump())
+    doc = banner.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.banners.insert_one(doc)
+    return banner
+
+@api_router.put("/admin/banners/{banner_id}", response_model=Banner)
+async def update_banner(banner_id: str, banner_data: BannerCreate, current_user: User = Depends(get_current_admin)):
+    result = await db.banners.update_one({"id": banner_id}, {"$set": banner_data.model_dump()})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Banner not found")
+    banner = await db.banners.find_one({"id": banner_id}, {"_id": 0})
+    if isinstance(banner.get('created_at'), str):
+        banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+    return Banner(**banner)
+
+@api_router.delete("/admin/banners/{banner_id}")
+async def delete_banner(banner_id: str, current_user: User = Depends(get_current_admin)):
+    result = await db.banners.delete_one({"id": banner_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Banner not found")
+    return {"message": "Banner deleted successfully"}
+
+@api_router.get("/admin/banners", response_model=List[Banner])
+async def get_all_banners_admin(current_user: User = Depends(get_current_admin)):
+    banners = await db.banners.find({}, {"_id": 0}).sort("order", 1).to_list(100)
+    for banner in banners:
+        if isinstance(banner.get('created_at'), str):
+            banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+    return banners
+
+# ==================== COUPON ROUTES ====================
+
+class Coupon(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str
+    discount_type: str
+    discount_value: float
+    min_purchase: float = 0.0
+    max_uses: Optional[int] = None
+    uses_count: int = 0
+    active: bool = True
+    expires_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CouponCreate(BaseModel):
+    code: str
+    discount_type: str
+    discount_value: float
+    min_purchase: float = 0.0
+    max_uses: Optional[int] = None
+    expires_at: Optional[str] = None
+
+@api_router.post("/validate-coupon")
+async def validate_coupon(code: str, subtotal: float):
+    coupon = await db.coupons.find_one({"code": code.upper(), "active": True}, {"_id": 0})
+    
+    if not coupon:
+        raise HTTPException(status_code=404, detail="Cupom inválido")
+    
+    # Check expiration
+    if coupon.get('expires_at'):
+        expires_at = datetime.fromisoformat(coupon['expires_at']) if isinstance(coupon['expires_at'], str) else coupon['expires_at']
+        if expires_at < datetime.now(timezone.utc):
+            raise HTTPException(status_code=400, detail="Cupom expirado")
+    
+    # Check max uses
+    if coupon.get('max_uses') and coupon.get('uses_count', 0) >= coupon['max_uses']:
+        raise HTTPException(status_code=400, detail="Cupom já foi totalmente utilizado")
+    
+    # Check minimum purchase
+    if subtotal < coupon.get('min_purchase', 0):
+        raise HTTPException(status_code=400, detail=f"Compra mínima de R$ {coupon['min_purchase']:.2f}")
+    
+    # Calculate discount
+    if coupon['discount_type'] == 'percentage':
+        discount = subtotal * (coupon['discount_value'] / 100)
+    else:
+        discount = coupon['discount_value']
+    
+    return {
+        "valid": True,
+        "discount_amount": discount,
+        "code": coupon['code']
+    }
+
+@api_router.get("/admin/coupons", response_model=List[Coupon])
+async def get_coupons(current_user: User = Depends(get_current_admin)):
+    coupons = await db.coupons.find({}, {"_id": 0}).to_list(1000)
+    for coupon in coupons:
+        if isinstance(coupon.get('created_at'), str):
+            coupon['created_at'] = datetime.fromisoformat(coupon['created_at'])
+        if coupon.get('expires_at') and isinstance(coupon['expires_at'], str):
+            coupon['expires_at'] = datetime.fromisoformat(coupon['expires_at'])
+    return coupons
+
+@api_router.post("/admin/coupons", response_model=Coupon)
+async def create_coupon(coupon_data: CouponCreate, current_user: User = Depends(get_current_admin)):
+    # Check if code already exists
+    existing = await db.coupons.find_one({"code": coupon_data.code.upper()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Código de cupom já existe")
+    
+    coupon_dict = coupon_data.model_dump()
+    coupon_dict['code'] = coupon_dict['code'].upper()
+    
+    if coupon_dict.get('expires_at'):
+        coupon_dict['expires_at'] = datetime.fromisoformat(coupon_dict['expires_at'])
+    
+    coupon = Coupon(**coupon_dict)
+    doc = coupon.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('expires_at'):
+        doc['expires_at'] = doc['expires_at'].isoformat()
+    
+    await db.coupons.insert_one(doc)
+    return coupon
+
+@api_router.put("/admin/coupons/{coupon_id}", response_model=Coupon)
+async def update_coupon(coupon_id: str, coupon_data: CouponCreate, current_user: User = Depends(get_current_admin)):
+    coupon_dict = coupon_data.model_dump()
+    coupon_dict['code'] = coupon_dict['code'].upper()
+    
+    if coupon_dict.get('expires_at'):
+        coupon_dict['expires_at'] = datetime.fromisoformat(coupon_dict['expires_at']).isoformat()
+    
+    result = await db.coupons.update_one({"id": coupon_id}, {"$set": coupon_dict})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Coupon not found")
+    
+    coupon = await db.coupons.find_one({"id": coupon_id}, {"_id": 0})
+    if isinstance(coupon.get('created_at'), str):
+        coupon['created_at'] = datetime.fromisoformat(coupon['created_at'])
+    if coupon.get('expires_at') and isinstance(coupon['expires_at'], str):
+        coupon['expires_at'] = datetime.fromisoformat(coupon['expires_at'])
+    return Coupon(**coupon)
+
+@api_router.delete("/admin/coupons/{coupon_id}")
+async def delete_coupon(coupon_id: str, current_user: User = Depends(get_current_admin)):
+    result = await db.coupons.delete_one({"id": coupon_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Coupon not found")
+    return {"message": "Coupon deleted successfully"}
+
+# ==================== CEP SHIPPING CALCULATION ====================
+
+@api_router.get("/shipping/calculate")
+async def calculate_shipping(cep: str, weight: float = 1.0):
+    """Calculate shipping cost by CEP"""
+    cep_clean = cep.replace("-", "").replace(".", "")
+    
+    if len(cep_clean) != 8:
+        raise HTTPException(status_code=400, detail="CEP inválido")
+    
+    # Simple region-based calculation
+    region = cep_clean[:2]
+    rates = []
+    
+    # São Paulo region
+    if region in ["01", "02", "03", "04", "05", "06", "07", "08", "09"]:
+        rates.append({
+            "id": "pac-sp",
+            "name": "PAC",
+            "price": 15.00,
+            "min_days": 3,
+            "max_days": 5
+        })
+        rates.append({
+            "id": "sedex-sp",
+            "name": "SEDEX",
+            "price": 25.00,
+            "min_days": 1,
+            "max_days": 2
+        })
+    else:
+        rates.append({
+            "id": "pac-other",
+            "name": "PAC",
+            "price": 20.00 + (weight * 2),
+            "min_days": 7,
+            "max_days": 12
+        })
+        rates.append({
+            "id": "sedex-other",
+            "name": "SEDEX",
+            "price": 35.00 + (weight * 3),
+            "min_days": 3,
+            "max_days": 5
+        })
+    
+    return {"rates": rates}
+
+# ==================== ANALYTICS & REPORTS ====================
+
+@api_router.get("/admin/analytics")
+async def get_analytics(current_user: User = Depends(get_current_admin)):
+    """Get analytics data"""
+    # Orders by status
+    pipeline = [
+        {"$group": {"_id": "$status", "count": {"$sum": 1}, "total": {"$sum": "$total"}}}
+    ]
+    orders_by_status = await db.orders.aggregate(pipeline).to_list(100)
+    
+    # Products low stock
+    low_stock = await db.products.find({"quantity": {"$lt": 10}, "inStock": True}, {"_id": 0}).to_list(100)
+    
+    # Recent orders
+    recent_orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).limit(10).to_list(10)
+    
+    # Top products
+    pipeline_products = [
+        {"$unwind": "$items"},
+        {"$group": {"_id": "$items.product_id", "total_sold": {"$sum": "$items.quantity"}, "revenue": {"$sum": {"$multiply": ["$items.quantity", "$items.price"]}}}},
+        {"$sort": {"total_sold": -1}},
+        {"$limit": 10}
+    ]
+    top_products_data = await db.orders.aggregate(pipeline_products).to_list(10)
+    
+    # Get product details
+    top_products = []
+    for item in top_products_data:
+        product = await db.products.find_one({"id": item["_id"]}, {"_id": 0, "name": 1, "image": 1})
+        if product:
+            top_products.append({
+                "product_id": item["_id"],
+                "name": product.get("name"),
+                "image": product.get("image"),
+                "total_sold": item["total_sold"],
+                "revenue": item["revenue"]
+            })
+    
+    return {
+        "orders_by_status": orders_by_status,
+        "low_stock_products": low_stock,
+        "recent_orders": recent_orders,
+        "top_products": top_products
+    }
+
+@api_router.get("/admin/export-orders")
+async def export_orders(current_user: User = Depends(get_current_admin)):
+    """Export orders to CSV"""
+    import csv
+    from io import StringIO
+    
+    orders = await db.orders.find({}, {"_id": 0}).to_list(10000)
+    
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Header
+    writer.writerow(['Order Number', 'Customer Name', 'Email', 'Phone', 'Total', 'Status', 'Created At'])
+    
+    # Data
+    for order in orders:
+        writer.writerow([
+            order.get('order_number'),
+            order.get('customer_name'),
+            order.get('customer_email'),
+            order.get('customer_phone'),
+            order.get('total'),
+            order.get('status'),
+            order.get('created_at')
+        ])
+    
+    from fastapi.responses import StreamingResponse
+    output.seek(0)
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=orders.csv"}
+    )
+
 # Include the router in the main app
 app.include_router(api_router)
 
