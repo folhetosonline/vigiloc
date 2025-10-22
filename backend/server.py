@@ -1192,8 +1192,7 @@ async def export_orders(current_user: User = Depends(get_current_admin)):
         headers={"Content-Disposition": "attachment; filename=orders.csv"}
     )
 
-# Include the router in the main app
-app.include_router(api_router)
+# Router will be included at the end after all routes are defined
 
 app.add_middleware(
     CORSMiddleware,
