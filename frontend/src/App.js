@@ -104,6 +104,8 @@ function App() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="content" element={<AdminContent />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="banners" element={<AdminBanners />} />
+            <Route path="coupons" element={<AdminCoupons />} />
           </Route>
         </Routes>
         <Toaster position="top-right" />
