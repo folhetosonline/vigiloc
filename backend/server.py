@@ -590,11 +590,13 @@ async def get_products(category: Optional[str] = None):
 
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    product = await db.products.find_one({"id": product_id, "published": True}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     if isinstance(product.get('timestamp'), str):
         product['timestamp'] = datetime.fromisoformat(product['timestamp'])
+    if isinstance(product.get('published_at'), str):
+        product['published_at'] = datetime.fromisoformat(product['published_at'])
     return product
 
 @api_router.post("/admin/products", response_model=Product)
