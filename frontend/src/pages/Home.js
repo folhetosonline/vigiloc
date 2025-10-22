@@ -5,6 +5,7 @@ import { API } from "@/App";
 import { Camera, KeyRound, Lock, CheckCircle, Users, Landmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import BannerCarousel from "@/components/BannerCarousel";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
