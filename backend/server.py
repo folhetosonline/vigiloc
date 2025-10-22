@@ -261,6 +261,35 @@ class Notification(BaseModel):
     sent_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+class CRMSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "crm_settings"
+    trigger_settings: dict = {
+        "payment_reminder_days": 1,
+        "overdue_notice_days": 3,
+        "suspension_warning_days": 10
+    }
+    email_templates: dict = {
+        "payment_reminder": {
+            "subject": "Lembrete: Pagamento próximo ao vencimento",
+            "body": "Olá {customer_name}!\n\nSeu pagamento de R$ {amount} vence em {due_date}.\n\nChave Pix: {pix_key}\n\nAtenciosamente,\nVigiloc"
+        },
+        "overdue_notice": {
+            "subject": "⚠️ Pagamento em Atraso",
+            "body": "Olá {customer_name},\n\nIdentificamos que seu pagamento de R$ {amount} está em atraso desde {due_date}.\n\nPor favor, regularize para evitar a suspensão do serviço.\n\nChave Pix: {pix_key}\n\nAtenciosamente,\nVigiloc"
+        },
+        "suspension_warning": {
+            "subject": "🚨 AVISO FINAL - Suspensão de Serviço",
+            "body": "AVISO FINAL\n\n{customer_name},\n\nSeu serviço será suspenso em 24 horas por falta de pagamento.\n\nValor em atraso: R$ {amount}\nVencimento original: {due_date}\n\nREGULARIZE URGENTEMENTE!\n\nChave Pix: {pix_key}\n\nVigiloc"
+        }
+    }
+    whatsapp_templates: dict = {
+        "payment_reminder": "Olá {customer_name}! Lembrete: Seu pagamento de R$ {amount} vence em {due_date}. PIX: {pix_key}",
+        "overdue_notice": "⚠️ {customer_name}, seu pagamento de R$ {amount} está atrasado. Por favor, regularize para evitar suspensão do serviço. PIX: {pix_key}",
+        "suspension_warning": "🚨 AVISO FINAL {customer_name}: Seu serviço será suspenso em 24h por falta de pagamento. Valor: R$ {amount}. Regularize URGENTE! PIX: {pix_key}"
+    }
+
 class PageContent(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str
