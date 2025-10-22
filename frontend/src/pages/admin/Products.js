@@ -38,7 +38,8 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API}/products`);
+      // Use admin endpoint to see ALL products (published and unpublished)
+      const response = await axios.get(`${API}/admin/products`);
       setProducts(response.data);
     } catch (error) {
       toast.error("Erro ao carregar produtos");
