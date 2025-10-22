@@ -301,6 +301,8 @@ class PageContent(BaseModel):
     sections: dict
     images: dict
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    published: bool = False  # Controls if content is live on website
+    published_at: Optional[datetime] = None
 
     price: float = 0.0
     min_days: int = 0
