@@ -1010,11 +1010,33 @@ async def delete_banner(banner_id: str, current_user: User = Depends(get_current
 
 @api_router.get("/admin/banners", response_model=List[Banner])
 async def get_all_banners_admin(current_user: User = Depends(get_current_admin)):
+    # Admin route - show ALL banners (published and unpublished)
     banners = await db.banners.find({}, {"_id": 0}).sort("order", 1).to_list(100)
     for banner in banners:
         if isinstance(banner.get('created_at'), str):
             banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+        if isinstance(banner.get('published_at'), str):
+            banner['published_at'] = datetime.fromisoformat(banner['published_at'])
     return banners
+
+@api_router.patch("/admin/banners/{banner_id}/publish")
+async def toggle_banner_publication(banner_id: str, published: bool, current_user: User = Depends(get_current_admin)):
+    """Toggle banner publication status"""
+    existing = await db.banners.find_one({"id": banner_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Banner not found")
+    
+    update_data = {"published": published}
+    if published and not existing.get('published'):
+        # Banner is being published for the first time
+        update_data['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not published:
+        # Banner is being unpublished
+        update_data['published_at'] = None
+    
+    await db.banners.update_one({"id": banner_id}, {"$set": update_data})
+    
+    return {"message": f"Banner {'published' if published else 'unpublished'} successfully"}
 
 # ==================== COUPON ROUTES ====================
 
