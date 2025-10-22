@@ -406,6 +406,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Site Settings Management APIs - COMPLETED"
     - "Frontend: All CRM pages and navigation"
   stuck_tasks: []
   test_all: false
