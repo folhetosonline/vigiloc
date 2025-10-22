@@ -129,6 +129,7 @@ function App() {
               <Route path="crm/tickets" element={<CRMTickets />} />
               <Route path="crm/notifications" element={<CRMNotifications />} />
               <Route path="crm/settings" element={<CRMSettings />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>
           <Toaster position="top-right" />
