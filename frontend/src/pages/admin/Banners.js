@@ -44,22 +44,36 @@ const Banners = () => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Check file size (client-side)
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > 100) {
+      toast.error(`Arquivo muito grande (${fileSizeMB.toFixed(1)}MB). Máximo: 100MB`);
+      return;
+    }
+
     setUploading(true);
+    setUploadProgress(0);
     const uploadFormData = new FormData();
     uploadFormData.append("file", file);
 
     try {
       const response = await axios.post(`${API}/upload`, uploadFormData, {
         headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
       });
       
       const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
       setFormData({ ...formData, media_url: response.data.url, media_type: mediaType });
-      toast.success("Arquivo enviado com sucesso");
+      toast.success(`Arquivo enviado com sucesso! (${response.data.size})`);
     } catch (error) {
-      toast.error("Erro ao enviar arquivo");
+      const errorMsg = error.response?.data?.detail || "Erro ao enviar arquivo";
+      toast.error(errorMsg);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
