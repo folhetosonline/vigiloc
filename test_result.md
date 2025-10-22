@@ -148,11 +148,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Contract management with auto-generated contract numbers"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Created 2 contracts linked to customers. Contract numbers auto-generated correctly (CTR-2025-0001, CTR-2025-0002). GET /admin/contracts returns all contracts with proper customer linking. Service types (totem, complete), monthly values, payment days all working correctly."
 
   - task: "Equipment CRUD APIs"
     implemented: true
