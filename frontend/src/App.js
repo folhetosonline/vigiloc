@@ -21,6 +21,8 @@ import AdminShipping from "@/pages/admin/Shipping";
 import AdminCategories from "@/pages/admin/Categories";
 import AdminContent from "@/pages/admin/Content";
 import AdminContacts from "@/pages/admin/Contacts";
+import AdminBanners from "@/pages/admin/Banners";
+import AdminCoupons from "@/pages/admin/Coupons";
 
 // Components
 import Navbar from "@/components/Navbar";
