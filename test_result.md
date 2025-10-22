@@ -178,11 +178,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Payment CRUD, generate monthly payments, mark as paid, PIX info update"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /admin/payments/generate-monthly generated 2 payments for active contracts. GET /admin/payments returns all payments with required fields. Status filtering (?status=pending) works correctly. PUT /admin/payments/{id}/pix updates PIX key/QR code. POST /admin/payments/{id}/mark-paid changes status to 'paid' and records payment method. All payment workflows functioning correctly."
 
   - task: "Maintenance Ticket APIs"
     implemented: true
