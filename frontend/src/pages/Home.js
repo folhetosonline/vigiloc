@@ -70,6 +70,12 @@ const Home = () => {
 
   return (
     <div className="home-page">
+      <SEO 
+        title="VigiLoc - Soluções em Segurança Eletrônica | Câmeras, Alarmes e Controle de Acesso"
+        description="Sistemas completos de segurança eletrônica para condomínios e empresas. Câmeras de vigilância, controle de acesso biométrico, fechaduras inteligentes e totens de monitoramento. Instalação profissional e suporte 24/7 em São Paulo."
+        keywords="segurança eletrônica, câmeras de vigilância, controle de acesso, fechaduras inteligentes, totens de monitoramento, CCTV, vigilância 24h, segurança para condomínios, segurança empresarial, São Paulo"
+      />
+      
       {/* Banner Carousel */}
       <BannerCarousel />
 
