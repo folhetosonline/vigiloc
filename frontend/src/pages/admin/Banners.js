@@ -188,19 +188,35 @@ const Banners = () => {
                   <div className="flex items-center space-x-2">
                     <Input
                       type="file"
-                      accept={formData.media_type === 'video' ? 'video/*' : 'image/*'}
+                      accept={formData.media_type === 'video' ? 'video/mp4,video/quicktime,video/x-msvideo' : 'image/*'}
                       onChange={handleUpload}
                       disabled={uploading}
                     />
                   </div>
+                  {uploading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                      <p className="text-sm text-gray-600 mt-1">{uploadProgress}% enviado...</p>
+                    </div>
+                  )}
                   <Input
                     placeholder="Ou cole a URL da mídia"
                     value={formData.media_url}
                     onChange={(e) => setFormData({ ...formData, media_url: e.target.value })}
+                    disabled={uploading}
                   />
                   {formData.media_url && formData.media_type === 'image' && (
                     <img src={formData.media_url} alt="Preview" className="w-32 h-32 object-cover rounded" />
                   )}
+                  {formData.media_url && formData.media_type === 'video' && (
+                    <video src={formData.media_url} className="w-64 h-36 object-cover rounded" controls />
+                  )}
+                  <p className="text-xs text-gray-500">
+                    Vídeos: MP4 ou MOV, máximo 100MB. Recomendado: 1920x1080, H.264, &lt;10MB
+                  </p>
                 </div>
               </div>
 
