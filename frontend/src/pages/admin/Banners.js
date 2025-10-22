@@ -277,13 +277,13 @@ const Banners = () => {
                 <TableHead>Título</TableHead>
                 <TableHead>Tipo</TableHead>
                 <TableHead>Ordem</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Status Site</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {banners.map((banner) => (
-                <TableRow key={banner.id}>
+                <TableRow key={banner.id} className={!banner.published ? "bg-yellow-50" : ""}>
                   <TableCell>
                     {banner.media_type === 'image' ? (
                       <img src={banner.media_url} alt={banner.title} className="w-20 h-12 object-cover rounded" />
@@ -295,12 +295,20 @@ const Banners = () => {
                   <TableCell>{banner.media_type === 'image' ? 'Imagem' : 'Vídeo'}</TableCell>
                   <TableCell>{banner.order}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded text-xs ${banner.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                      {banner.active ? 'Ativo' : 'Inativo'}
-                    </span>
+                    <Badge className={banner.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
+                      {banner.published ? "🟢 AO VIVO" : "⚠️ RASCUNHO"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
+                      <Button 
+                        size="icon" 
+                        variant={banner.published ? "outline" : "default"}
+                        onClick={() => handleTogglePublish(banner.id, banner.published)}
+                        title={banner.published ? "Remover do site" : "Publicar no site"}
+                      >
+                        {banner.published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
                       <Button size="icon" variant="outline" onClick={() => handleEdit(banner)}>
                         <Pencil className="w-4 h-4" />
                       </Button>
