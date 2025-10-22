@@ -647,6 +647,24 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
         product['published_at'] = datetime.fromisoformat(product['published_at'])
     return Product(**product)
 
+@api_router.patch("/admin/products/{product_id}/publish")
+async def toggle_product_publication(product_id: str, published: bool, current_user: User = Depends(get_current_admin)):
+    existing = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    update_data = {"published": published}
+    if published and not existing.get('published'):
+        # Product is being published for the first time
+        update_data['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not published:
+        # Product is being unpublished
+        update_data['published_at'] = None
+    
+    await db.products.update_one({"id": product_id}, {"$set": update_data})
+    
+    return {"message": f"Product {'published' if published else 'unpublished'} successfully"}
+
 @api_router.delete("/admin/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_admin)):
     result = await db.products.delete_one({"id": product_id})
