@@ -51,6 +51,7 @@ const Settings = () => {
 
   useEffect(() => {
     fetchUsers();
+    fetchSiteSettings();
   }, []);
 
   const fetchUsers = async () => {
