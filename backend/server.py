@@ -386,18 +386,30 @@ async def logout(response: Response, current_user: User = Depends(get_current_us
 
 @api_router.post("/upload")
 async def upload_file(file: UploadFile = File(...), current_user: User = Depends(get_current_admin)):
-    if not file.content_type.startswith('image/'):
-        raise HTTPException(status_code=400, detail="Only images are allowed")
+    # Accept both images and videos
+    allowed_types = ['image/', 'video/']
+    if not any(file.content_type.startswith(t) for t in allowed_types):
+        raise HTTPException(status_code=400, detail="Apenas imagens e vídeos são permitidos")
     
-    file_ext = file.filename.split('.')[-1]
+    # Check file size (max 100MB)
+    content = await file.read()
+    file_size_mb = len(content) / (1024 * 1024)
+    
+    if file_size_mb > 100:
+        raise HTTPException(status_code=400, detail=f"Arquivo muito grande ({file_size_mb:.1f}MB). Máximo: 100MB")
+    
+    file_ext = file.filename.split('.')[-1].lower()
     file_name = f"{uuid.uuid4()}.{file_ext}"
     file_path = UPLOAD_DIR / file_name
     
     async with aiofiles.open(file_path, 'wb') as f:
-        content = await file.read()
         await f.write(content)
     
-    return {"url": f"/uploads/{file_name}"}
+    return {
+        "url": f"/uploads/{file_name}",
+        "size": f"{file_size_mb:.2f}MB",
+        "type": file.content_type
+    }
 
 # ==================== PRODUCT ROUTES ====================
 
