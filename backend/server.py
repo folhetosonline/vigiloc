@@ -979,12 +979,26 @@ async def create_banner(banner_data: BannerCreate, current_user: User = Depends(
 
 @api_router.put("/admin/banners/{banner_id}", response_model=Banner)
 async def update_banner(banner_id: str, banner_data: BannerCreate, current_user: User = Depends(get_current_admin)):
-    result = await db.banners.update_one({"id": banner_id}, {"$set": banner_data.model_dump()})
-    if result.matched_count == 0:
+    existing = await db.banners.find_one({"id": banner_id}, {"_id": 0})
+    if not existing:
         raise HTTPException(status_code=404, detail="Banner not found")
+    
+    updated_doc = banner_data.model_dump()
+    
+    # Handle published_at timestamp
+    if updated_doc.get('published') and not existing.get('published'):
+        # Banner is being published for the first time
+        updated_doc['published_at'] = datetime.now(timezone.utc).isoformat()
+    elif not updated_doc.get('published'):
+        # Banner is being unpublished
+        updated_doc['published_at'] = None
+    
+    result = await db.banners.update_one({"id": banner_id}, {"$set": updated_doc})
     banner = await db.banners.find_one({"id": banner_id}, {"_id": 0})
     if isinstance(banner.get('created_at'), str):
         banner['created_at'] = datetime.fromisoformat(banner['created_at'])
+    if isinstance(banner.get('published_at'), str):
+        banner['published_at'] = datetime.fromisoformat(banner['published_at'])
     return Banner(**banner)
 
 @api_router.delete("/admin/banners/{banner_id}")
