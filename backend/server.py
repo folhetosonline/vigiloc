@@ -697,6 +697,7 @@ async def change_own_password(password_data: dict, current_user: User = Depends(
 # ==================== UPLOAD ROUTES ====================
 
 @api_router.post("/upload")
+@api_router.post("/admin/upload")  # Add admin route too
 async def upload_file(file: UploadFile = File(...), current_user: User = Depends(get_current_admin)):
     # Accept both images and videos
     allowed_types = ['image/', 'video/']
@@ -717,8 +718,13 @@ async def upload_file(file: UploadFile = File(...), current_user: User = Depends
     async with aiofiles.open(file_path, 'wb') as f:
         await f.write(content)
     
+    # Get backend URL from env
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+    full_url = f"{backend_url.replace('/api', '')}/uploads/{file_name}"
+    
     return {
         "url": f"/uploads/{file_name}",
+        "file_url": full_url,  # Add file_url for compatibility
         "size": f"{file_size_mb:.2f}MB",
         "type": file.content_type
     }
