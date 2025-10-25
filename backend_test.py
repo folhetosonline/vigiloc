@@ -997,8 +997,44 @@ class CRMTester:
         else:
             self.log(f"\n⚠️  {len(self.failed_tests)} tests failed. Please review the issues above.")
 
+def test_upload_only():
+    """Quick test function for file upload only - as requested"""
+    tester = CRMTester()
+    
+    print("🚀 RAPID FILE UPLOAD TEST - NÃO PERDER TEMPO!")
+    print("=" * 50)
+    
+    # Authenticate first
+    if not tester.authenticate():
+        print("❌ Authentication failed")
+        return False
+    
+    # Run only file upload test
+    success = tester.test_file_upload()
+    
+    # Print quick summary
+    print("\n" + "=" * 50)
+    if success:
+        print("🎉 FILE UPLOAD TEST PASSED!")
+    else:
+        print("❌ FILE UPLOAD TEST FAILED!")
+        if tester.failed_tests:
+            print("Failed tests:")
+            for test in tester.failed_tests:
+                print(f"  • {test}")
+    
+    return success
+
 def main():
     """Main function to run the tests"""
+    import sys
+    
+    # Check if we should run only upload test
+    if len(sys.argv) > 1 and sys.argv[1] == "--upload-only":
+        success = test_upload_only()
+        sys.exit(0 if success else 1)
+    
+    # Run all tests
     tester = CRMTester()
     success = tester.run_all_tests()
     
