@@ -277,6 +277,21 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Site settings endpoints working perfectly. GET /api/site-settings returns default settings (site_name: VigiLoc). PUT /admin/site-settings successfully updates site name, contact email, phone, WhatsApp, and address. GET /api/site-settings verification confirms all updates saved correctly. Admin authentication required and working. Site configuration management fully functional."
 
+  - task: "File Upload API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "File upload endpoint for images and videos with admin authentication"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED RAPIDLY: File upload API working perfectly! POST /api/admin/upload successfully uploads PNG test image. Returns complete file_url (https://securetracker-crm.preview.emergentagent.com/uploads/filename.png), relative url, file size, and content type. File correctly saved to /app/backend/uploads directory. Admin authentication required and working. FIXED: Added REACT_APP_BACKEND_URL to backend .env for correct external URL generation."
+
 frontend:
   - task: "CRM Dashboard Page"
     implemented: true
