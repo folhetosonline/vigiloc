@@ -7,6 +7,7 @@ Tests all CRM functionality in the specified order from the review request.
 import requests
 import json
 import sys
+import os
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 
