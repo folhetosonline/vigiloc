@@ -835,6 +835,100 @@ class CRMTester:
             self.failed_tests.append("Notification System")
             return False
     
+    def test_file_upload(self) -> bool:
+        """Test File Upload API - RAPID TEST as requested"""
+        self.log("\n=== TESTING FILE UPLOAD API ===")
+        
+        try:
+            import io
+            from PIL import Image
+            
+            # Create a small test PNG image (100x100 pixels)
+            self.log("Creating test PNG image...")
+            img = Image.new('RGB', (100, 100), color='red')
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format='PNG')
+            img_bytes.seek(0)
+            
+            # Prepare multipart form data for file upload
+            files = {
+                'file': ('test_image.png', img_bytes, 'image/png')
+            }
+            
+            # POST /api/admin/upload
+            self.log("Testing POST /admin/upload...")
+            url = f"{BASE_URL}/admin/upload"
+            
+            response = self.session.post(url, files=files)
+            
+            if response.status_code == 200:
+                result = response.json()
+                self.log(f"✅ File upload successful")
+                
+                # Verify response contains file_url
+                if 'file_url' in result:
+                    file_url = result['file_url']
+                    self.log(f"✅ file_url returned: {file_url}")
+                    self.passed_tests.append("File Upload - file_url returned")
+                    
+                    # Verify file_url is complete URL
+                    if file_url.startswith('http') and 'uploads/' in file_url:
+                        self.log("✅ file_url is complete URL")
+                        self.passed_tests.append("File Upload - Complete URL")
+                    else:
+                        self.log(f"❌ file_url is not complete URL: {file_url}")
+                        self.failed_tests.append("File Upload - Complete URL")
+                else:
+                    self.log("❌ file_url not in response")
+                    self.failed_tests.append("File Upload - file_url missing")
+                
+                # Verify other expected fields
+                expected_fields = ['url', 'size', 'type']
+                for field in expected_fields:
+                    if field in result:
+                        self.log(f"✅ {field} field present: {result[field]}")
+                    else:
+                        self.log(f"❌ {field} field missing")
+                        self.failed_tests.append(f"File Upload - {field} field")
+                
+                self.passed_tests.append("File Upload API")
+                
+            else:
+                self.log(f"❌ File upload failed: {response.status_code} - {response.text}")
+                self.failed_tests.append("File Upload API")
+                return False
+            
+            # Verify file was saved in /app/backend/uploads
+            self.log("Checking if file was saved in /app/backend/uploads...")
+            import os
+            upload_dir = "/app/backend/uploads"
+            
+            if os.path.exists(upload_dir):
+                files_in_upload = os.listdir(upload_dir)
+                if files_in_upload:
+                    self.log(f"✅ Files found in uploads directory: {len(files_in_upload)} files")
+                    self.passed_tests.append("File Upload - File Saved")
+                    
+                    # Check if any PNG files exist
+                    png_files = [f for f in files_in_upload if f.endswith('.png')]
+                    if png_files:
+                        self.log(f"✅ PNG files found: {png_files}")
+                    else:
+                        self.log("⚠️ No PNG files found, but other files exist")
+                else:
+                    self.log("❌ No files found in uploads directory")
+                    self.failed_tests.append("File Upload - File Saved")
+            else:
+                self.log("❌ Upload directory does not exist")
+                self.failed_tests.append("File Upload - Upload Directory")
+            
+            return len([t for t in self.failed_tests if "File Upload" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ File Upload test error: {str(e)}", "ERROR")
+            self.failed_tests.append("File Upload API")
+            return False
+    
     def run_all_tests(self) -> bool:
         """Run all CRM/ERP tests in the specified order"""
         self.log("🚀 Starting CRM/ERP Backend API Tests")
