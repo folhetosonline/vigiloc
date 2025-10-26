@@ -19,6 +19,10 @@ const AdminLayout = () => {
     }
   };
 
+  const handlePreview = () => {
+    window.open("/", "_blank");
+  };
+
   const menuItems = [
     { path: "/admin", icon: <LayoutDashboard />, label: "Dashboard", exact: true },
     { path: "/admin/products", icon: <Package />, label: "Produtos" },
