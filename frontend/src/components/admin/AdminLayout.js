@@ -61,6 +61,18 @@ const AdminLayout = () => {
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold text-blue-600">Admin VigiLoc</h1>
         </div>
+        
+        {/* Preview Button */}
+        <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-blue-100">
+          <Button 
+            onClick={handlePreview} 
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            Ver Site Público
+          </Button>
+        </div>
+        
         <nav className="p-4 space-y-2">
           <div className="mb-4">
             <p className="text-xs font-semibold text-gray-500 uppercase mb-2">E-commerce</p>
