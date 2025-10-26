@@ -1156,9 +1156,11 @@ class CRMTester:
             
             # 2. POST /api/admin/users (create test user)
             self.log("Testing POST /admin/users (create test user)...")
+            import time
+            unique_email = f"teste.crm.{int(time.time())}@vigiloc.com"
             test_user = {
                 "name": "Usuário Teste CRM",
-                "email": "teste.crm@vigiloc.com",
+                "email": unique_email,
                 "password": "senha123456",
                 "is_admin": False,
                 "role": "editor",
