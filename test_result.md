@@ -421,9 +421,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Site Settings Management APIs - COMPLETED"
-    - "Frontend: All CRM pages and navigation"
-  stuck_tasks: []
+    - "Frontend Logo URL Issue - CRITICAL FIX NEEDED"
+  stuck_tasks:
+    - "Frontend Logo URL Issue"
   test_all: false
   test_priority: "high_first"
 
