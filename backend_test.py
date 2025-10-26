@@ -62,6 +62,8 @@ class CRMTester:
                 response = self.session.post(url, json=data, params=params)
             elif method.upper() == "PUT":
                 response = self.session.put(url, json=data, params=params)
+            elif method.upper() == "PATCH":
+                response = self.session.patch(url, json=data, params=params)
             elif method.upper() == "DELETE":
                 response = self.session.delete(url, params=params)
             else:
