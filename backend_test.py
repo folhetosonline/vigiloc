@@ -930,38 +930,324 @@ class CRMTester:
             self.failed_tests.append("File Upload API")
             return False
     
+    def test_ecommerce_apis(self) -> bool:
+        """Test E-commerce APIs as requested"""
+        self.log("\n=== TESTING E-COMMERCE APIs ===")
+        
+        try:
+            # 1. GET /api/products (public products - only published)
+            self.log("Testing GET /api/products (public products)...")
+            response = self.make_request("GET", "/products")
+            
+            if response.status_code == 200:
+                products = response.json()
+                self.log(f"✅ Retrieved {len(products)} public products")
+                self.passed_tests.append("GET Public Products")
+                
+                # Verify all products are published
+                all_published = all(p.get('published', False) for p in products)
+                if all_published:
+                    self.log("✅ All public products are published")
+                else:
+                    self.log("❌ Some public products are not published")
+                    self.failed_tests.append("Verify Public Products Published")
+            else:
+                self.log(f"❌ Failed to get public products: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Public Products")
+            
+            # 2. GET /api/admin/products (admin - all products)
+            self.log("Testing GET /admin/products (admin - all products)...")
+            response = self.make_request("GET", "/admin/products")
+            
+            if response.status_code == 200:
+                admin_products = response.json()
+                self.log(f"✅ Retrieved {len(admin_products)} admin products")
+                self.passed_tests.append("GET Admin Products")
+            else:
+                self.log(f"❌ Failed to get admin products: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Admin Products")
+            
+            # 3. POST /api/admin/products (create test product)
+            self.log("Testing POST /admin/products (create test product)...")
+            test_product = {
+                "name": "Produto Teste CRM",
+                "category": "seguranca",
+                "description": "Produto de teste para validação do sistema",
+                "price": 299.90,
+                "image": "/uploads/test-product.jpg",
+                "images": ["/uploads/test-product-1.jpg", "/uploads/test-product-2.jpg"],
+                "features": ["Recurso 1", "Recurso 2", "Recurso 3"],
+                "inStock": True,
+                "quantity": 10,
+                "sku": "TST-001",
+                "published": False
+            }
+            
+            response = self.make_request("POST", "/admin/products", test_product)
+            
+            if response.status_code == 200:
+                created_product = response.json()
+                self.test_data['test_product'] = created_product
+                self.log(f"✅ Test product created: {created_product['name']}")
+                self.passed_tests.append("Create Test Product")
+            else:
+                self.log(f"❌ Failed to create test product: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Test Product")
+            
+            # 4. PATCH /api/admin/products/{id}/publish?published=true (publish product)
+            if 'test_product' in self.test_data:
+                product_id = self.test_data['test_product']['id']
+                self.log(f"Testing PATCH /admin/products/{product_id}/publish?published=true...")
+                response = self.make_request("PATCH", f"/admin/products/{product_id}/publish", params={"published": "true"})
+                
+                if response.status_code == 200:
+                    self.log("✅ Product published successfully")
+                    self.passed_tests.append("Publish Product")
+                else:
+                    self.log(f"❌ Failed to publish product: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Publish Product")
+            
+            # 5. GET /api/categories
+            self.log("Testing GET /api/categories...")
+            response = self.make_request("GET", "/categories")
+            
+            if response.status_code == 200:
+                categories = response.json()
+                self.log(f"✅ Retrieved {len(categories)} categories")
+                self.passed_tests.append("GET Categories")
+            else:
+                self.log(f"❌ Failed to get categories: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Categories")
+            
+            # 6. GET /api/banners (public banners - only published)
+            self.log("Testing GET /api/banners (public banners)...")
+            response = self.make_request("GET", "/banners")
+            
+            if response.status_code == 200:
+                banners = response.json()
+                self.log(f"✅ Retrieved {len(banners)} public banners")
+                self.passed_tests.append("GET Public Banners")
+                
+                # Verify all banners are published and active
+                all_published = all(b.get('published', False) and b.get('active', False) for b in banners)
+                if all_published:
+                    self.log("✅ All public banners are published and active")
+                else:
+                    self.log("❌ Some public banners are not published or active")
+                    self.failed_tests.append("Verify Public Banners Status")
+            else:
+                self.log(f"❌ Failed to get public banners: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Public Banners")
+            
+            # 7. GET /api/admin/banners (admin - all banners)
+            self.log("Testing GET /admin/banners (admin - all banners)...")
+            response = self.make_request("GET", "/admin/banners")
+            
+            if response.status_code == 200:
+                admin_banners = response.json()
+                self.log(f"✅ Retrieved {len(admin_banners)} admin banners")
+                self.passed_tests.append("GET Admin Banners")
+            else:
+                self.log(f"❌ Failed to get admin banners: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Admin Banners")
+            
+            return len([t for t in self.failed_tests if "Product" in t or "Category" in t or "Banner" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ E-commerce APIs test error: {str(e)}", "ERROR")
+            self.failed_tests.append("E-commerce APIs")
+            return False
+    
+    def test_site_settings_apis(self) -> bool:
+        """Test Site Settings APIs as requested"""
+        self.log("\n=== TESTING SITE SETTINGS APIs ===")
+        
+        try:
+            # 1. GET /api/site-settings (public settings)
+            self.log("Testing GET /api/site-settings (public settings)...")
+            response = self.make_request("GET", "/site-settings")
+            
+            if response.status_code == 200:
+                settings = response.json()
+                self.log(f"✅ Retrieved site settings: {settings.get('site_name', 'N/A')}")
+                self.passed_tests.append("GET Site Settings")
+                self.test_data['original_site_settings'] = settings
+            else:
+                self.log(f"❌ Failed to get site settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Site Settings")
+            
+            # 2. PUT /api/admin/site-settings (update settings)
+            self.log("Testing PUT /admin/site-settings (update settings)...")
+            update_data = {
+                "site_name": "VigiLoc - Sistema Completo Testado",
+                "contact_email": "teste@vigiloc.com.br",
+                "contact_phone": "(11) 98888-7777",
+                "whatsapp_number": "5511988887777",
+                "address": "Rua de Teste, 456 - São Paulo, SP"
+            }
+            
+            response = self.make_request("PUT", "/admin/site-settings", update_data)
+            
+            if response.status_code == 200:
+                self.log("✅ Site settings updated successfully")
+                self.passed_tests.append("Update Site Settings")
+            else:
+                self.log(f"❌ Failed to update site settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("Update Site Settings")
+            
+            # 3. GET /api/site-settings (verify updates)
+            self.log("Testing GET /api/site-settings (verify updates)...")
+            response = self.make_request("GET", "/site-settings")
+            
+            if response.status_code == 200:
+                updated_settings = response.json()
+                self.log("✅ Site settings verification successful")
+                
+                # Verify updates were applied
+                if (updated_settings.get('site_name') == update_data['site_name'] and
+                    updated_settings.get('contact_email') == update_data['contact_email']):
+                    self.log("✅ Site settings updates verified")
+                    self.passed_tests.append("Verify Site Settings Updates")
+                else:
+                    self.log("❌ Site settings updates not properly applied")
+                    self.failed_tests.append("Verify Site Settings Updates")
+            else:
+                self.log(f"❌ Failed to verify site settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("Verify Site Settings Updates")
+            
+            return len([t for t in self.failed_tests if "Site Settings" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Site Settings APIs test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Site Settings APIs")
+            return False
+    
+    def test_user_management_apis(self) -> bool:
+        """Test User Management APIs as requested"""
+        self.log("\n=== TESTING USER MANAGEMENT APIs ===")
+        
+        try:
+            # 1. GET /api/admin/users (list all users)
+            self.log("Testing GET /admin/users (list all users)...")
+            response = self.make_request("GET", "/admin/users")
+            
+            if response.status_code == 200:
+                users = response.json()
+                self.log(f"✅ Retrieved {len(users)} users")
+                self.passed_tests.append("GET All Users")
+            else:
+                self.log(f"❌ Failed to get users: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET All Users")
+            
+            # 2. POST /api/admin/users (create test user)
+            self.log("Testing POST /admin/users (create test user)...")
+            test_user = {
+                "name": "Usuário Teste CRM",
+                "email": "teste.crm@vigiloc.com",
+                "password": "senha123456",
+                "is_admin": False,
+                "role": "editor",
+                "active": True
+            }
+            
+            response = self.make_request("POST", "/admin/users", test_user)
+            
+            if response.status_code == 200:
+                result = response.json()
+                self.test_data['test_user_id'] = result.get('user_id')
+                self.log(f"✅ Test user created: {result.get('user_id')}")
+                self.passed_tests.append("Create Test User")
+            else:
+                self.log(f"❌ Failed to create test user: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Test User")
+            
+            # 3. PUT /api/admin/users/{id} (update user)
+            if 'test_user_id' in self.test_data:
+                user_id = self.test_data['test_user_id']
+                self.log(f"Testing PUT /admin/users/{user_id} (update user)...")
+                update_data = {
+                    "name": "Usuário Teste CRM - ATUALIZADO",
+                    "role": "manager",
+                    "active": True
+                }
+                
+                response = self.make_request("PUT", f"/admin/users/{user_id}", update_data)
+                
+                if response.status_code == 200:
+                    self.log("✅ User updated successfully")
+                    self.passed_tests.append("Update User")
+                else:
+                    self.log(f"❌ Failed to update user: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Update User")
+            
+            # 4. POST /api/admin/users/{id}/change-password (change password)
+            if 'test_user_id' in self.test_data:
+                user_id = self.test_data['test_user_id']
+                self.log(f"Testing POST /admin/users/{user_id}/change-password...")
+                password_data = {
+                    "new_password": "novasenha123456"
+                }
+                
+                response = self.make_request("POST", f"/admin/users/{user_id}/change-password", password_data)
+                
+                if response.status_code == 200:
+                    self.log("✅ User password changed successfully")
+                    self.passed_tests.append("Change User Password")
+                else:
+                    self.log(f"❌ Failed to change user password: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Change User Password")
+            
+            return len([t for t in self.failed_tests if "User" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ User Management APIs test error: {str(e)}", "ERROR")
+            self.failed_tests.append("User Management APIs")
+            return False
+
     def run_all_tests(self) -> bool:
-        """Run all CRM/ERP tests in the specified order"""
-        self.log("🚀 Starting CRM/ERP Backend API Tests")
+        """Run all backend tests as requested in the review"""
+        self.log("🚀 TESTE COMPLETO DE TODOS OS SISTEMAS DO BACKEND")
         self.log("=" * 60)
         
         # Authenticate first
         if not self.authenticate():
             return False
         
-        # Run tests in the specified order
+        # Run tests in the specified order from the review request
         test_results = []
         
-        # 1. CRM Settings APIs (Test first since other features depend on it)
-        test_results.append(self.test_crm_settings())
+        # 1. E-COMMERCE
+        test_results.append(self.test_ecommerce_apis())
         
-        # 2. Customer APIs
+        # 2. UPLOAD & MÍDIA
+        test_results.append(self.test_file_upload())
+        
+        # 3. CONFIGURAÇÕES DO SITE
+        test_results.append(self.test_site_settings_apis())
+        
+        # 4. GERENCIAMENTO DE USUÁRIOS
+        test_results.append(self.test_user_management_apis())
+        
+        # 5. CRM - CLIENTES
         test_results.append(self.test_customer_apis())
         
-        # 3. Contract APIs
+        # 6. CRM - CONTRATOS
         test_results.append(self.test_contract_apis())
         
-        # 4. Equipment APIs
+        # 7. CRM - EQUIPAMENTOS
         test_results.append(self.test_equipment_apis())
         
-        # 5. Payment APIs
+        # 8. CRM - PAGAMENTOS
         test_results.append(self.test_payment_apis())
         
-        # 6. Maintenance Ticket APIs
+        # 9. CRM - TICKETS
         test_results.append(self.test_maintenance_ticket_apis())
         
-        # 7. Notification System
+        # 10. CRM - NOTIFICAÇÕES
         test_results.append(self.test_notification_system())
+        
+        # Also test CRM Settings (dependencies)
+        test_results.append(self.test_crm_settings())
         
         # Print summary
         self.print_summary()
