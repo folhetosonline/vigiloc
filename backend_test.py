@@ -1008,6 +1008,19 @@ class CRMTester:
                 else:
                     self.log(f"❌ Failed to publish product: {response.status_code} - {response.text}")
                     self.failed_tests.append("Publish Product")
+                
+                # Verify product is now visible in public products
+                self.log("Verifying published product appears in public list...")
+                response = self.make_request("GET", "/products")
+                if response.status_code == 200:
+                    public_products = response.json()
+                    published_product = next((p for p in public_products if p['id'] == product_id), None)
+                    if published_product:
+                        self.log("✅ Published product now visible in public list")
+                        self.passed_tests.append("Verify Product Publication")
+                    else:
+                        self.log("❌ Published product not visible in public list")
+                        self.failed_tests.append("Verify Product Publication")
             
             # 5. GET /api/categories
             self.log("Testing GET /api/categories...")
