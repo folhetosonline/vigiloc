@@ -1,7 +1,31 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { API } from "@/App";
 
 const Footer = () => {
+  const [siteSettings, setSiteSettings] = useState({ 
+    site_name: "VigiLoc", 
+    logo_url: null,
+    contact_email: "",
+    contact_phone: "",
+    address: ""
+  });
+
+  useEffect(() => {
+    fetchSiteSettings();
+  }, []);
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar configurações");
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white" data-testid="footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -9,14 +33,28 @@ const Footer = () => {
           {/* Brand */}
           <div data-testid="footer-brand">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="vigiloc-logo-footer" aria-label="VigiLoc">
-                <span className="vigiloc-v-footer">V</span>
-              </div>
-              <span className="text-2xl font-bold">VigiLoc</span>
+              {siteSettings.logo_url ? (
+                <img 
+                  src={siteSettings.logo_url} 
+                  alt={siteSettings.site_name} 
+                  className="h-10 w-auto object-contain" 
+                />
+              ) : (
+                <div className="vigiloc-logo-footer" aria-label={siteSettings.site_name}>
+                  <span className="vigiloc-v-footer">V</span>
+                </div>
+              )}
+              <span className="text-2xl font-bold">{siteSettings.site_name}</span>
             </div>
             <p className="text-gray-400">
               Soluções inteligentes em segurança eletrônica: câmeras, controle de acesso e totens de monitoramento.
             </p>
+            {siteSettings.contact_email && (
+              <p className="text-gray-400 mt-2">Email: {siteSettings.contact_email}</p>
+            )}
+            {siteSettings.contact_phone && (
+              <p className="text-gray-400">Tel: {siteSettings.contact_phone}</p>
+            )}
           </div>
 
           {/* Quick Links */}
