@@ -33,21 +33,21 @@ const AdminLayout = () => {
     { path: "/admin/categories", icon: <FolderOpen />, label: "Categorias" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
     { path: "/admin/shipping", icon: <Truck />, label: "Frete" },
-    { path: "/admin/banners", icon: <FileText />, label: "Banners" },
-    { path: "/admin/coupons", icon: <FileText />, label: "Cupons" },
+    { path: "/admin/banners", icon: <Image />, label: "Banners" },
+    { path: "/admin/coupons", icon: <Ticket />, label: "Cupons" },
     { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
 
   const crmMenuItems = [
-    { path: "/admin/crm", icon: <Users />, label: "CRM Dashboard" },
+    { path: "/admin/crm", icon: <Building2 />, label: "CRM Dashboard" },
     { path: "/admin/crm/customers", icon: <Users />, label: "Clientes" },
-    { path: "/admin/crm/contracts", icon: <FileText />, label: "Contratos" },
-    { path: "/admin/crm/equipment", icon: <Package />, label: "Equipamentos" },
-    { path: "/admin/crm/payments", icon: <ShoppingCart />, label: "Pagamentos" },
-    { path: "/admin/crm/tickets", icon: <MessageSquare />, label: "Chamados" },
-    { path: "/admin/crm/notifications", icon: <MessageSquare />, label: "Notificações" },
+    { path: "/admin/crm/contracts", icon: <ClipboardList />, label: "Contratos" },
+    { path: "/admin/crm/equipment", icon: <BoxIcon />, label: "Equipamentos" },
+    { path: "/admin/crm/payments", icon: <DollarSign />, label: "Pagamentos" },
+    { path: "/admin/crm/tickets", icon: <Wrench />, label: "Chamados" },
+    { path: "/admin/crm/notifications", icon: <Bell />, label: "Notificações" },
     { path: "/admin/crm/settings", icon: <Settings />, label: "Configurações" },
   ];
 
