@@ -729,6 +729,41 @@ async def upload_file(file: UploadFile = File(...), current_user: User = Depends
         "type": file.content_type
     }
 
+
+@api_router.get("/media/{filename}")
+async def get_media_file(filename: str):
+    """Serve uploaded media files with proper CORS"""
+    from fastapi.responses import FileResponse
+    
+    file_path = UPLOAD_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Determine content type
+    ext = filename.split('.')[-1].lower()
+    content_types = {
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'gif': 'image/gif',
+        'webp': 'image/webp',
+        'svg': 'image/svg+xml',
+        'mp4': 'video/mp4',
+        'webm': 'video/webm'
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+    
+    return FileResponse(
+        file_path, 
+        media_type=content_type,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "public, max-age=31536000"
+        }
+    )
+
+
 # ==================== PRODUCT ROUTES ====================
 
 @api_router.get("/products", response_model=List[Product])
