@@ -245,7 +245,7 @@ const Settings = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Assunto</label>
                   <Input
-                    value={emailTemplates.suspension_warning.subject}
+                    value={emailTemplates?.suspension_warning?.subject || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       suspension_warning: {...emailTemplates.suspension_warning, subject: e.target.value}
@@ -256,7 +256,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium mb-2">Corpo do Email</label>
                   <textarea
                     className="w-full p-3 border rounded min-h-[150px] font-mono text-sm"
-                    value={emailTemplates.suspension_warning.body}
+                    value={emailTemplates?.suspension_warning?.body || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       suspension_warning: {...emailTemplates.suspension_warning, body: e.target.value}
