@@ -900,6 +900,35 @@ async def get_products(category: Optional[str] = None):
             product['published_at'] = datetime.fromisoformat(product['published_at'])
     return products
 
+@api_router.get("/products/by-page/{page_name}", response_model=List[Product])
+async def get_products_by_page(page_name: str, badges: Optional[str] = None):
+    """Get products filtered by page and optionally by badges"""
+    query = {"published": True}
+    
+    # Filter by page (products can be shown on multiple pages)
+    if page_name == "todas":
+        # Show all products
+        pass
+    else:
+        # Show products that have this page in show_on_pages OR have "todas" in show_on_pages
+        query["$or"] = [
+            {"show_on_pages": page_name},
+            {"show_on_pages": "todas"}
+        ]
+    
+    # Filter by badges if provided (comma-separated)
+    if badges:
+        badge_list = [b.strip() for b in badges.split(',')]
+        query["badges"] = {"$in": badge_list}
+    
+    products = await db.products.find(query, {"_id": 0}).to_list(1000)
+    for product in products:
+        if isinstance(product.get('timestamp'), str):
+            product['timestamp'] = datetime.fromisoformat(product['timestamp'])
+        if isinstance(product.get('published_at'), str):
+            product['published_at'] = datetime.fromisoformat(product['published_at'])
+    return products
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     product = await db.products.find_one({"id": product_id, "published": True}, {"_id": 0})
