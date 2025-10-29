@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
