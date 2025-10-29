@@ -18,6 +18,7 @@ import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminProducts from "@/pages/admin/Products";
 import AdminOrders from "@/pages/admin/Orders";
+import CreateOrder from "@/pages/admin/CreateOrder";
 import AdminShipping from "@/pages/admin/Shipping";
 import AdminCategories from "@/pages/admin/Categories";
 import AdminContent from "@/pages/admin/Content";
