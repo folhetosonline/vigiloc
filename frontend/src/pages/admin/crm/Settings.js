@@ -317,7 +317,7 @@ const Settings = () => {
               <CardContent>
                 <textarea
                   className="w-full p-3 border rounded min-h-[100px]"
-                  value={whatsappTemplates.suspension_warning}
+                  value={whatsappTemplates?.suspension_warning || ""}
                   onChange={(e) => setWhatsappTemplates({...whatsappTemplates, suspension_warning: e.target.value})}
                 />
                 <p className="text-xs text-gray-500 mt-1">
