@@ -210,7 +210,7 @@ const Settings = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Assunto</label>
                   <Input
-                    value={emailTemplates.overdue_notice.subject}
+                    value={emailTemplates?.overdue_notice?.subject || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       overdue_notice: {...emailTemplates.overdue_notice, subject: e.target.value}
@@ -221,7 +221,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium mb-2">Corpo do Email</label>
                   <textarea
                     className="w-full p-3 border rounded min-h-[150px] font-mono text-sm"
-                    value={emailTemplates.overdue_notice.body}
+                    value={emailTemplates?.overdue_notice?.body || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       overdue_notice: {...emailTemplates.overdue_notice, body: e.target.value}
