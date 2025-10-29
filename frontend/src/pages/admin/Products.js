@@ -112,6 +112,8 @@ const Products = () => {
       quantity: product.quantity || 0,
       sku: product.sku || "",
       weight: product.weight || 0,
+      show_on_pages: product.show_on_pages || [],
+      badges: product.badges || [],
     });
     setOpen(true);
   };
