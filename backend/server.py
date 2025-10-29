@@ -327,6 +327,83 @@ class SiteSettings(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+# ==================== ADVANCED ADMIN MODELS ====================
+
+class CustomPage(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    slug: str  # URL da página (ex: /sobre-nos)
+    title: str
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    blocks: List[dict] = []  # Blocos JSON do page builder
+    published: bool = False
+    published_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
+
+class ThemeSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "theme_settings"
+    primary_color: str = "#3B82F6"
+    secondary_color: str = "#1E40AF"
+    accent_color: str = "#F59E0B"
+    font_heading: str = "Inter"
+    font_body: str = "Inter"
+    logo_url: Optional[str] = None
+    favicon_url: Optional[str] = None
+    custom_css: Optional[str] = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MenuItem(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    label: str
+    url: str
+    target: str = "_self"  # _self ou _blank
+    order: int = 0
+    parent_id: Optional[str] = None  # Para submenus
+    icon: Optional[str] = None
+
+class Menu(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # header, footer, mobile
+    items: List[MenuItem] = []
+    active: bool = True
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Review(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    product_id: str
+    user_id: Optional[str] = None
+    user_name: str
+    user_email: str
+    rating: int  # 1-5
+    title: Optional[str] = None
+    comment: str
+    verified_purchase: bool = False
+    status: str = "pending"  # pending, approved, rejected
+    admin_reply: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    approved_at: Optional[datetime] = None
+
+class AnalyticsEvent(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    event_type: str  # page_view, product_view, add_to_cart, purchase
+    page_url: Optional[str] = None
+    product_id: Optional[str] = None
+    order_id: Optional[str] = None
+    user_id: Optional[str] = None
+    session_id: str
+    amount: Optional[float] = None
+    metadata: Optional[dict] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+
 class ShippingRateCreate(BaseModel):
     name: str
     type: str
