@@ -1773,6 +1773,8 @@ async def mark_payment_paid(payment_id: str, payment_method: str, current_user: 
         }}
     )
     if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado")
+    return {"message": "Pagamento marcado como pago"}
 
 
 # ==================== PAGE BUILDER ROUTES ====================
