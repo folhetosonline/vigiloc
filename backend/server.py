@@ -347,6 +347,44 @@ class CustomPage(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
+# CMS Content Blocks
+class ContentBlock(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page_id: str  # ID da página onde o bloco aparece
+    type: str  # hero, card, text, media, banner, product_list
+    order: int = 0
+    settings: dict = {}  # Configurações específicas do bloco
+    content: dict = {}  # Conteúdo do bloco
+    published: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
+
+# Exemplo de estruturas de settings e content por tipo:
+# type: "hero" 
+#   settings: { "background_type": "image|video|color", "overlay_opacity": 0.5, "text_align": "center" }
+#   content: { "background_url": "...", "title": "...", "subtitle": "...", "button_text": "...", "button_link": "..." }
+#
+# type: "card"
+#   settings: { "layout": "grid|carousel", "columns": 3 }
+#   content: { "cards": [{ "image": "...", "title": "...", "description": "...", "link": "..." }] }
+#
+# type: "text"
+#   settings: { "font_size": "base", "text_color": "#000", "background_color": "#FFF" }
+#   content: { "html": "..." }
+#
+# type: "media"
+#   settings: { "layout": "single|gallery", "aspect_ratio": "16:9" }
+#   content: { "media": [{ "url": "...", "type": "image|video", "alt": "..." }] }
+#
+# type: "banner"
+#   settings: { "full_width": true, "height": "auto" }
+#   content: { "image_url": "...", "link": "...", "alt": "..." }
+#
+# type: "product_list"
+#   settings: { "filter": "all|category|badges", "layout": "grid|list", "limit": 12 }
+#   content: { "category": "...", "badges": ["novidade"], "title": "..." }
+
 class ThemeSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = "theme_settings"
