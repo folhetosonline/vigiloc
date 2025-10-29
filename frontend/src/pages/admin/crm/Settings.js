@@ -45,8 +45,21 @@ const Settings = () => {
       const response = await axios.get(`${API}/admin/crm/settings`);
       if (response.data) {
         if (response.data.trigger_settings) setTriggerSettings(response.data.trigger_settings);
-        if (response.data.email_templates) setEmailTemplates(response.data.email_templates);
-        if (response.data.whatsapp_templates) setWhatsappTemplates(response.data.whatsapp_templates);
+        if (response.data.email_templates) {
+          // Merge with defaults to ensure all templates exist
+          setEmailTemplates({
+            payment_reminder: response.data.email_templates.payment_reminder || emailTemplates.payment_reminder,
+            overdue_notice: response.data.email_templates.overdue_notice || emailTemplates.overdue_notice,
+            suspension_warning: response.data.email_templates.suspension_warning || emailTemplates.suspension_warning
+          });
+        }
+        if (response.data.whatsapp_templates) {
+          setWhatsappTemplates({
+            payment_reminder: response.data.whatsapp_templates.payment_reminder || whatsappTemplates.payment_reminder,
+            overdue_notice: response.data.whatsapp_templates.overdue_notice || whatsappTemplates.overdue_notice,
+            suspension_warning: response.data.whatsapp_templates.suspension_warning || whatsappTemplates.suspension_warning
+          });
+        }
       }
     } catch (error) {
       console.log("Carregando configurações padrão");
