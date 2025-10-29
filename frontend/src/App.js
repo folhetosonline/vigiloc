@@ -132,6 +132,10 @@ function App() {
               <Route path="crm/notifications" element={<CRMNotifications />} />
               <Route path="crm/settings" element={<CRMSettings />} />
               <Route path="settings" element={<AdminSettings />} />
+              
+              {/* Shopify-like Features */}
+              <Route path="page-builder" element={<PageBuilder />} />
+              <Route path="theme-customizer" element={<ThemeCustomizer />} />
             </Route>
           </Routes>
           <Toaster position="top-right" />
