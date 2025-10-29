@@ -66,7 +66,13 @@ const Orders = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Pedidos</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Pedidos</h1>
+        <Button onClick={() => navigate("/admin/orders/create")}>
+          <Plus className="w-4 h-4 mr-2" />
+          Criar Pedido Manualmente
+        </Button>
+      </div>
 
       <Card>
         <CardContent className="p-6">
