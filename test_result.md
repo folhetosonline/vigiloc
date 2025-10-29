@@ -466,6 +466,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "New Admin Features Testing - COMPLETED"
     - "Frontend Logo URL Issue - CRITICAL FIX NEEDED"
   stuck_tasks:
     - "Frontend Logo URL Issue"
