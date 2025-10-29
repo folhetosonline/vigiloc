@@ -125,6 +125,9 @@ class Product(BaseModel):
     dimensions: Optional[dict] = None
     published: bool = False  # Controls if product is visible on website
     published_at: Optional[datetime] = None
+    # New fields for pages and badges
+    show_on_pages: List[str] = []  # ["home", "totens", "produtos", "todas"]
+    badges: List[str] = []  # ["novidade", "lancamento", "custo-beneficio", "top-linha", "oferta", "destaque"]
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
