@@ -1462,6 +1462,9 @@ class CRMTester:
         # Run tests in the specified order from the review request
         test_results = []
         
+        # NEW ADMIN FEATURES - Test first as requested in review
+        test_results.append(self.test_new_admin_features())
+        
         # 1. E-COMMERCE
         test_results.append(self.test_ecommerce_apis())
         
@@ -1499,6 +1502,23 @@ class CRMTester:
         self.print_summary()
         
         return all(test_results)
+    
+    def run_new_admin_features_only(self) -> bool:
+        """Run ONLY the new admin features tests as requested in review"""
+        self.log("🎯 TESTING NEW ADMIN FEATURES ONLY")
+        self.log("=" * 60)
+        
+        # Authenticate first
+        if not self.authenticate():
+            return False
+        
+        # Run only the new admin features test
+        result = self.test_new_admin_features()
+        
+        # Print summary
+        self.print_summary()
+        
+        return result
     
     def print_summary(self):
         """Print test results summary"""
