@@ -285,7 +285,7 @@ const Settings = () => {
               <CardContent>
                 <textarea
                   className="w-full p-3 border rounded min-h-[100px]"
-                  value={whatsappTemplates.payment_reminder}
+                  value={whatsappTemplates?.payment_reminder || ""}
                   onChange={(e) => setWhatsappTemplates({...whatsappTemplates, payment_reminder: e.target.value})}
                 />
                 <p className="text-xs text-gray-500 mt-1">
