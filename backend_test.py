@@ -1587,9 +1587,15 @@ def main():
         success = test_upload_only()
         sys.exit(0 if success else 1)
     
-    # Run all tests
+    # Check if we should run only new admin features test
+    if len(sys.argv) > 1 and sys.argv[1] == "--admin-features":
+        tester = CRMTester()
+        success = tester.run_new_admin_features_only()
+        sys.exit(0 if success else 1)
+    
+    # Run new admin features tests as requested in review
     tester = CRMTester()
-    success = tester.run_all_tests()
+    success = tester.run_new_admin_features_only()
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
