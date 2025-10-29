@@ -1221,6 +1221,235 @@ class CRMTester:
             self.failed_tests.append("User Management APIs")
             return False
 
+    def test_new_admin_features(self) -> bool:
+        """Test NEW ADMIN FEATURES as requested in review"""
+        self.log("\n=== TESTING NEW ADMIN FEATURES ===")
+        
+        try:
+            # 1. Dashboard Analytics - GET /api/admin/analytics/dashboard
+            self.log("Testing GET /admin/analytics/dashboard...")
+            response = self.make_request("GET", "/admin/analytics/dashboard")
+            
+            if response.status_code == 200:
+                analytics = response.json()
+                self.log("✅ Dashboard analytics retrieved successfully")
+                
+                # Verify expected fields
+                expected_fields = ['total_orders', 'total_revenue', 'revenue_30d', 'orders_30d', 
+                                 'total_products', 'total_customers', 'top_products', 'daily_sales']
+                
+                missing_fields = [field for field in expected_fields if field not in analytics]
+                if not missing_fields:
+                    self.log("✅ All expected analytics fields present")
+                    self.log(f"  • Total Orders: {analytics.get('total_orders', 0)}")
+                    self.log(f"  • Total Revenue: R$ {analytics.get('total_revenue', 0):.2f}")
+                    self.log(f"  • Total Products: {analytics.get('total_products', 0)}")
+                    self.log(f"  • Total Customers: {analytics.get('total_customers', 0)}")
+                    self.passed_tests.append("Dashboard Analytics - Complete Data")
+                else:
+                    self.log(f"❌ Missing analytics fields: {missing_fields}")
+                    self.failed_tests.append("Dashboard Analytics - Missing Fields")
+                
+                self.passed_tests.append("Dashboard Analytics API")
+            else:
+                self.log(f"❌ Failed to get dashboard analytics: {response.status_code} - {response.text}")
+                self.failed_tests.append("Dashboard Analytics API")
+            
+            # 2. Page Builder - GET /api/admin/pages (list pages)
+            self.log("Testing GET /admin/pages (list custom pages)...")
+            response = self.make_request("GET", "/admin/pages")
+            
+            if response.status_code == 200:
+                pages = response.json()
+                self.log(f"✅ Retrieved {len(pages)} custom pages")
+                self.passed_tests.append("List Custom Pages")
+                self.test_data['initial_pages_count'] = len(pages)
+            else:
+                self.log(f"❌ Failed to get custom pages: {response.status_code} - {response.text}")
+                self.failed_tests.append("List Custom Pages")
+            
+            # 3. Page Builder - POST /api/admin/pages (create page)
+            self.log("Testing POST /admin/pages (create custom page)...")
+            test_page = {
+                "slug": "teste-admin-page",
+                "title": "Página de Teste Admin",
+                "meta_title": "Teste Admin - Meta Title",
+                "meta_description": "Página criada para testar funcionalidades admin",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "content": {
+                            "title": "Bem-vindo à Página de Teste",
+                            "subtitle": "Esta página foi criada automaticamente pelo teste"
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "content": {
+                            "text": "Este é um bloco de texto de teste para validar o page builder."
+                        }
+                    }
+                ],
+                "published": False
+            }
+            
+            response = self.make_request("POST", "/admin/pages", test_page)
+            
+            if response.status_code == 200:
+                created_page = response.json()
+                self.test_data['test_page'] = created_page
+                self.log(f"✅ Custom page created: {created_page['title']} (ID: {created_page['id']})")
+                self.passed_tests.append("Create Custom Page")
+                
+                # Verify page has UUID ID
+                if created_page.get('id') and len(created_page['id']) > 10:
+                    self.log("✅ Page created with UUID ID")
+                else:
+                    self.log("❌ Page ID not properly generated")
+                    self.failed_tests.append("Page UUID Generation")
+            else:
+                self.log(f"❌ Failed to create custom page: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Custom Page")
+            
+            # 4. Page Builder - PUT /api/admin/pages/{page_id} (update page)
+            if 'test_page' in self.test_data:
+                page_id = self.test_data['test_page']['id']
+                self.log(f"Testing PUT /admin/pages/{page_id} (update page)...")
+                
+                update_data = {
+                    "title": "Página de Teste Admin - ATUALIZADA",
+                    "published": True,
+                    "blocks": [
+                        {
+                            "type": "hero",
+                            "content": {
+                                "title": "Página Atualizada com Sucesso",
+                                "subtitle": "Esta página foi atualizada pelo teste automatizado"
+                            }
+                        }
+                    ]
+                }
+                
+                response = self.make_request("PUT", f"/admin/pages/{page_id}", update_data)
+                
+                if response.status_code == 200:
+                    updated_page = response.json()
+                    self.log(f"✅ Page updated: {updated_page['title']}")
+                    
+                    # Verify published status changed
+                    if updated_page.get('published'):
+                        self.log("✅ Page published successfully")
+                        self.passed_tests.append("Publish Custom Page")
+                    else:
+                        self.log("❌ Page publication status not updated")
+                        self.failed_tests.append("Publish Custom Page")
+                    
+                    self.passed_tests.append("Update Custom Page")
+                else:
+                    self.log(f"❌ Failed to update page: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Update Custom Page")
+            
+            # 5. Theme Customizer - GET /api/theme-settings (get current theme)
+            self.log("Testing GET /api/theme-settings (get theme settings)...")
+            response = self.make_request("GET", "/theme-settings")
+            
+            if response.status_code == 200:
+                theme_settings = response.json()
+                self.log("✅ Theme settings retrieved successfully")
+                self.test_data['original_theme'] = theme_settings
+                
+                # Verify expected theme fields
+                expected_theme_fields = ['primary_color', 'secondary_color', 'accent_color', 
+                                       'font_heading', 'font_body']
+                
+                missing_theme_fields = [field for field in expected_theme_fields if field not in theme_settings]
+                if not missing_theme_fields:
+                    self.log("✅ All expected theme fields present")
+                    self.log(f"  • Primary Color: {theme_settings.get('primary_color')}")
+                    self.log(f"  • Secondary Color: {theme_settings.get('secondary_color')}")
+                    self.log(f"  • Font Heading: {theme_settings.get('font_heading')}")
+                    self.passed_tests.append("Theme Settings - Complete Data")
+                else:
+                    self.log(f"❌ Missing theme fields: {missing_theme_fields}")
+                    self.failed_tests.append("Theme Settings - Missing Fields")
+                
+                self.passed_tests.append("Get Theme Settings")
+            else:
+                self.log(f"❌ Failed to get theme settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("Get Theme Settings")
+            
+            # 6. Theme Customizer - PUT /api/admin/theme-settings (update theme)
+            self.log("Testing PUT /admin/theme-settings (update theme)...")
+            theme_update = {
+                "primary_color": "#FF6B35",
+                "secondary_color": "#004E89",
+                "accent_color": "#FFD23F",
+                "font_heading": "Roboto",
+                "font_body": "Open Sans",
+                "custom_css": "/* Custom CSS for testing */ .test-class { color: #FF6B35; }"
+            }
+            
+            response = self.make_request("PUT", "/admin/theme-settings", theme_update)
+            
+            if response.status_code == 200:
+                self.log("✅ Theme settings updated successfully")
+                self.passed_tests.append("Update Theme Settings")
+                
+                # Verify updates by getting theme settings again
+                self.log("Verifying theme updates...")
+                verify_response = self.make_request("GET", "/theme-settings")
+                
+                if verify_response.status_code == 200:
+                    updated_theme = verify_response.json()
+                    
+                    # Check if updates were applied
+                    if (updated_theme.get('primary_color') == theme_update['primary_color'] and
+                        updated_theme.get('font_heading') == theme_update['font_heading']):
+                        self.log("✅ Theme updates verified successfully")
+                        self.passed_tests.append("Verify Theme Updates")
+                    else:
+                        self.log("❌ Theme updates not properly applied")
+                        self.failed_tests.append("Verify Theme Updates")
+                else:
+                    self.log("❌ Failed to verify theme updates")
+                    self.failed_tests.append("Verify Theme Updates")
+            else:
+                self.log(f"❌ Failed to update theme settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("Update Theme Settings")
+            
+            # 7. Page Builder - DELETE /api/admin/pages/{page_id} (cleanup test page)
+            if 'test_page' in self.test_data:
+                page_id = self.test_data['test_page']['id']
+                self.log(f"Testing DELETE /admin/pages/{page_id} (cleanup test page)...")
+                
+                response = self.make_request("DELETE", f"/admin/pages/{page_id}")
+                
+                if response.status_code == 200:
+                    self.log("✅ Test page deleted successfully")
+                    self.passed_tests.append("Delete Custom Page")
+                    
+                    # Verify page was deleted
+                    verify_response = self.make_request("GET", "/admin/pages")
+                    if verify_response.status_code == 200:
+                        remaining_pages = verify_response.json()
+                        if len(remaining_pages) == self.test_data.get('initial_pages_count', 0):
+                            self.log("✅ Page deletion verified")
+                            self.passed_tests.append("Verify Page Deletion")
+                        else:
+                            self.log("❌ Page deletion not verified")
+                            self.failed_tests.append("Verify Page Deletion")
+                else:
+                    self.log(f"❌ Failed to delete test page: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Delete Custom Page")
+            
+            return len([t for t in self.failed_tests if any(keyword in t for keyword in 
+                       ["Dashboard", "Page", "Theme", "Analytics", "Custom"])]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ New Admin Features test error: {str(e)}", "ERROR")
+            self.failed_tests.append("New Admin Features")
+            return False
+
     def run_all_tests(self) -> bool:
         """Run all backend tests as requested in the review"""
         self.log("🚀 TESTE COMPLETO DE TODOS OS SISTEMAS DO BACKEND")
