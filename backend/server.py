@@ -145,6 +145,8 @@ class ProductCreate(BaseModel):
     dimensions: Optional[dict] = None
     published: bool = False  # Controls if product is visible on website
     published_at: Optional[datetime] = None
+    show_on_pages: List[str] = []  # ["home", "totens", "produtos", "todas"]
+    badges: List[str] = []  # ["novidade", "lancamento", "custo-beneficio", "top-linha", "oferta", "destaque"]
 
 class Category(BaseModel):
     model_config = ConfigDict(extra="ignore")
