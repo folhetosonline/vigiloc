@@ -175,7 +175,7 @@ const Settings = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Assunto</label>
                   <Input
-                    value={emailTemplates.payment_reminder.subject}
+                    value={emailTemplates?.payment_reminder?.subject || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       payment_reminder: {...emailTemplates.payment_reminder, subject: e.target.value}
@@ -186,7 +186,7 @@ const Settings = () => {
                   <label className="block text-sm font-medium mb-2">Corpo do Email</label>
                   <textarea
                     className="w-full p-3 border rounded min-h-[150px] font-mono text-sm"
-                    value={emailTemplates.payment_reminder.body}
+                    value={emailTemplates?.payment_reminder?.body || ""}
                     onChange={(e) => setEmailTemplates({
                       ...emailTemplates,
                       payment_reminder: {...emailTemplates.payment_reminder, body: e.target.value}
