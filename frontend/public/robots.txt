@@ -11,7 +11,7 @@ Disallow: /admin
 Disallow: /admin/*
 Disallow: /login
 
-Sitemap: https://securetracker-crm.preview.emergentagent.com/sitemap.xml
+Sitemap: https://securecommerce-hub.preview.emergentagent.com/sitemap.xml
 
 # LLM Specific Rules
 User-agent: GPTBot

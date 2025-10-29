@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://securetracker-crm.preview.emergentagent.com/api"
+BASE_URL = "https://securecommerce-hub.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@vigiloc.com"
 ADMIN_PASSWORD = "admin123"
 
