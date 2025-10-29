@@ -29,6 +29,8 @@ const Products = () => {
     quantity: 0,
     sku: "",
     weight: 0,
+    show_on_pages: [],
+    badges: [],
   });
   const [uploading, setUploading] = useState(false);
 
