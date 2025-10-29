@@ -135,4 +135,48 @@ const PageBuilder = () => {
 
       {/* Pages Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {pages.map((page) => (\n          <Card key={page.id} className={!page.published ? \"border-orange-200 bg-orange-50\" : \"\"}>\n            <CardHeader>\n              <div className=\"flex justify-between items-start\">\n                <div>\n                  <CardTitle className=\"text-lg\">{page.title}</CardTitle>\n                  <p className=\"text-sm text-gray-500 mt-1\">/{page.slug}</p>\n                </div>\n                <Badge className={page.published ? \"bg-green-100 text-green-800\" : \"bg-orange-100 text-orange-800\"}>\n                  {page.published ? \"\ud83d\udfe2 Live\" : \"\u26a0\ufe0f Draft\"}\n                </Badge>\n              </div>\n            </CardHeader>\n            <CardContent>\n              <div className=\"flex gap-2\">\n                <Button size=\"sm\" variant=\"outline\" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>\n                  <Pencil className=\"h-4 w-4 mr-1\" />\n                  Editar\n                </Button>\n                <Button size=\"sm\" variant=\"outline\" onClick={() => window.open(`/pages/${page.slug}`, '_blank')}>\n                  <Eye className=\"h-4 w-4 mr-1\" />\n                  Preview\n                </Button>\n                <Button size=\"sm\" variant=\"destructive\" onClick={() => handleDelete(page.id)}>\n                  <Trash2 className=\"h-4 w-4\" />\n                </Button>\n              </div>\n            </CardContent>\n          </Card>\n        ))}\n      </div>\n\n      {pages.length === 0 && (\n        <Card className=\"mt-8\">\n          <CardContent className=\"flex flex-col items-center justify-center py-16\">\n            <Layout className=\"h-16 w-16 text-gray-400 mb-4\" />\n            <h3 className=\"text-xl font-semibold mb-2\">Nenhuma p\u00e1gina ainda</h3>\n            <p className=\"text-gray-600 mb-4\">Crie sua primeira p\u00e1gina customizada</p>\n            <Button onClick={() => setOpen(true)}>\n              <Plus className=\"mr-2 h-4 w-4\" />\n              Criar P\u00e1gina\n            </Button>\n          </CardContent>\n        </Card>\n      )}\n    </div>\n  );\n};\n\nexport default PageBuilder;
+        {pages.map((page) => (
+          <Card key={page.id} className={!page.published ? "border-orange-200 bg-orange-50" : ""}>
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-lg">{page.title}</CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">/{page.slug}</p>
+                </div>
+                <Badge className={page.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
+                  {page.published ? "🟢 Live" : "⚠️ Draft"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>
+                  <Pencil className="h-4 w-4 mr-1" />
+                  Editar
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => window.open(`/pages/${page.slug}`, '_blank')}>
+                  <Eye className="h-4 w-4 mr-1" />
+                  Preview
+                </Button>
+                <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {pages.length === 0 && (
+        <Card className="mt-8">
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <Layout className="h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Nenhuma página ainda</h3>
+            <p className="text-gray-600 mb-4">Crie sua primeira página customizada</p>
+            <Button onClick={() => setOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Criar Página
+            </Button>
+          </CardContent>
+        </Card>
+      )}\n    </div>\n  );\n};\n\nexport default PageBuilder;
