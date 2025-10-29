@@ -32,45 +32,10 @@ const Content = () => {
     }
   };
 
-  const handleImageUpload = async (e, page, imageKey) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    const uploadFormData = new FormData();
-    uploadFormData.append("file", file);
-
-    try {
-      const response = await axios.post(`${API}/admin/upload`, uploadFormData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      
-      const imageUrl = response.data.file_url;
-      
-      if (page === 'contato') {
-        setContactContent({
-          ...contactContent,
-          images: { ...contactContent.images, [imageKey]: imageUrl }
-        });
-      } else if (page === 'totens') {
-        setTotensContent({
-          ...totensContent,
-          images: { ...totensContent.images, [imageKey]: imageUrl }
-        });
-      }
-      
-      toast.success("Imagem enviada!");
-    } catch (error) {
-      toast.error("Erro ao enviar imagem");
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleSave = async (page, content) => {
     try {
       await axios.put(`${API}/admin/page-content/${page}`, content);
-      toast.success("Salvo!");
+      toast.success("Conteúdo salvo!");
       fetchAllContent();
     } catch (error) {
       toast.error("Erro ao salvar");
@@ -108,10 +73,7 @@ const Content = () => {
                     <Badge className={contactContent.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
                       {contactContent.published ? "🟢 PUBLICADO" : "⚠️ RASCUNHO"}
                     </Badge>
-                    <Button 
-                      size="sm"
-                      onClick={() => handleTogglePublish('contato', contactContent.published)}
-                    >
+                    <Button size="sm" onClick={() => handleTogglePublish('contato', contactContent.published)}>
                       {contactContent.published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
@@ -139,8 +101,7 @@ const Content = () => {
                   />
                 </div>
                 <Button onClick={() => handleSave('contato', contactContent)} className="w-full">
-                  <Save className="mr-2 h-4 w-4" />
-                  Salvar
+                  <Save className="mr-2 h-4 w-4" />Salvar
                 </Button>
               </CardContent>
             </Card>
@@ -157,10 +118,7 @@ const Content = () => {
                     <Badge className={totensContent.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
                       {totensContent.published ? "🟢 PUBLICADO" : "⚠️ RASCUNHO"}
                     </Badge>
-                    <Button 
-                      size="sm"
-                      onClick={() => handleTogglePublish('totens', totensContent.published)}
-                    >
+                    <Button size="sm" onClick={() => handleTogglePublish('totens', totensContent.published)}>
                       {totensContent.published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
@@ -190,8 +148,7 @@ const Content = () => {
                   />
                 </div>
                 <Button onClick={() => handleSave('totens', totensContent)} className="w-full">
-                  <Save className="mr-2 h-4 w-4" />
-                  Salvar
+                  <Save className="mr-2 h-4 w-4" />Salvar
                 </Button>
               </CardContent>
             </Card>
