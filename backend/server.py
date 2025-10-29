@@ -1773,6 +1773,227 @@ async def mark_payment_paid(payment_id: str, payment_method: str, current_user: 
         }}
     )
     if result.matched_count == 0:
+
+
+# ==================== PAGE BUILDER ROUTES ====================
+
+@api_router.get("/admin/pages", response_model=List[CustomPage])
+async def get_all_pages(current_user: User = Depends(get_current_admin)):
+    """Get all custom pages - Admin only"""
+    pages = await db.custom_pages.find({}, {"_id": 0}).to_list(1000)
+    for page in pages:
+        for field in ['created_at', 'updated_at', 'published_at']:
+            if page.get(field) and isinstance(page[field], str):
+                page[field] = datetime.fromisoformat(page[field])
+    return pages
+
+@api_router.get("/pages/{slug}")
+async def get_page_by_slug(slug: str):
+    """Get published page by slug - Public"""
+    page = await db.custom_pages.find_one({"slug": slug, "published": True}, {"_id": 0})
+    if not page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return page
+
+@api_router.post("/admin/pages", response_model=CustomPage)
+async def create_page(page_data: dict, current_user: User = Depends(get_current_admin)):
+    """Create custom page"""
+    page = CustomPage(**page_data)
+    doc = page.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.custom_pages.insert_one(doc)
+    return page
+
+@api_router.put("/admin/pages/{page_id}", response_model=CustomPage)
+async def update_page(page_id: str, page_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update custom page"""
+    page_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    existing = await db.custom_pages.find_one({"id": page_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Page not found")
+    
+    if page_data.get('published') and not existing.get('published'):
+        page_data['published_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.custom_pages.update_one({"id": page_id}, {"$set": page_data})
+    updated = await db.custom_pages.find_one({"id": page_id}, {"_id": 0})
+    
+    for field in ['created_at', 'updated_at', 'published_at']:
+        if updated.get(field) and isinstance(updated[field], str):
+            updated[field] = datetime.fromisoformat(updated[field])
+    
+    return CustomPage(**updated)
+
+@api_router.delete("/admin/pages/{page_id}")
+async def delete_page(page_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete custom page"""
+    result = await db.custom_pages.delete_one({"id": page_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return {"message": "Page deleted"}
+
+# ==================== THEME CUSTOMIZER ROUTES ====================
+
+@api_router.get("/theme-settings")
+async def get_theme_settings():
+    """Get theme settings - Public"""
+    settings = await db.theme_settings.find_one({"id": "theme_settings"}, {"_id": 0})
+    if not settings:
+        default = ThemeSettings()
+        return default.model_dump()
+    return settings
+
+@api_router.put("/admin/theme-settings")
+async def update_theme_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update theme settings"""
+    settings_data['id'] = "theme_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.theme_settings.update_one(
+        {"id": "theme_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Theme settings updated"}
+
+# ==================== MENU BUILDER ROUTES ====================
+
+@api_router.get("/menus/{menu_name}")
+async def get_menu(menu_name: str):
+    """Get menu by name - Public"""
+    menu = await db.menus.find_one({"name": menu_name, "active": True}, {"_id": 0})
+    if not menu:
+        return {"name": menu_name, "items": []}
+    return menu
+
+@api_router.get("/admin/menus")
+async def get_all_menus(current_user: User = Depends(get_current_admin)):
+    """Get all menus - Admin"""
+    menus = await db.menus.find({}, {"_id": 0}).to_list(100)
+    return menus
+
+@api_router.put("/admin/menus/{menu_id}")
+async def update_menu(menu_id: str, menu_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update menu"""
+    menu_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.menus.update_one({"id": menu_id}, {"$set": menu_data}, upsert=True)
+    return {"message": "Menu updated"}
+
+# ==================== REVIEWS ROUTES ====================
+
+@api_router.get("/products/{product_id}/reviews")
+async def get_product_reviews(product_id: str):
+    """Get approved reviews for product - Public"""
+    reviews = await db.reviews.find({
+        "product_id": product_id,
+        "status": "approved"
+    }, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return reviews
+
+@api_router.post("/reviews")
+async def create_review(review_data: dict):
+    """Create review - Public"""
+    review = Review(**review_data)
+    doc = review.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.reviews.insert_one(doc)
+    return {"message": "Review submitted for approval"}
+
+@api_router.get("/admin/reviews")
+async def get_all_reviews(status: Optional[str] = None, current_user: User = Depends(get_current_admin)):
+    """Get all reviews - Admin"""
+    query = {}
+    if status:
+        query['status'] = status
+    reviews = await db.reviews.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return reviews
+
+@api_router.patch("/admin/reviews/{review_id}/approve")
+async def approve_review(review_id: str, current_user: User = Depends(get_current_admin)):
+    """Approve review"""
+    await db.reviews.update_one(
+        {"id": review_id},
+        {"$set": {
+            "status": "approved",
+            "approved_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    return {"message": "Review approved"}
+
+@api_router.patch("/admin/reviews/{review_id}/reject")
+async def reject_review(review_id: str, current_user: User = Depends(get_current_admin)):
+    """Reject review"""
+    await db.reviews.update_one({"id": review_id}, {"$set": {"status": "rejected"}})
+    return {"message": "Review rejected"}
+
+# ==================== ANALYTICS ROUTES ====================
+
+@api_router.post("/analytics/track")
+async def track_event(event_data: dict):
+    """Track analytics event - Public"""
+    event = AnalyticsEvent(**event_data)
+    doc = event.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.analytics_events.insert_one(doc)
+    return {"message": "Event tracked"}
+
+@api_router.get("/admin/analytics/dashboard")
+async def get_analytics_dashboard(current_user: User = Depends(get_current_admin)):
+    """Get dashboard analytics"""
+    from datetime import timedelta
+    
+    today = datetime.now(timezone.utc)
+    last_30_days = today - timedelta(days=30)
+    
+    # Total orders and revenue
+    orders = await db.orders.find({}, {"_id": 0}).to_list(10000)
+    total_orders = len(orders)
+    total_revenue = sum(order.get('total', 0) for order in orders)
+    
+    # Orders last 30 days
+    orders_30d = [o for o in orders if datetime.fromisoformat(o.get('created_at', '2020-01-01')) > last_30_days]
+    revenue_30d = sum(o.get('total', 0) for o in orders_30d)
+    
+    # Products count
+    products = await db.products.count_documents({})
+    
+    # Customers count
+    customers = await db.customers.count_documents({}) if 'customers' in await db.list_collection_names() else 0
+    
+    # Top products
+    product_sales = {}
+    for order in orders:
+        for item in order.get('items', []):
+            pid = item.get('product_id')
+            if pid:
+                product_sales[pid] = product_sales.get(pid, 0) + item.get('quantity', 1)
+    
+    top_products = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:5]
+    
+    # Daily sales last 7 days
+    daily_sales = {}
+    for i in range(7):
+        day = today - timedelta(days=i)
+        day_str = day.strftime('%Y-%m-%d')
+        daily_sales[day_str] = 0
+    
+    for order in orders:
+        order_date = datetime.fromisoformat(order.get('created_at', '2020-01-01')).strftime('%Y-%m-%d')
+        if order_date in daily_sales:
+            daily_sales[order_date] += order.get('total', 0)
+    
+    return {
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "revenue_30d": revenue_30d,
+        "orders_30d": len(orders_30d),
+        "total_products": products,
+        "total_customers": customers,
+        "top_products": top_products,
+        "daily_sales": daily_sales
+    }
+
         raise HTTPException(status_code=404, detail="Pagamento não encontrado")
     return {"message": "Pagamento marcado como pago"}
 
