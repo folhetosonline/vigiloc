@@ -37,6 +37,8 @@ const AdminLayout = () => {
     { path: "/admin/coupons", icon: <Ticket />, label: "Cupons" },
     { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
+    { path: "/admin/page-builder", icon: <Layout />, label: "Page Builder" },
+    { path: "/admin/theme-customizer", icon: <Palette />, label: "Tema" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
 
