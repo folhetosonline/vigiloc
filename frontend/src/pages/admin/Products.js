@@ -305,6 +305,59 @@ const Products = () => {
                 <label>Em estoque</label>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium mb-2">🎯 Exibir nas Páginas</label>
+                <div className="space-y-2">
+                  {["home", "totens", "produtos", "todas"].map(page => (
+                    <div key={page} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`page-${page}`}
+                        checked={formData.show_on_pages.includes(page)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, show_on_pages: [...formData.show_on_pages, page] });
+                          } else {
+                            setFormData({ ...formData, show_on_pages: formData.show_on_pages.filter(p => p !== page) });
+                          }
+                        }}
+                      />
+                      <label htmlFor={`page-${page}`} className="capitalize">{page}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">🏷️ Badges do Produto</label>
+                <div className="space-y-2">
+                  {[
+                    { value: "novidade", label: "🆕 Novidade" },
+                    { value: "lancamento", label: "🚀 Lançamento" },
+                    { value: "custo-beneficio", label: "💰 Ótimo Custo-Benefício" },
+                    { value: "top-linha", label: "⭐ Top de Linha" },
+                    { value: "oferta", label: "🔥 Oferta" },
+                    { value: "destaque", label: "🎯 Destaque" }
+                  ].map(badge => (
+                    <div key={badge.value} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`badge-${badge.value}`}
+                        checked={formData.badges.includes(badge.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, badges: [...formData.badges, badge.value] });
+                          } else {
+                            setFormData({ ...formData, badges: formData.badges.filter(b => b !== badge.value) });
+                          }
+                        }}
+                      />
+                      <label htmlFor={`badge-${badge.value}`}>{badge.label}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <Button type="submit" className="w-full">
                 {editingProduct ? "Atualizar" : "Criar"} Produto
               </Button>
