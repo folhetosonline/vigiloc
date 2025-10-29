@@ -1996,10 +1996,6 @@ async def get_analytics_dashboard(current_user: User = Depends(get_current_admin
         "daily_sales": daily_sales
     }
 
-        raise HTTPException(status_code=404, detail="Pagamento não encontrado")
-    return {"message": "Pagamento marcado como pago"}
-
-
 @api_router.put("/admin/payments/{payment_id}/pix")
 async def update_payment_pix(payment_id: str, pix_data: dict, current_user: User = Depends(get_current_admin)):
     """Update PIX information for a payment"""
