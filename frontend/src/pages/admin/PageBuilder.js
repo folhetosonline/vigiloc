@@ -179,4 +179,9 @@ const PageBuilder = () => {
             </Button>
           </CardContent>
         </Card>
-      )}\n    </div>\n  );\n};\n\nexport default PageBuilder;
+      )}
+    </div>
+  );
+};
+
+export default PageBuilder;
