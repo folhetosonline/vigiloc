@@ -1144,6 +1144,42 @@ async def update_order_status(order_id: str, status: str, current_user: User = D
     
     return {"message": "Order status updated"}
 
+@api_router.post("/admin/orders/create", response_model=Order)
+async def create_order_manually(order_data: dict, current_user: User = Depends(get_current_admin)):
+    """Create order manually in admin"""
+    # Generate order number
+    order_count = await db.orders.count_documents({})
+    order_number = f"ORD-{order_count + 1:05d}"
+    
+    # Calculate totals
+    subtotal = sum(item['price'] * item['quantity'] for item in order_data['items'])
+    shipping_cost = order_data.get('shipping_cost', 0)
+    total = subtotal + shipping_cost
+    
+    order = Order(
+        order_number=order_number,
+        user_id=order_data.get('user_id'),
+        customer_name=order_data['customer_name'],
+        customer_email=order_data['customer_email'],
+        customer_phone=order_data['customer_phone'],
+        items=order_data['items'],
+        subtotal=subtotal,
+        shipping_cost=shipping_cost,
+        total=total,
+        shipping_address=order_data['shipping_address'],
+        shipping_method=order_data.get('shipping_method', 'manual'),
+        payment_method=order_data.get('payment_method', 'pending'),
+        status=order_data.get('status', 'pending'),
+        notes=order_data.get('notes')
+    )
+    
+    order_doc = order.model_dump()
+    order_doc['created_at'] = order_doc['created_at'].isoformat()
+    order_doc['updated_at'] = order_doc['updated_at'].isoformat()
+    
+    await db.orders.insert_one(order_doc)
+    return order
+
 # ==================== SITE CONTENT ROUTES ====================
 
 @api_router.get("/site-content", response_model=SiteContent)
