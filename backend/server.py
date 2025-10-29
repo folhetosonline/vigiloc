@@ -1914,6 +1914,71 @@ async def delete_page(page_id: str, current_user: User = Depends(get_current_adm
         raise HTTPException(status_code=404, detail="Page not found")
     return {"message": "Page deleted"}
 
+# ==================== CONTENT BLOCKS ROUTES ====================
+
+@api_router.get("/admin/content-blocks/{page_id}")
+async def get_page_blocks(page_id: str, current_user: User = Depends(get_current_admin)):
+    """Get all content blocks for a specific page"""
+    blocks = await db.content_blocks.find({"page_id": page_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    for block in blocks:
+        for field in ['created_at', 'updated_at']:
+            if block.get(field) and isinstance(block[field], str):
+                block[field] = datetime.fromisoformat(block[field])
+    return blocks
+
+@api_router.get("/content-blocks/{page_id}/published")
+async def get_published_blocks(page_id: str):
+    """Get published content blocks for a page - Public"""
+    blocks = await db.content_blocks.find(
+        {"page_id": page_id, "published": True}, 
+        {"_id": 0}
+    ).sort("order", 1).to_list(100)
+    return blocks
+
+@api_router.post("/admin/content-blocks")
+async def create_content_block(block_data: dict, current_user: User = Depends(get_current_admin)):
+    """Create new content block"""
+    block = ContentBlock(**block_data)
+    doc = block.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('updated_at'):
+        doc['updated_at'] = doc['updated_at'].isoformat()
+    await db.content_blocks.insert_one(doc)
+    return block
+
+@api_router.put("/admin/content-blocks/{block_id}")
+async def update_content_block(block_id: str, block_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update content block"""
+    block_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.content_blocks.update_one(
+        {"id": block_id},
+        {"$set": block_data}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Content block not found")
+    
+    return {"message": "Content block updated"}
+
+@api_router.delete("/admin/content-blocks/{block_id}")
+async def delete_content_block(block_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete content block"""
+    result = await db.content_blocks.delete_one({"id": block_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Content block not found")
+    return {"message": "Content block deleted"}
+
+@api_router.put("/admin/content-blocks/{block_id}/reorder")
+async def reorder_content_block(block_id: str, new_order: int, current_user: User = Depends(get_current_admin)):
+    """Change the order of a content block"""
+    result = await db.content_blocks.update_one(
+        {"id": block_id},
+        {"$set": {"order": new_order, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Content block not found")
+    return {"message": "Block order updated"}
+
 # ==================== THEME CUSTOMIZER ROUTES ====================
 
 @api_router.get("/theme-settings")
