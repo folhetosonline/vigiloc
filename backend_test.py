@@ -2083,7 +2083,11 @@ class CRMTester:
         # Run tests in the specified order from the review request
         test_results = []
         
-        # NEW FEATURES - Test first as requested in review
+        # PRIORITY: Customer Account Registration and Management System
+        self.log("\n🎯 PRIORITY TEST - CUSTOMER ACCOUNT SYSTEM:")
+        test_results.append(self.test_customer_account_system())
+        
+        # NEW FEATURES - Test as requested in review
         self.log("\n🎯 TESTING NEW FEATURES AS REQUESTED:")
         test_results.append(self.test_new_product_features())
         test_results.append(self.test_manual_order_creation())
