@@ -20,6 +20,11 @@ const CustomerLogin = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  const handleGoogleLogin = () => {
+    const redirectUrl = `${window.location.origin}/minha-conta`;
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
