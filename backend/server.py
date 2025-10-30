@@ -2489,6 +2489,32 @@ async def update_theme_settings(settings_data: dict, current_user: User = Depend
     )
     return {"message": "Theme settings updated"}
 
+
+# ==================== PAYMENT SETTINGS ROUTES ====================
+
+@api_router.get("/admin/payment-settings")
+async def get_payment_settings(current_user: User = Depends(get_current_admin)):
+    """Get payment settings - Admin only"""
+    settings = await db.payment_settings.find_one({"id": "payment_settings"}, {"_id": 0})
+    if not settings:
+        default = PaymentSettings()
+        return default.model_dump()
+    return settings
+
+@api_router.put("/admin/payment-settings")
+async def update_payment_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update payment settings - Admin only"""
+    settings_data['id'] = "payment_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.payment_settings.update_one(
+        {"id": "payment_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Payment settings updated successfully"}
+
+
 # ==================== MENU BUILDER ROUTES ====================
 
 @api_router.get("/menus/{menu_name}")
