@@ -1349,7 +1349,7 @@ async def get_customer_profile(current_user: User = Depends(get_customer_user)):
     }
 
 @api_router.put("/customer/profile")
-async def update_customer_profile(data: dict, current_user: User = Depends(get_current_user)):
+async def update_customer_profile(data: dict, current_user: User = Depends(get_customer_user)):
     """Update customer profile"""
     update_data = {
         "name": data.get("name"),
