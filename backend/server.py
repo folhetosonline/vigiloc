@@ -1372,7 +1372,7 @@ async def update_customer_profile(data: dict, current_user: User = Depends(get_c
 @api_router.put("/customer/change-password")
 async def change_customer_password(
     data: dict,
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_customer_user)
 ):
     """Change customer password"""
     user_doc = await db.users.find_one({"id": current_user.id})
