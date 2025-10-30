@@ -132,6 +132,15 @@ const CustomerLogin = () => {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium mb-2">CPF</label>
+                    <Input
+                      required
+                      value={registerData.cpf}
+                      onChange={(e) => setRegisterData({ ...registerData, cpf: e.target.value })}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium mb-2">Senha</label>
                     <Input
                       type="password"
