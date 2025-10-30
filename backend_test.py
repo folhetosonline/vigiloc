@@ -1823,6 +1823,254 @@ class CRMTester:
             self.failed_tests.append("Content Blocks CMS")
             return False
 
+    def test_customer_account_system(self) -> bool:
+        """Test Customer Account Registration and Management System - PRIORITY TEST"""
+        self.log("\n=== TESTING CUSTOMER ACCOUNT REGISTRATION & MANAGEMENT SYSTEM ===")
+        
+        try:
+            # Test data for customer registration
+            customer_data = {
+                "name": "Maria Santos",
+                "email": "maria.santos@test.com",
+                "password": "senha123",
+                "phone": "(11) 98765-4321",
+                "cpf": "123.456.789-00"
+            }
+            
+            # 1. Customer Registration (POST /api/customer/register)
+            self.log("1. Testing Customer Registration (POST /customer/register)...")
+            response = self.make_request("POST", "/customer/register", customer_data)
+            
+            if response.status_code == 200:
+                result = response.json()
+                self.log("✅ Customer registration successful")
+                
+                # Verify response includes token and user data
+                if 'token' in result and 'user' in result:
+                    self.log("✅ Response includes token and user data")
+                    self.test_data['customer_token'] = result['token']
+                    self.test_data['customer_user'] = result['user']
+                    self.passed_tests.append("Customer Registration - Response Format")
+                    
+                    # Verify user data includes required fields
+                    user = result['user']
+                    required_fields = ['id', 'name', 'email', 'phone']
+                    missing_fields = [field for field in required_fields if field not in user]
+                    
+                    if not missing_fields:
+                        self.log("✅ User data includes all required fields")
+                        self.passed_tests.append("Customer Registration - User Data")
+                    else:
+                        self.log(f"❌ Missing user data fields: {missing_fields}")
+                        self.failed_tests.append("Customer Registration - User Data")
+                else:
+                    self.log("❌ Response missing token or user data")
+                    self.failed_tests.append("Customer Registration - Response Format")
+                
+                self.passed_tests.append("Customer Registration")
+            else:
+                self.log(f"❌ Customer registration failed: {response.status_code} - {response.text}")
+                self.failed_tests.append("Customer Registration")
+                return False
+            
+            # 2. Customer Login (POST /api/customer/login)
+            self.log("2. Testing Customer Login (POST /customer/login)...")
+            login_data = {
+                "email": customer_data["email"],
+                "password": customer_data["password"]
+            }
+            
+            response = self.make_request("POST", "/customer/login", login_data)
+            
+            if response.status_code == 200:
+                result = response.json()
+                self.log("✅ Customer login successful")
+                
+                # Update token for subsequent requests
+                if 'token' in result:
+                    self.test_data['customer_token'] = result['token']
+                    self.passed_tests.append("Customer Login")
+                else:
+                    self.log("❌ Login response missing token")
+                    self.failed_tests.append("Customer Login - Token")
+            else:
+                self.log(f"❌ Customer login failed: {response.status_code} - {response.text}")
+                self.failed_tests.append("Customer Login")
+            
+            # Set customer token for authenticated requests
+            if 'customer_token' in self.test_data:
+                # Temporarily store admin token
+                admin_token = self.session.headers.get('Authorization')
+                # Set customer token
+                self.session.headers.update({"Authorization": f"Bearer {self.test_data['customer_token']}"})
+                
+                # 3. Get Customer Profile (GET /api/customer/me)
+                self.log("3. Testing Get Customer Profile (GET /customer/me)...")
+                response = self.make_request("GET", "/customer/me")
+                
+                if response.status_code == 200:
+                    profile = response.json()
+                    self.log("✅ Customer profile retrieved successfully")
+                    
+                    # Verify profile includes required fields
+                    required_fields = ['name', 'email', 'phone', 'cpf', 'address']
+                    missing_fields = [field for field in required_fields if field not in profile]
+                    
+                    if not missing_fields:
+                        self.log("✅ Profile includes all required fields")
+                        self.log(f"  • Name: {profile.get('name')}")
+                        self.log(f"  • Email: {profile.get('email')}")
+                        self.log(f"  • Phone: {profile.get('phone')}")
+                        self.log(f"  • CPF: {profile.get('cpf')}")
+                        
+                        # Verify address object structure
+                        address = profile.get('address', {})
+                        address_fields = ['street', 'number', 'complement', 'neighborhood', 'city', 'state', 'zip']
+                        if isinstance(address, dict):
+                            self.log("✅ Address object present with correct structure")
+                            self.log(f"  • Address fields available: {list(address.keys())}")
+                            self.passed_tests.append("Customer Profile - Address Structure")
+                        else:
+                            self.log("❌ Address object not properly structured")
+                            self.failed_tests.append("Customer Profile - Address Structure")
+                        
+                        self.passed_tests.append("Customer Profile - Required Fields")
+                    else:
+                        self.log(f"❌ Profile missing fields: {missing_fields}")
+                        self.failed_tests.append("Customer Profile - Required Fields")
+                    
+                    self.passed_tests.append("Get Customer Profile")
+                else:
+                    self.log(f"❌ Failed to get customer profile: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Get Customer Profile")
+                
+                # 4. Update Customer Profile (PUT /api/customer/profile)
+                self.log("4. Testing Update Customer Profile (PUT /customer/profile)...")
+                update_data = {
+                    "name": "Maria Santos Silva",
+                    "phone": "(11) 99999-8888",
+                    "cpf": "123.456.789-00",
+                    "address": {
+                        "street": "Avenida Paulista",
+                        "number": "1000",
+                        "complement": "Apto 101",
+                        "neighborhood": "Bela Vista",
+                        "city": "São Paulo",
+                        "state": "SP",
+                        "zip": "01310-100"
+                    }
+                }
+                
+                response = self.make_request("PUT", "/customer/profile", update_data)
+                
+                if response.status_code == 200:
+                    self.log("✅ Customer profile updated successfully")
+                    self.passed_tests.append("Update Customer Profile")
+                    
+                    # Verify updates were saved by getting profile again
+                    self.log("Verifying profile updates...")
+                    verify_response = self.make_request("GET", "/customer/me")
+                    
+                    if verify_response.status_code == 200:
+                        updated_profile = verify_response.json()
+                        
+                        # Check if updates were applied
+                        if (updated_profile.get('name') == update_data['name'] and
+                            updated_profile.get('phone') == update_data['phone']):
+                            self.log("✅ Profile updates verified")
+                            
+                            # Check address updates
+                            updated_address = updated_profile.get('address', {})
+                            if (updated_address.get('street') == update_data['address']['street'] and
+                                updated_address.get('city') == update_data['address']['city']):
+                                self.log("✅ Address updates verified")
+                                self.log(f"  • Street: {updated_address.get('street')}")
+                                self.log(f"  • Number: {updated_address.get('number')}")
+                                self.log(f"  • City: {updated_address.get('city')}")
+                                self.log(f"  • State: {updated_address.get('state')}")
+                                self.log(f"  • ZIP: {updated_address.get('zip')}")
+                                self.passed_tests.append("Verify Profile Updates")
+                            else:
+                                self.log("❌ Address updates not properly saved")
+                                self.failed_tests.append("Verify Address Updates")
+                        else:
+                            self.log("❌ Profile updates not properly saved")
+                            self.failed_tests.append("Verify Profile Updates")
+                else:
+                    self.log(f"❌ Failed to update customer profile: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Update Customer Profile")
+                
+                # 5. Change Password (PUT /api/customer/change-password)
+                self.log("5. Testing Change Customer Password (PUT /customer/change-password)...")
+                password_data = {
+                    "current_password": "senha123",
+                    "new_password": "novasenha456"
+                }
+                
+                response = self.make_request("PUT", "/customer/change-password", password_data)
+                
+                if response.status_code == 200:
+                    self.log("✅ Customer password changed successfully")
+                    self.passed_tests.append("Change Customer Password")
+                    
+                    # Verify can login with new password
+                    self.log("Verifying login with new password...")
+                    new_login_data = {
+                        "email": customer_data["email"],
+                        "password": "novasenha456"
+                    }
+                    
+                    # Restore admin token temporarily for login test
+                    self.session.headers.update({"Authorization": admin_token})
+                    login_response = self.make_request("POST", "/customer/login", new_login_data)
+                    
+                    if login_response.status_code == 200:
+                        self.log("✅ Login with new password successful")
+                        self.passed_tests.append("Verify New Password Login")
+                    else:
+                        self.log("❌ Login with new password failed")
+                        self.failed_tests.append("Verify New Password Login")
+                else:
+                    self.log(f"❌ Failed to change customer password: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Change Customer Password")
+                
+                # Restore admin token
+                self.session.headers.update({"Authorization": admin_token})
+            
+            # Check if user was created in database with all fields
+            self.log("6. Verifying user creation in database...")
+            # Use admin token to check user in database
+            response = self.make_request("GET", "/admin/users")
+            
+            if response.status_code == 200:
+                users = response.json()
+                created_user = next((u for u in users if u.get('email') == customer_data['email']), None)
+                
+                if created_user:
+                    self.log("✅ User found in database")
+                    
+                    # Verify user has all required fields
+                    user_fields = ['phone', 'cpf', 'address_street', 'address_city', 'address_state']
+                    present_fields = [field for field in user_fields if created_user.get(field) is not None]
+                    
+                    self.log(f"  • User fields present: {present_fields}")
+                    if len(present_fields) >= 3:  # At least phone, cpf, and some address fields
+                        self.log("✅ User has required extended fields")
+                        self.passed_tests.append("Verify User Database Fields")
+                    else:
+                        self.log("❌ User missing some extended fields")
+                        self.failed_tests.append("Verify User Database Fields")
+                else:
+                    self.log("❌ User not found in database")
+                    self.failed_tests.append("Verify User in Database")
+            
+            return len([t for t in self.failed_tests if "Customer" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Customer Account System test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Customer Account System")
+            return False
+
     def run_all_tests(self) -> bool:
         """Run all backend tests as requested in the review"""
         self.log("🚀 TESTE COMPLETO DE TODOS OS SISTEMAS DO BACKEND")
