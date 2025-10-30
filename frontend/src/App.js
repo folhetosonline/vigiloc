@@ -98,7 +98,7 @@ function PrivateRoute({ children }) {
     return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
-  return user && user.is_admin ? children : <Navigate to="/login" />;
+  return user && user.is_admin ? children : <Navigate to="/painel-admin" />;
 }
 
 function App() {
