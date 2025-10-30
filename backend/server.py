@@ -662,13 +662,16 @@ async def get_current_user(request: Request, credentials: HTTPAuthorizationCrede
     
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_identifier: str = payload.get("sub")
+        if user_identifier is None:
             raise HTTPException(status_code=401, detail="Invalid token")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    # Try to find user by ID first, then by email (for customer tokens)
+    user = await db.users.find_one({"id": user_identifier}, {"_id": 0})
+    if user is None:
+        user = await db.users.find_one({"email": user_identifier}, {"_id": 0})
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
     
