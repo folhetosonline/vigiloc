@@ -679,6 +679,35 @@ async def get_current_user(request: Request, credentials: HTTPAuthorizationCrede
     
     return User(**user)
 
+async def get_customer_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
+    """Authentication for customer endpoints - only accepts Authorization header, ignores cookies"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    token = credentials.credentials
+    
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_identifier: str = payload.get("sub")
+        if user_identifier is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # Try to find user by ID first, then by email
+    user = await db.users.find_one({"id": user_identifier}, {"_id": 0})
+    if user is None:
+        user = await db.users.find_one({"email": user_identifier}, {"_id": 0})
+    if user is None:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    # Verify user is a customer (not admin-only)
+    user_obj = User(**user)
+    if user_obj.role not in ["customer", "admin", "manager", "editor", "viewer"]:
+        raise HTTPException(status_code=403, detail="Invalid user role")
+    
+    return user_obj
+
 async def get_current_admin(current_user: User = Depends(get_current_user)) -> User:
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
