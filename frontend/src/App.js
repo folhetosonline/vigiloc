@@ -29,6 +29,7 @@ import PageBuilder from "@/pages/admin/PageBuilder";
 import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
 import ContentBlockEditor from "@/pages/admin/ContentBlockEditor";
 import NavbarCustomizer from "@/pages/admin/NavbarCustomizer";
+import Reports from "@/pages/admin/Reports";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
