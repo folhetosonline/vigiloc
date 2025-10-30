@@ -633,6 +633,18 @@ frontend:
         agent: "main"
         comment: "Added CPF and complete address fields to customer profile page. Address fields include: street, number, complement, neighborhood, city, state, zip. Organized in responsive grid layout. NEEDS TESTING."
 
+  - task: "App.js CRM Routes"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "All CRM routes added and working"
+      - working: true
         agent: "testing"
         comment: "✅ VERIFIED: All routes functional based on previous comprehensive testing"
 
