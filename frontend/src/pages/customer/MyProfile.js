@@ -10,7 +10,17 @@ import { toast } from "sonner";
 const MyProfile = ({ user, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: user?.name || "",
-    phone: user?.phone || ""
+    phone: user?.phone || "",
+    cpf: user?.cpf || "",
+    address: {
+      street: user?.address?.street || "",
+      number: user?.address?.number || "",
+      complement: user?.address?.complement || "",
+      neighborhood: user?.address?.neighborhood || "",
+      city: user?.address?.city || "",
+      state: user?.address?.state || "",
+      zip: user?.address?.zip || ""
+    }
   });
   const [loading, setLoading] = useState(false);
 
