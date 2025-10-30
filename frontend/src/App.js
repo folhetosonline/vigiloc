@@ -39,7 +39,6 @@ import CRMTickets from "@/pages/admin/crm/Tickets";
 import CRMNotifications from "@/pages/admin/crm/Notifications";
 import CRMSettings from "@/pages/admin/crm/Settings";
 import AdminSettings from "@/pages/admin/Settings";
-import PageBuilder from "@/pages/admin/PageBuilder";
 import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
 
 // Components
