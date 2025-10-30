@@ -62,7 +62,7 @@ const CustomerAccount = () => {
   const checkAuth = async () => {
     const token = localStorage.getItem('customer_token');
     if (!token) {
-      navigate('/login');
+      navigate('/entrar-cliente');
       return;
     }
 
@@ -73,7 +73,7 @@ const CustomerAccount = () => {
       setUser(response.data);
     } catch (error) {
       localStorage.removeItem('customer_token');
-      navigate('/login');
+      navigate('/entrar-cliente');
     } finally {
       setLoading(false);
     }
