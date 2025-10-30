@@ -356,6 +356,71 @@ class SystemPage(BaseModel):
     editable: bool = True  # If content blocks can be added
     removable: bool = False  # System pages cannot be removed
 
+class TrackingSettings(BaseModel):
+    """Analytics and tracking tags configuration"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = "tracking_settings"
+    # Google Tag Manager
+    gtm_id: Optional[str] = None
+    gtm_enabled: bool = False
+    # Google Analytics 4
+    ga4_measurement_id: Optional[str] = None
+    ga4_enabled: bool = False
+    ga4_ecommerce_enabled: bool = True
+    # Meta Pixel
+    meta_pixel_id: Optional[str] = None
+    meta_pixel_enabled: bool = False
+    # Amazon
+    amazon_tag_id: Optional[str] = None
+    amazon_enabled: bool = False
+    # Custom Scripts
+    custom_head_scripts: Optional[str] = None  # Scripts to inject in <head>
+    custom_body_scripts: Optional[str] = None  # Scripts to inject before </body>
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SEOSettings(BaseModel):
+    """SEO configuration and automation settings"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = "seo_settings"
+    # Site basics
+    site_url: str = "https://securecommerce-hub.preview.emergentagent.com"
+    default_meta_title: str = "VigiLoc - Segurança Inteligente"
+    default_meta_description: str = "Soluções de segurança inteligente"
+    default_keywords: str = "segurança, câmeras, vigilância"
+    # Robots.txt
+    robots_txt_content: str = "User-agent: *\nAllow: /\nSitemap: {site_url}/sitemap.xml"
+    # Indexação automática
+    auto_index_enabled: bool = True
+    auto_index_frequency: str = "daily"  # daily, weekly
+    # Search Console
+    google_search_console_enabled: bool = False
+    google_search_console_api_key: Optional[str] = None
+    bing_webmaster_enabled: bool = False
+    bing_webmaster_api_key: Optional[str] = None
+    # LLM Indexing
+    llm_indexing_enabled: bool = True
+    # Social Media
+    og_image: Optional[str] = None
+    twitter_card: str = "summary_large_image"
+    twitter_site: Optional[str] = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SEOAnalysis(BaseModel):
+    """SEO analysis result for a page"""
+    page_url: str
+    score: int  # 0-100
+    title_score: int
+    description_score: int
+    keywords_score: int
+    headings_score: int
+    content_score: int
+    images_score: int
+    links_score: int
+    issues: List[str] = []
+    warnings: List[str] = []
+    suggestions: List[str] = []
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 # ==================== ADVANCED ADMIN MODELS ====================
 
