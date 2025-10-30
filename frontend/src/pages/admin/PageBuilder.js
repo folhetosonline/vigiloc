@@ -29,10 +29,15 @@ const PageBuilder = () => {
 
   const fetchPages = async () => {
     try {
-      const response = await axios.get(`${API}/admin/pages`);
-      setPages(response.data);
+      const response = await axios.get(`${API}/admin/all-pages`);
+      // Combine system and custom pages
+      const allPages = [
+        ...response.data.system.map(p => ({...p, isSystem: true})),
+        ...response.data.custom.map(p => ({...p, isSystem: false}))
+      ];
+      setPages(allPages);
     } catch (error) {
-      toast.error("Erro ao carregar p\u00e1ginas");
+      toast.error("Erro ao carregar páginas");
     }
   };
 
