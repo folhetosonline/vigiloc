@@ -2224,9 +2224,35 @@ def main():
         success = tester.run_new_admin_features_only()
         sys.exit(0 if success else 1)
     
-    # Run new admin features tests as requested in review
+    # Check if we should run only customer account system test
+    if len(sys.argv) > 1 and sys.argv[1] == "--customer-account":
+        tester = CRMTester()
+        if tester.authenticate():
+            success = tester.test_customer_account_system()
+            print(f"\n🎯 Customer Account System Test: {'✅ PASSED' if success else '❌ FAILED'}")
+        else:
+            success = False
+        sys.exit(0 if success else 1)
+    
+    # Run customer account system test as requested in review
     tester = CRMTester()
-    success = tester.run_new_admin_features_only()
+    if tester.authenticate():
+        success = tester.test_customer_account_system()
+        print(f"\n🎯 Customer Account System Test: {'✅ PASSED' if success else '❌ FAILED'}")
+        
+        # Print summary
+        if success:
+            print("\n✅ ALL CUSTOMER ACCOUNT TESTS PASSED!")
+            print("- Customer registration works without KeyError")
+            print("- All customer endpoints accept and return new fields correctly")
+            print("- Address fields are properly stored and retrieved")
+            print("- Password change works with password_hash field")
+        else:
+            print("\n❌ SOME CUSTOMER ACCOUNT TESTS FAILED!")
+            print("Failed tests:", tester.failed_tests)
+    else:
+        success = False
+        print("❌ Authentication failed")
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
