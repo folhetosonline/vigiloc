@@ -527,6 +527,10 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="payments">
+          <PaymentSettings />
+        </TabsContent>
+
         <TabsContent value="tracking">
           <TrackingManager />
         </TabsContent>
