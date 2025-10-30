@@ -698,8 +698,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Customer Account Registration Fix - COMPLETED AND TESTED ✅"
-    - "Customer Registration with Phone, CPF fields - WORKING ✅"
+    - "Google Social Login Implementation - COMPLETED, NEEDS TESTING"
+    - "Customer Account Registration with CPF - TESTED AND WORKING ✅"
     - "Customer Profile with Address Management - WORKING ✅"
   stuck_tasks: []
   test_all: false
