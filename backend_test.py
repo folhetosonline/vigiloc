@@ -2237,6 +2237,10 @@ class CRMTester:
         self.log("\n🎯 PRIORITY TEST - CUSTOMER ACCOUNT SYSTEM:")
         test_results.append(self.test_customer_account_system())
         
+        # NEW FEATURE: Google OAuth Endpoint
+        self.log("\n🎯 NEW FEATURE - GOOGLE OAUTH ENDPOINT:")
+        test_results.append(self.test_google_oauth_endpoint())
+        
         # NEW FEATURES - Test as requested in review
         self.log("\n🎯 TESTING NEW FEATURES AS REQUESTED:")
         test_results.append(self.test_new_product_features())
