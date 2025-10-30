@@ -1335,7 +1335,7 @@ async def login_customer(data: dict):
     if not user_doc:
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
     
-    if not pwd_context.verify(data.get("password"), user_doc['password']):
+    if not pwd_context.verify(data.get("password"), user_doc['password_hash']):
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
     
     # Generate token
