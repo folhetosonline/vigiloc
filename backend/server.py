@@ -1360,6 +1360,16 @@ async def get_customer_profile(current_user: User = Depends(get_current_user)):
         "name": current_user.name,
         "email": current_user.email,
         "phone": current_user.phone,
+        "cpf": current_user.cpf,
+        "address": {
+            "street": current_user.address_street,
+            "number": current_user.address_number,
+            "complement": current_user.address_complement,
+            "neighborhood": current_user.address_neighborhood,
+            "city": current_user.address_city,
+            "state": current_user.address_state,
+            "zip": current_user.address_zip
+        },
         "role": current_user.role
     }
 
