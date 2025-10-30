@@ -115,7 +115,14 @@ function App() {
             <Route path="/contato" element={<><Navbar /><Contact /><Footer /><WhatsAppButton /></>} />
             <Route path="/carrinho" element={<><Navbar /><Cart /><Footer /><WhatsAppButton /></>} />
             <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /><WhatsAppButton /></>} />
-            <Route path="/login" element={<Login />} />
+            
+            {/* Customer Area */}
+            <Route path="/login" element={<><Navbar /><CustomerLogin /><Footer /><WhatsAppButton /></>} />
+            <Route path="/recuperar-senha" element={<><Navbar /><ForgotPassword /><Footer /><WhatsAppButton /></>} />
+            <Route path="/minha-conta" element={<><Navbar /><CustomerAccount /><Footer /><WhatsAppButton /></>} />
+            
+            {/* Admin Login */}
+            <Route path="/admin/login" element={<Login />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
