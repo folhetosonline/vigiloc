@@ -499,6 +499,34 @@ class ThemeSettings(BaseModel):
     custom_css: Optional[str] = None
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class PaymentSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "payment_settings"
+    
+    # Mercado Pago
+    mercadopago_enabled: bool = False
+    mercadopago_public_key: Optional[str] = None
+    mercadopago_access_token: Optional[str] = None
+    mercadopago_webhook_secret: Optional[str] = None
+    mercadopago_sandbox_mode: bool = True
+    
+    # Stripe
+    stripe_enabled: bool = False
+    stripe_public_key: Optional[str] = None
+    stripe_secret_key: Optional[str] = None
+    stripe_webhook_secret: Optional[str] = None
+    stripe_test_mode: bool = True
+    
+    # PagSeguro
+    pagseguro_enabled: bool = False
+    pagseguro_email: Optional[str] = None
+    pagseguro_token_production: Optional[str] = None
+    pagseguro_token_sandbox: Optional[str] = None
+    pagseguro_sandbox_mode: bool = True
+    
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 class MenuItem(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
