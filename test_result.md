@@ -113,6 +113,8 @@ user_problem_statement: |
   - Suspension warnings (configurable days after due)
   - PIX payment information storage
   - SendGrid email integration (logs when no API key present)
+  - Complete Customer Account Portal ("Minha Conta") with registration, login, profile management
+  - Customer registration with phone, CPF, and address fields
 
 backend:
   - task: "CRM Models (Customer, Contract, Equipment, Payment, MaintenanceTicket, Notification, CRMSettings)"
