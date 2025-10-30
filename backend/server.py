@@ -1498,6 +1498,102 @@ async def get_customer_orders(current_user: User = Depends(get_current_user)):
     
     return orders
 
+# ==================== GOOGLE OAUTH ROUTES ====================
+
+@api_router.post("/auth/google/callback")
+async def google_oauth_callback(data: dict):
+    """Handle Google OAuth callback from Emergent Auth"""
+    session_id = data.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id is required")
+    
+    try:
+        # Call Emergent's session-data API
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid session_id")
+            
+            session_data = response.json()
+        
+        # Extract user data
+        email = session_data.get("email")
+        name = session_data.get("name")
+        picture = session_data.get("picture")
+        emergent_session_token = session_data.get("session_token")
+        google_id = session_data.get("id")
+        
+        # Check if user exists
+        user_doc = await db.users.find_one({"email": email})
+        
+        if user_doc:
+            # User exists - update google_id and picture if not set
+            update_data = {}
+            if not user_doc.get('google_id'):
+                update_data['google_id'] = google_id
+            if not user_doc.get('picture') and picture:
+                update_data['picture'] = picture
+            
+            if update_data:
+                await db.users.update_one(
+                    {"email": email},
+                    {"$set": update_data}
+                )
+            
+            user_id = user_doc['id']
+        else:
+            # Auto-create new customer account
+            new_user = User(
+                email=email,
+                name=name,
+                google_id=google_id,
+                picture=picture,
+                role="customer",
+                is_admin=False,
+                password_hash=None  # No password for Google users
+            )
+            
+            user_dict = new_user.model_dump()
+            user_dict['created_at'] = user_dict['created_at'].isoformat()
+            await db.users.insert_one(user_dict)
+            user_id = new_user.id
+        
+        # Store Emergent session in database with 7-day expiry
+        expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        session = Session(
+            user_id=user_id,
+            session_token=emergent_session_token,
+            expires_at=expires_at
+        )
+        
+        session_dict = session.model_dump()
+        session_dict['created_at'] = session_dict['created_at'].isoformat()
+        session_dict['expires_at'] = session_dict['expires_at'].isoformat()
+        await db.sessions.insert_one(session_dict)
+        
+        # Generate our own JWT token for the customer
+        token = create_access_token(data={"sub": email})
+        
+        return {
+            "token": token,
+            "session_token": emergent_session_token,
+            "user": {
+                "id": user_id,
+                "name": name,
+                "email": email,
+                "picture": picture,
+                "role": "customer"
+            }
+        }
+        
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to validate session: {str(e)}")
+
+
 @api_router.get("/customer/orders/{order_id}")
 async def get_customer_order_detail(order_id: str, current_user: User = Depends(get_current_user)):
     """Get specific order details"""
