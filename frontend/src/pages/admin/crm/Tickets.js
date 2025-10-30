@@ -65,11 +65,17 @@ const Tickets = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Convert "none" back to empty string before sending to API
+      const dataToSend = {
+        ...formData,
+        equipment_id: formData.equipment_id === "none" ? "" : formData.equipment_id
+      };
+      
       if (editingTicket) {
-        await axios.put(`${API}/admin/tickets/${editingTicket.id}`, formData);
+        await axios.put(`${API}/admin/tickets/${editingTicket.id}`, dataToSend);
         toast.success("Chamado atualizado com sucesso");
       } else {
-        await axios.post(`${API}/admin/tickets`, formData);
+        await axios.post(`${API}/admin/tickets`, dataToSend);
         toast.success("Chamado criado com sucesso");
       }
       setOpen(false);
