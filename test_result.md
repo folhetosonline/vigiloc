@@ -1056,6 +1056,70 @@ agent_communication:
       🚀 SITE SETTINGS ENDPOINTS FULLY FUNCTIONAL! NÃO PERDER TEMPO - CONFIRMED WORKING!
   - agent: "testing"
     message: |
+
+  - agent: "main"
+    message: |
+      🔧 CRITICAL BUG FIX - CUSTOMER REGISTRATION
+      
+      **Issue Reported by User:**
+      "Dando erro ao criar a conta ainda" (Still getting error when creating account)
+      Backend logs showed: KeyError during customer registration - User model missing 'phone' field
+      
+      **Changes Implemented:**
+      
+      ✅ Backend (server.py):
+      1. Extended User Model:
+         - Added phone: Optional[str] = None
+         - Added cpf: Optional[str] = None
+         - Added address fields: address_street, address_number, address_complement, 
+           address_neighborhood, address_city, address_state, address_zip (all Optional[str])
+      
+      2. Fixed Customer Registration Endpoint (/customer/register):
+         - Changed from password= to password_hash= (consistency fix)
+         - Now accepts and stores cpf field
+         - Already had phone field but model was missing it
+      
+      3. Enhanced Customer Profile Endpoints:
+         - GET /customer/me: Returns cpf and complete address object
+         - PUT /customer/profile: Accepts and updates cpf and all address fields
+      
+      4. Fixed Password Change Endpoint (/customer/change-password):
+         - Changed user_doc['password'] to user_doc['password_hash']
+         - Changed update field from 'password' to 'password_hash'
+      
+      ✅ Frontend:
+      1. CustomerLogin.js (Registration Form):
+         - Added CPF field to registration form
+         - Form now collects: name, email, phone, cpf, password
+      
+      2. MyProfile.js (Customer Profile):
+         - Added CPF field (required)
+         - Added complete address section with 7 fields:
+           * CEP (zip code)
+           * Rua (street)
+           * Número (number)
+           * Complemento (complement)
+           * Bairro (neighborhood)
+           * Cidade (city)
+           * Estado (state - 2 char max)
+         - Responsive grid layout (2 columns on desktop)
+      
+      **Backend Restarted:** ✅
+      
+      **Ready for Testing:**
+      - Customer registration with phone and CPF
+      - Customer profile display with CPF and address
+      - Customer profile update with CPF and address
+      - Password change functionality
+      
+      Please test the complete customer account flow:
+      1. Register new customer with phone + CPF
+      2. Login with new customer credentials
+      3. View profile (should show CPF and address fields)
+      4. Update profile with address information
+      5. Change password
+      6. View orders (if any)
+
       🎯 RAPID FILE UPLOAD TEST COMPLETE - ALL TESTS PASSED! 
       
       ✅ FILE UPLOAD API TESTING RESULTS (6/6 PASSED - 100% SUCCESS RATE):
