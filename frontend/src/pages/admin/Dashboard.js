@@ -192,19 +192,31 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="p-4 border rounded-lg hover:bg-gray-50 transition text-center">
+            <button 
+              onClick={() => navigate("/admin/products")}
+              className="p-4 border rounded-lg hover:bg-gray-50 transition text-center cursor-pointer"
+            >
               <Package className="h-8 w-8 mx-auto mb-2 text-blue-500" />
               <p className="text-sm font-medium">Novo Produto</p>
             </button>
-            <button className="p-4 border rounded-lg hover:bg-gray-50 transition text-center">
+            <button 
+              onClick={() => navigate("/admin/orders")}
+              className="p-4 border rounded-lg hover:bg-gray-50 transition text-center cursor-pointer"
+            >
               <ShoppingCart className="h-8 w-8 mx-auto mb-2 text-green-500" />
               <p className="text-sm font-medium">Ver Pedidos</p>
             </button>
-            <button className="p-4 border rounded-lg hover:bg-gray-50 transition text-center">
+            <button 
+              onClick={() => navigate("/admin/crm/customers")}
+              className="p-4 border rounded-lg hover:bg-gray-50 transition text-center cursor-pointer"
+            >
               <Users className="h-8 w-8 mx-auto mb-2 text-purple-500" />
               <p className="text-sm font-medium">Clientes</p>
             </button>
-            <button className="p-4 border rounded-lg hover:bg-gray-50 transition text-center">
+            <button 
+              onClick={() => window.open("/", "_blank")}
+              className="p-4 border rounded-lg hover:bg-gray-50 transition text-center cursor-pointer"
+            >
               <Eye className="h-8 w-8 mx-auto mb-2 text-orange-500" />
               <p className="text-sm font-medium">Ver Site</p>
             </button>
