@@ -1453,7 +1453,7 @@ async def reset_password(token: str, new_password: str):
     return {"message": "Senha redefinida com sucesso"}
 
 @api_router.get("/customer/orders")
-async def get_customer_orders(current_user: User = Depends(get_current_user)):
+async def get_customer_orders(current_user: User = Depends(get_customer_user)):
     """Get customer's orders"""
     orders = await db.orders.find(
         {"customer_email": current_user.email},
