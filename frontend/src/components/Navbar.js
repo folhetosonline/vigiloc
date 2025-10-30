@@ -73,6 +73,11 @@ const Navbar = () => {
                 <ShoppingCart className="h-6 w-6" />
               </Button>
             </Link>
+            <Link to="/login">
+              <Button variant="outline">
+                Minha Conta
+              </Button>
+            </Link>
             <Button
               data-testid="nav-whatsapp-btn"
               onClick={() => window.open("https://wa.me/5511999999999", "_blank")}
