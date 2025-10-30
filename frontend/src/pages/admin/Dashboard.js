@@ -167,7 +167,11 @@ const Dashboard = () => {
             <div className="space-y-4">
               {analytics?.top_products?.length > 0 ? (
                 analytics.top_products.map(([productId, quantity], index) => (
-                  <div key={productId} className="flex items-center justify-between">
+                  <div 
+                    key={productId} 
+                    onClick={() => navigate(`/admin/products`)}
+                    className="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer transition"
+                  >
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                         <span className="text-blue-600 font-bold text-sm">{index + 1}</span>
