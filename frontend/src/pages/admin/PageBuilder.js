@@ -141,16 +141,25 @@ const PageBuilder = () => {
       {/* Pages Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {pages.map((page) => (
-          <Card key={page.id} className={!page.published ? "border-orange-200 bg-orange-50" : ""}>
+          <Card key={page.id} className={page.isSystem ? "border-blue-200 bg-blue-50" : !page.published ? "border-orange-200 bg-orange-50" : ""}>
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-lg">{page.title}</CardTitle>
-                  <p className="text-sm text-gray-500 mt-1">/{page.slug}</p>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    {page.name || page.title}
+                    {page.isSystem && (
+                      <Badge className="bg-blue-100 text-blue-800 text-xs">
+                        Sistema
+                      </Badge>
+                    )}
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">{page.slug}</p>
                 </div>
-                <Badge className={page.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
-                  {page.published ? "🟢 Live" : "⚠️ Draft"}
-                </Badge>
+                {!page.isSystem && (
+                  <Badge className={page.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
+                    {page.published ? "🟢 Live" : "⚠️ Draft"}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -159,13 +168,15 @@ const PageBuilder = () => {
                   <Pencil className="h-4 w-4 mr-1" />
                   Editar Conteúdo
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => window.open(`/pages/${page.slug}`, '_blank')}>
+                <Button size="sm" variant="outline" onClick={() => window.open(page.slug, '_blank')}>
                   <Eye className="h-4 w-4 mr-1" />
                   Preview
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                {!page.isSystem && (
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
