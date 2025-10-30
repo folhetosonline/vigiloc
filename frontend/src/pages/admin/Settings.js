@@ -522,6 +522,14 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="tracking">
+          <TrackingManager />
+        </TabsContent>
+
+        <TabsContent value="seo">
+          <SEOManager />
+        </TabsContent>
+
         <TabsContent value="profile">
           <Card>
             <CardHeader>
