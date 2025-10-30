@@ -13,6 +13,9 @@ import Contact from "@/pages/Contact";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import Login from "@/pages/Login";
+import CustomerLogin from "@/pages/CustomerLogin";
+import CustomerAccount from "@/pages/CustomerAccount";
+import ForgotPassword from "@/pages/ForgotPassword";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin/Dashboard";
