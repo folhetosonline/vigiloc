@@ -1376,9 +1376,21 @@ async def get_customer_profile(current_user: User = Depends(get_current_user)):
 @api_router.put("/customer/profile")
 async def update_customer_profile(data: dict, current_user: User = Depends(get_current_user)):
     """Update customer profile"""
+    update_data = {
+        "name": data.get("name"),
+        "phone": data.get("phone"),
+        "cpf": data.get("cpf"),
+        "address_street": data.get("address", {}).get("street"),
+        "address_number": data.get("address", {}).get("number"),
+        "address_complement": data.get("address", {}).get("complement"),
+        "address_neighborhood": data.get("address", {}).get("neighborhood"),
+        "address_city": data.get("address", {}).get("city"),
+        "address_state": data.get("address", {}).get("state"),
+        "address_zip": data.get("address", {}).get("zip")
+    }
     await db.users.update_one(
         {"id": current_user.id},
-        {"$set": {"name": data.get("name"), "phone": data.get("phone")}}
+        {"$set": update_data}
     )
     return {"message": "Perfil atualizado com sucesso"}
 
