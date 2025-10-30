@@ -118,11 +118,12 @@ function App() {
             
             {/* Customer Area */}
             <Route path="/login" element={<><Navbar /><CustomerLogin /><Footer /><WhatsAppButton /></>} />
+            <Route path="/entrar-cliente" element={<><Navbar /><CustomerLogin /><Footer /><WhatsAppButton /></>} />
             <Route path="/recuperar-senha" element={<><Navbar /><ForgotPassword /><Footer /><WhatsAppButton /></>} />
             <Route path="/minha-conta" element={<><Navbar /><CustomerAccount /><Footer /><WhatsAppButton /></>} />
             
-            {/* Admin Login */}
-            <Route path="/admin/login" element={<Login />} />
+            {/* Admin Login - Secure URL */}
+            <Route path="/painel-admin" element={<Login />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
