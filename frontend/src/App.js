@@ -28,6 +28,7 @@ import AdminCoupons from "@/pages/admin/Coupons";
 import PageBuilder from "@/pages/admin/PageBuilder";
 import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
 import ContentBlockEditor from "@/pages/admin/ContentBlockEditor";
+import NavbarCustomizer from "@/pages/admin/NavbarCustomizer";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
