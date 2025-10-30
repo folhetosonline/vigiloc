@@ -1162,3 +1162,52 @@ agent_communication:
       - Upload directory creation and file persistence
       
       🚀 FILE UPLOAD API FULLY FUNCTIONAL! RÁPIDO - TESTE COMPLETO!
+  - agent: "testing"
+    message: |
+      🎯 CUSTOMER ACCOUNT REGISTRATION & MANAGEMENT SYSTEM - TESTING COMPLETE ✅
+      
+      ✅ COMPREHENSIVE TESTING RESULTS (100% SUCCESS RATE):
+      
+      **PRIORITY TEST - CUSTOMER ACCOUNT SYSTEM:**
+      All 5 requested test scenarios PASSED:
+      
+      **1. Customer Registration (POST /api/customer/register):**
+      - ✅ Creates customer with name, email, password, phone, CPF
+      - ✅ Returns token and complete user data
+      - ✅ User created in database with all required fields
+      - ✅ No KeyError - issue completely resolved
+      
+      **2. Customer Login (POST /api/customer/login):**
+      - ✅ Authenticates with registered customer credentials
+      - ✅ Returns valid JWT token
+      - ✅ Token works for subsequent authenticated requests
+      
+      **3. Get Customer Profile (GET /api/customer/me):**
+      - ✅ Returns complete profile: name, email, phone, cpf, address object
+      - ✅ Address object includes all 7 fields: street, number, complement, neighborhood, city, state, zip
+      - ✅ All fields properly structured and accessible
+      
+      **4. Update Customer Profile (PUT /api/customer/profile):**
+      - ✅ Successfully updates profile with realistic Brazilian address data:
+        * Street: "Avenida Paulista", Number: "1000", Complement: "Apto 101"
+        * Neighborhood: "Bela Vista", City: "São Paulo", State: "SP", ZIP: "01310-100"
+      - ✅ All updates verified and persisted correctly in database
+      - ✅ Address fields properly stored and retrieved
+      
+      **5. Change Password (PUT /api/customer/change-password):**
+      - ✅ Changes customer password with current_password and new_password
+      - ✅ Password change works with password_hash field (fixed)
+      - ✅ Can login with new password successfully
+      
+      **🔧 CRITICAL FIXES IMPLEMENTED:**
+      - Fixed customer login endpoint: changed user_doc['password'] to user_doc['password_hash']
+      - Fixed JWT token resolution: prioritized Authorization header over session cookies for API calls
+      - Fixed User model: added phone, cpf, and 7 address fields (address_street, address_number, address_complement, address_neighborhood, address_city, address_state, address_zip)
+      
+      **📊 SUCCESS CRITERIA MET:**
+      ✅ Customer registration works without KeyError
+      ✅ All customer endpoints accept and return new fields correctly  
+      ✅ Address fields are properly stored and retrieved
+      ✅ Password change works with password_hash field
+      
+      🚀 CUSTOMER ACCOUNT SYSTEM FULLY FUNCTIONAL AND READY FOR PRODUCTION!
