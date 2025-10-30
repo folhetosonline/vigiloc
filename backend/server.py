@@ -650,12 +650,13 @@ def create_access_token(data: dict) -> str:
 async def get_current_user(request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     token = None
     
-    # Check cookie first
-    token = request.cookies.get("session_token")
-    
-    # Fallback to Authorization header
-    if not token and credentials:
+    # Check Authorization header first (for API calls)
+    if credentials:
         token = credentials.credentials
+    
+    # Fallback to cookie (for web sessions)
+    if not token:
+        token = request.cookies.get("session_token")
     
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
