@@ -76,22 +76,22 @@ const PageBuilder = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Page Builder</h1>
-          <p className="text-gray-600">Crie p\u00e1ginas customizadas para seu site</p>
+          <p className="text-gray-600">Crie páginas customizadas para seu site</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Nova P\u00e1gina
+              Nova Página
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Criar Nova P\u00e1gina</DialogTitle>
+              <DialogTitle>Criar Nova Página</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">T\u00edtulo</label>
+                <label className="block text-sm font-medium mb-2">Título</label>
                 <Input
                   required
                   value={formData.title}
