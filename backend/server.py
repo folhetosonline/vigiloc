@@ -1278,6 +1278,208 @@ async def create_order(order_data: OrderCreate, session_id: Optional[str] = None
     
     return order
 
+
+# ==================== CUSTOMER ACCOUNT ROUTES ====================
+
+@api_router.post("/customer/register")
+async def register_customer(name: str, email: EmailStr, password: str, phone: str):
+    """Register new customer account"""
+    # Check if email already exists
+    existing = await db.users.find_one({"email": email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email já cadastrado")
+    
+    # Create user
+    hashed_password = pwd_context.hash(password)
+    user = User(
+        name=name,
+        email=email,
+        password=hashed_password,
+        phone=phone,
+        role="customer"
+    )
+    
+    doc = user.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.users.insert_one(doc)
+    
+    # Generate token
+    token = create_access_token(data={"sub": user.email})
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "phone": user.phone,
+            "role": user.role
+        }
+    }
+
+@api_router.post("/customer/login")
+async def login_customer(email: EmailStr, password: str):
+    """Customer login"""
+    user_doc = await db.users.find_one({"email": email})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    
+    if not pwd_context.verify(password, user_doc['password']):
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    
+    # Generate token
+    token = create_access_token(data={"sub": email})
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user_doc['id'],
+            "name": user_doc['name'],
+            "email": user_doc['email'],
+            "phone": user_doc.get('phone'),
+            "role": user_doc['role']
+        }
+    }
+
+@api_router.get("/customer/me")
+async def get_customer_profile(current_user: User = Depends(get_current_user)):
+    """Get current customer profile"""
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "phone": current_user.phone,
+        "role": current_user.role
+    }
+
+@api_router.put("/customer/profile")
+async def update_customer_profile(name: str, phone: str, current_user: User = Depends(get_current_user)):
+    """Update customer profile"""
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"name": name, "phone": phone}}
+    )
+    return {"message": "Perfil atualizado com sucesso"}
+
+@api_router.put("/customer/change-password")
+async def change_customer_password(
+    current_password: str, 
+    new_password: str, 
+    current_user: User = Depends(get_current_user)
+):
+    """Change customer password"""
+    user_doc = await db.users.find_one({"id": current_user.id})
+    
+    # Verify current password
+    if not pwd_context.verify(current_password, user_doc['password']):
+        raise HTTPException(status_code=400, detail="Senha atual incorreta")
+    
+    # Update password
+    hashed_password = pwd_context.hash(new_password)
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"password": hashed_password}}
+    )
+    
+    return {"message": "Senha alterada com sucesso"}
+
+@api_router.post("/customer/forgot-password")
+async def forgot_password(email: EmailStr):
+    """Request password reset"""
+    user_doc = await db.users.find_one({"email": email})
+    if not user_doc:
+        # Don't reveal if email exists
+        return {"message": "Se o email existir, um link de recuperação será enviado"}
+    
+    # Generate reset token
+    import secrets
+    token = secrets.token_urlsafe(32)
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+    
+    reset = PasswordReset(
+        email=email,
+        token=token,
+        expires_at=expires_at
+    )
+    
+    doc = reset.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['expires_at'] = doc['expires_at'].isoformat()
+    await db.password_resets.insert_one(doc)
+    
+    # TODO: Send email with reset link
+    # For now, just log it
+    reset_link = f"https://seu-site.com/reset-password?token={token}"
+    print(f"Password reset link: {reset_link}")
+    
+    return {"message": "Se o email existir, um link de recuperação será enviado"}
+
+@api_router.post("/customer/reset-password")
+async def reset_password(token: str, new_password: str):
+    """Reset password with token"""
+    reset_doc = await db.password_resets.find_one({
+        "token": token,
+        "used": False
+    })
+    
+    if not reset_doc:
+        raise HTTPException(status_code=400, detail="Token inválido ou expirado")
+    
+    # Check if expired
+    expires_at = datetime.fromisoformat(reset_doc['expires_at'])
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Token expirado")
+    
+    # Update password
+    hashed_password = pwd_context.hash(new_password)
+    await db.users.update_one(
+        {"email": reset_doc['email']},
+        {"$set": {"password": hashed_password}}
+    )
+    
+    # Mark token as used
+    await db.password_resets.update_one(
+        {"id": reset_doc['id']},
+        {"$set": {"used": True}}
+    )
+    
+    return {"message": "Senha redefinida com sucesso"}
+
+@api_router.get("/customer/orders")
+async def get_customer_orders(current_user: User = Depends(get_current_user)):
+    """Get customer's orders"""
+    orders = await db.orders.find(
+        {"customer_email": current_user.email},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
+    
+    for order in orders:
+        if isinstance(order.get('created_at'), str):
+            order['created_at'] = datetime.fromisoformat(order['created_at'])
+        if isinstance(order.get('updated_at'), str):
+            order['updated_at'] = datetime.fromisoformat(order['updated_at'])
+    
+    return orders
+
+@api_router.get("/customer/orders/{order_id}")
+async def get_customer_order_detail(order_id: str, current_user: User = Depends(get_current_user)):
+    """Get specific order details"""
+    order = await db.orders.find_one(
+        {"id": order_id, "customer_email": current_user.email},
+        {"_id": 0}
+    )
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    if isinstance(order.get('created_at'), str):
+        order['created_at'] = datetime.fromisoformat(order['created_at'])
+    if isinstance(order.get('updated_at'), str):
+        order['updated_at'] = datetime.fromisoformat(order['updated_at'])
+    
+    return order
+
+
 @api_router.get("/admin/orders", response_model=List[Order])
 async def get_orders(current_user: User = Depends(get_current_admin)):
     orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
