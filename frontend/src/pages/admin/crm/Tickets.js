@@ -20,7 +20,7 @@ const Tickets = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [formData, setFormData] = useState({
     customer_id: "",
-    equipment_id: "",
+    equipment_id: "none",
     title: "",
     description: "",
     priority: "medium",
