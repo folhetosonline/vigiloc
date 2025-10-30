@@ -337,6 +337,66 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Theme Customizer APIs working perfectly. GET /api/theme-settings returns default theme settings (primary_color: #3B82F6, secondary_color: #1E40AF, font_heading: Inter). PUT /api/admin/theme-settings successfully updates theme colors and fonts. Theme updates verified by re-fetching settings. All theme customization features functional with proper persistence."
 
+  - task: "Product Badges and Pages System"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Products can now have badges (novidade, top-linha, oferta, etc.) and show_on_pages (totens, home, todas) fields"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Product badges and pages system working perfectly. POST /api/admin/products creates products with badges ['novidade', 'top-linha'] and show_on_pages ['totens', 'home']. GET /api/products/by-page/totens returns products filtered by page. GET /api/products/by-page/totens?badges=novidade,top-linha filters products by both page and badges. PUT /api/admin/products/{id} successfully updates badges and pages. All filtering and badge management working correctly."
+
+  - task: "Manual Order Creation"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Admin can create orders manually with POST /api/admin/orders/create"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Manual order creation working perfectly. POST /api/admin/orders/create successfully creates orders with customer data, shipping address, items, and calculates totals correctly. Order ORD-00003 created with subtotal R$ 2599.98, shipping R$ 50.00, total R$ 2649.98. Order appears in GET /api/admin/orders list. All manual order workflows functional."
+
+  - task: "Content Blocks CMS System"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Complete CMS system with content blocks (hero, card, text, media, banner, product_list types)"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Content Blocks CMS working perfectly. POST /api/admin/content-blocks creates hero blocks with settings and content. GET /api/admin/content-blocks/{page_id} lists blocks for page. PUT /api/admin/content-blocks/{id} updates block content and settings. PUT /api/admin/content-blocks/{id}/reorder changes block order. GET /api/content-blocks/{page_id}/published returns only published blocks. DELETE /api/admin/content-blocks/{id} removes blocks. All CMS functionality operational."
+
+  - task: "Product Filtering by Page and Badges"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/products/by-page/{page_name} with optional ?badges= query parameter"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Product filtering working perfectly. GET /api/products/by-page/totens returns 3 products for 'totens' page. GET /api/products/by-page/totens?badges=novidade,top-linha filters products by badges and returns only products with specified badges. All products correctly filtered by page and badge combinations. Filtering logic working as expected."
+
 frontend:
   - task: "CRM Dashboard Page"
     implemented: true
