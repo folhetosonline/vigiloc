@@ -1218,6 +1218,92 @@ agent_communication:
       
       **2. Customer Login (POST /api/customer/login):**
       - ✅ Authenticates with registered customer credentials
+
+  - agent: "main"
+    message: |
+      🔐 GOOGLE SOCIAL LOGIN IMPLEMENTED
+      
+      **Feature:** Emergent's Built-in Google Authentication for Customer Portal
+      
+      **Why Emergent Auth?**
+      - ✅ No API keys needed
+      - ✅ Zero configuration required
+      - ✅ Built-in session management
+      - ✅ 7-day persistent sessions
+      
+      **Backend Implementation (server.py):**
+      
+      1. Added POST /api/auth/google/callback endpoint:
+         - Accepts session_id from Emergent Auth
+         - Calls https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data
+         - Retrieves user data: email, name, picture, google_id, session_token
+         - Auto-creates customer account if email doesn't exist
+         - Updates existing users with google_id and picture if missing
+         - Stores Emergent session_token in database with 7-day expiry
+         - Returns our JWT token for API authentication
+      
+      2. Session Management:
+         - Session model already exists with: user_id, session_token, expires_at
+         - Timezone-aware expiry (datetime.now(timezone.utc) + 7 days)
+         - Stores Emergent's session_token for potential future use
+      
+      3. Auto-Create Customer Logic:
+         - New Google users automatically get role="customer"
+         - is_admin=False
+         - password_hash=None (no password for Google users)
+         - Stores Google profile picture and google_id
+      
+      **Frontend Implementation:**
+      
+      1. CustomerLogin.js (Login/Register Page):
+         - Added "Continuar com Google" button to both tabs
+         - Styled with official Google colors and logo
+         - Redirects to: https://auth.emergentagent.com/?redirect=${minha-conta-url}
+         - Divider line with "ou" text for better UX
+      
+      2. CustomerAccount.js (Account Dashboard):
+         - Added Google OAuth callback handler in useEffect
+         - Checks URL fragment for session_id on page load
+         - Calls backend /api/auth/google/callback with session_id
+         - Stores returned JWT token in localStorage
+         - Cleans URL fragment after processing
+         - Shows success toast message
+         - Falls back to regular auth check if no session_id
+         - Fixed navigate paths from '/login' to '/entrar-cliente'
+      
+      **Authentication Flow:**
+      1. User clicks "Continuar com Google"
+      2. Redirects to Emergent Auth
+      3. User authenticates with Google
+      4. Redirects back to /minha-conta#session_id=XXX
+      5. Frontend detects session_id, shows loading
+      6. Calls backend to exchange session_id for token
+      7. Backend validates session, creates/updates user
+      8. Frontend stores token, cleans URL, shows dashboard
+      
+      **Security Features:**
+      - ✅ No password storage for Google users
+      - ✅ Automatic account linking by email
+      - ✅ Session expiry management (7 days)
+      - ✅ Clean URL after auth (removes session_id from fragment)
+      - ✅ JWT token for subsequent API calls
+      
+      **User Experience:**
+      - ✅ One-click login for customers
+      - ✅ Auto-fills profile with Google data
+      - ✅ Profile picture from Google
+      - ✅ No need to remember password
+      - ✅ Available on both login and register tabs
+      
+      **Ready for Testing:**
+      - Google OAuth callback endpoint (/api/auth/google/callback)
+      - Google login button UI (CustomerLogin.js)
+      - Session_id processing (CustomerAccount.js)
+      - Auto-create customer accounts
+      - Profile picture and name from Google
+      
+      Please test complete Google login flow end-to-end with real Google account!
+
       - ✅ Returns valid JWT token
       - ✅ Token works for subsequent authenticated requests
       
