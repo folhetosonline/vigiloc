@@ -1762,8 +1762,8 @@ class CRMTester:
             
             # 4. Reorder content block
             self.log(f"Testing PUT /admin/content-blocks/{created_block['id']}/reorder...")
-            # Check the reorder endpoint signature
-            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}/reorder", params={"new_order": 1})
+            # The new_order is a query parameter
+            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}/reorder?new_order=1")
             
             if response.status_code == 200:
                 self.log("✅ Content block reordered successfully")
