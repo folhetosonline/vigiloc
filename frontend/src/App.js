@@ -25,6 +25,9 @@ import AdminContent from "@/pages/admin/Content";
 import AdminContacts from "@/pages/admin/Contacts";
 import AdminBanners from "@/pages/admin/Banners";
 import AdminCoupons from "@/pages/admin/Coupons";
+import PageBuilder from "@/pages/admin/PageBuilder";
+import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
+import ContentBlockEditor from "@/pages/admin/ContentBlockEditor";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
