@@ -141,6 +141,7 @@ function App() {
               <Route path="page-builder" element={<PageBuilder />} />
               <Route path="page-editor/:pageId" element={<ContentBlockEditor />} />
               <Route path="theme-customizer" element={<ThemeCustomizer />} />
+              <Route path="navbar-customizer" element={<NavbarCustomizer />} />
             </Route>
           </Routes>
           <Toaster position="top-right" />
