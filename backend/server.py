@@ -1304,8 +1304,9 @@ async def register_customer(data: dict):
     user = User(
         name=data.get("name"),
         email=data.get("email"),
-        password=hashed_password,
+        password_hash=hashed_password,
         phone=data.get("phone"),
+        cpf=data.get("cpf"),
         role="customer"
     )
     
