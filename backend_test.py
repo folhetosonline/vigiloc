@@ -1738,15 +1738,23 @@ class CRMTester:
             response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}", update_data)
             
             if response.status_code == 200:
-                updated_block = response.json()
+                result = response.json()
                 self.log("✅ Content block updated successfully")
                 
-                # Verify update
-                if updated_block['content']['title'] == "Bem-vindo ao VigiLoc - ATUALIZADO":
-                    self.log("✅ Content block content updated correctly")
-                    self.passed_tests.append("Update Content Block")
+                # Verify update by fetching the block again
+                verify_response = self.make_request("GET", f"/admin/content-blocks/{page_id}")
+                if verify_response.status_code == 200:
+                    updated_blocks = verify_response.json()
+                    updated_block = next((b for b in updated_blocks if b['id'] == created_block['id']), None)
+                    
+                    if updated_block and updated_block['content']['title'] == "Bem-vindo ao VigiLoc - ATUALIZADO":
+                        self.log("✅ Content block content updated correctly")
+                        self.passed_tests.append("Update Content Block")
+                    else:
+                        self.log("❌ Content block content not updated correctly")
+                        self.failed_tests.append("Update Content Block")
                 else:
-                    self.log("❌ Content block content not updated correctly")
+                    self.log("❌ Failed to verify content block update")
                     self.failed_tests.append("Update Content Block")
             else:
                 self.log(f"❌ Failed to update content block: {response.status_code} - {response.text}")
@@ -1754,7 +1762,8 @@ class CRMTester:
             
             # 4. Reorder content block
             self.log(f"Testing PUT /admin/content-blocks/{created_block['id']}/reorder...")
-            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}/reorder", {"new_order": 1})
+            # Check the reorder endpoint signature
+            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}/reorder", params={"new_order": 1})
             
             if response.status_code == 200:
                 self.log("✅ Content block reordered successfully")
