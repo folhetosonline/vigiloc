@@ -1922,6 +1922,27 @@ async def get_all_pages(current_user: User = Depends(get_current_admin)):
                 page[field] = datetime.fromisoformat(page[field])
     return pages
 
+@api_router.get("/admin/all-pages")
+async def get_all_pages_including_system(current_user: User = Depends(get_current_admin)):
+    """Get both system pages and custom pages"""
+    # Define system pages
+    system_pages = [
+        {"id": "home", "name": "Home", "slug": "/", "type": "system", "editable": True, "removable": False},
+        {"id": "produtos", "name": "Produtos", "slug": "/produtos", "type": "system", "editable": True, "removable": False},
+        {"id": "totens", "name": "Totens", "slug": "/totens", "type": "system", "editable": True, "removable": False},
+        {"id": "contato", "name": "Contato", "slug": "/contato", "type": "system", "editable": True, "removable": False},
+        {"id": "sobre", "name": "Sobre", "slug": "/sobre", "type": "system", "editable": True, "removable": False},
+    ]
+    
+    # Get custom pages
+    custom_pages = await db.custom_pages.find({}, {"_id": 0}).to_list(1000)
+    for page in custom_pages:
+        page["type"] = "custom"
+        page["editable"] = True
+        page["removable"] = True
+    
+    return {"system": system_pages, "custom": custom_pages}
+
 @api_router.get("/pages/{slug}")
 async def get_page_by_slug(slug: str):
     """Get published page by slug - Public"""
