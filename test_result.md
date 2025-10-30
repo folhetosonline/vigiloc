@@ -656,10 +656,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "New Features Testing - COMPLETED"
-    - "All Backend Systems - WORKING"
-    - "Frontend New Features - TESTED AND WORKING"
-  stuck_tasks: []
+    - "Customer Account Registration Fix - IMPLEMENTED, NEEDS TESTING"
+    - "Customer Registration with Phone, CPF fields"
+    - "Customer Profile with Address Management"
+  stuck_tasks:
+    - "Customer Account Registration (was failing with KeyError)"
   test_all: false
   test_priority: "high_first"
 
