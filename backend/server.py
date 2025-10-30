@@ -1403,14 +1403,14 @@ async def change_customer_password(
     user_doc = await db.users.find_one({"id": current_user.id})
     
     # Verify current password
-    if not pwd_context.verify(data.get("current_password"), user_doc['password']):
+    if not pwd_context.verify(data.get("current_password"), user_doc['password_hash']):
         raise HTTPException(status_code=400, detail="Senha atual incorreta")
     
     # Update password
     hashed_password = pwd_context.hash(data.get("new_password"))
     await db.users.update_one(
         {"id": current_user.id},
-        {"$set": {"password": hashed_password}}
+        {"$set": {"password_hash": hashed_password}}
     )
     
     return {"message": "Senha alterada com sucesso"}
