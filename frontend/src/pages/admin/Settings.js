@@ -257,9 +257,26 @@ const Settings = () => {
 
       <Tabs defaultValue="site" className="w-full">
         <TabsList>
-          <TabsTrigger value="site">Configurações do Site</TabsTrigger>
-          <TabsTrigger value="users">Gerenciar Usuários</TabsTrigger>
-          <TabsTrigger value="profile">Meu Perfil</TabsTrigger>
+          <TabsTrigger value="site">
+            <Globe className="w-4 h-4 mr-2" />
+            Site
+          </TabsTrigger>
+          <TabsTrigger value="tracking">
+            <Code className="w-4 h-4 mr-2" />
+            Tracking
+          </TabsTrigger>
+          <TabsTrigger value="seo">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            SEO
+          </TabsTrigger>
+          <TabsTrigger value="users">
+            <User className="w-4 h-4 mr-2" />
+            Usuários
+          </TabsTrigger>
+          <TabsTrigger value="profile">
+            <Key className="w-4 h-4 mr-2" />
+            Perfil
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="site">
