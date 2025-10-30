@@ -7,9 +7,9 @@ import { ShoppingBag, User, Key, Package, TrendingUp } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
 import { toast } from "sonner";
-import MyOrders from "./MyOrders";
-import MyProfile from "./MyProfile";
-import ChangePassword from "./ChangePassword";
+import MyOrders from "./customer/MyOrders";
+import MyProfile from "./customer/MyProfile";
+import ChangePassword from "./customer/ChangePassword";
 
 const CustomerAccount = () => {
   const navigate = useNavigate();
