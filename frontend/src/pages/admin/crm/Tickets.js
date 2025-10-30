@@ -196,10 +196,10 @@ const Tickets = () => {
 
                   <div className="col-span-2">
                     <label className="block text-sm font-medium mb-2">Equipamento (Opcional)</label>
-                    <Select value={formData.equipment_id} onValueChange={(value) => setFormData({...formData, equipment_id: value})}>
+                    <Select value={formData.equipment_id || "none"} onValueChange={(value) => setFormData({...formData, equipment_id: value === "none" ? "" : value})}>
                       <SelectTrigger><SelectValue placeholder="Selecione um equipamento" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Nenhum</SelectItem>
+                        <SelectItem value="none">Nenhum</SelectItem>
                         {equipment.filter(eq => eq.customer_id === formData.customer_id).map(eq => (
                           <SelectItem key={eq.id} value={eq.id}>{eq.equipment_type} - {eq.serial_number}</SelectItem>
                         ))}
