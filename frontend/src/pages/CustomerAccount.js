@@ -17,7 +17,46 @@ const CustomerAccount = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuth();
+    // Check for Google OAuth session_id in URL fragment first
+    const handleGoogleCallback = async () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('session_id=')) {
+        const sessionId = hash.split('session_id=')[1].split('&')[0];
+        
+        try {
+          // Call backend to exchange session_id for our token
+          const response = await axios.post(`${API}/auth/google/callback`, {
+            session_id: sessionId
+          });
+          
+          // Store token
+          localStorage.setItem('customer_token', response.data.token);
+          
+          // Clean URL
+          window.history.replaceState(null, '', window.location.pathname);
+          
+          // Set user data
+          setUser(response.data.user);
+          setLoading(false);
+          
+          toast.success('Login com Google realizado com sucesso!');
+          return true;
+        } catch (error) {
+          console.error('Google auth error:', error);
+          toast.error('Erro ao fazer login com Google');
+          navigate('/entrar-cliente');
+          return false;
+        }
+      }
+      return false;
+    };
+
+    // Try Google callback first, if not present check regular auth
+    handleGoogleCallback().then((googleAuthHandled) => {
+      if (!googleAuthHandled) {
+        checkAuth();
+      }
+    });
   }, []);
 
   const checkAuth = async () => {
