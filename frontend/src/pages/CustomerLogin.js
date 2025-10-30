@@ -15,7 +15,8 @@ const CustomerLogin = () => {
     name: "",
     email: "",
     password: "",
-    phone: ""
+    phone: "",
+    cpf: ""
   });
   const [loading, setLoading] = useState(false);
 
