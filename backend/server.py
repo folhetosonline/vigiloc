@@ -16,6 +16,7 @@ import shutil
 import aiofiles
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content
+import httpx
 
 
 ROOT_DIR = Path(__file__).parent
