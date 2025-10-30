@@ -331,6 +331,31 @@ class SiteSettings(BaseModel):
     address: Optional[str] = None
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class NavbarSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "navbar_settings"
+    background_color: str = "#FFFFFF"
+    text_color: str = "#1F2937"
+    hover_color: str = "#3B82F6"
+    font_family: str = "Inter"
+    font_size: str = "base"  # sm, base, lg
+    height: str = "16"  # Tailwind units (16 = 4rem = 64px)
+    logo_size: str = "10"  # Tailwind units
+    show_logo: bool = True
+    show_site_name: bool = True
+    sticky: bool = True
+    shadow: bool = True
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SystemPage(BaseModel):
+    """Pages that are part of the system (not custom)"""
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    name: str
+    slug: str
+    editable: bool = True  # If content blocks can be added
+    removable: bool = False  # System pages cannot be removed
+
 
 # ==================== ADVANCED ADMIN MODELS ====================
 
