@@ -383,7 +383,7 @@ class SEOSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = "seo_settings"
     # Site basics
-    site_url: str = "https://securecommerce-hub.preview.emergentagent.com"
+    site_url: str = "https://secushop.preview.emergentagent.com"
     default_meta_title: str = "VigiLoc - Segurança Inteligente"
     default_meta_description: str = "Soluções de segurança inteligente"
     default_keywords: str = "segurança, câmeras, vigilância"
@@ -3132,7 +3132,7 @@ async def generate_sitemap(current_user: User = Depends(get_current_admin)):
     """Generate sitemap.xml"""
     try:
         seo_settings = await db.seo_settings.find_one({"id": "seo_settings"}, {"_id": 0})
-        site_url = seo_settings.get('site_url', 'https://securecommerce-hub.preview.emergentagent.com') if seo_settings else 'https://securecommerce-hub.preview.emergentagent.com'
+        site_url = seo_settings.get('site_url', 'https://secushop.preview.emergentagent.com') if seo_settings else 'https://secushop.preview.emergentagent.com'
         
         # Get all published pages and products
         products = await db.products.find({"published": True}, {"_id": 0, "id": 1, "timestamp": 1}).to_list(1000)

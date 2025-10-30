@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://securecommerce-hub.preview.emergentagent.com/api"
+BASE_URL = "https://secushop.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@vigiloc.com"
 ADMIN_PASSWORD = "admin123"
 
