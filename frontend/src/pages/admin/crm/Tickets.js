@@ -84,7 +84,7 @@ const Tickets = () => {
     setEditingTicket(ticket);
     setFormData({
       customer_id: ticket.customer_id,
-      equipment_id: ticket.equipment_id || "",
+      equipment_id: ticket.equipment_id || "none",
       title: ticket.title,
       description: ticket.description,
       priority: ticket.priority,
