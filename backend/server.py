@@ -1328,7 +1328,7 @@ async def login_customer(data: dict):
     }
 
 @api_router.get("/customer/me")
-async def get_customer_profile(current_user: User = Depends(get_current_user)):
+async def get_customer_profile(current_user: User = Depends(get_customer_user)):
     """Get current customer profile"""
     return {
         "id": current_user.id,
