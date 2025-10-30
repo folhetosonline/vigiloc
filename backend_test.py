@@ -1828,10 +1828,12 @@ class CRMTester:
         self.log("\n=== TESTING CUSTOMER ACCOUNT REGISTRATION & MANAGEMENT SYSTEM ===")
         
         try:
-            # Test data for customer registration
+            # Test data for customer registration (use unique email)
+            import time
+            unique_email = f"maria.santos.{int(time.time())}@test.com"
             customer_data = {
                 "name": "Maria Santos",
-                "email": "maria.santos@test.com",
+                "email": unique_email,
                 "password": "senha123",
                 "phone": "(11) 98765-4321",
                 "cpf": "123.456.789-00"
