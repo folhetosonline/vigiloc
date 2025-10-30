@@ -608,6 +608,31 @@ frontend:
         agent: "main"
         comment: "All CRM routes added and working"
       - working: true
+
+  - task: "Customer Registration Form with CPF"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/CustomerLogin.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added CPF field to customer registration form. Form now collects: name, email, phone, cpf, password. NEEDS TESTING."
+
+  - task: "Customer Profile with Address Fields"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/customer/MyProfile.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added CPF and complete address fields to customer profile page. Address fields include: street, number, complement, neighborhood, city, state, zip. Organized in responsive grid layout. NEEDS TESTING."
+
         agent: "testing"
         comment: "✅ VERIFIED: All routes functional based on previous comprehensive testing"
 
