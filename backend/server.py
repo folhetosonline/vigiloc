@@ -1282,20 +1282,20 @@ async def create_order(order_data: OrderCreate, session_id: Optional[str] = None
 # ==================== CUSTOMER ACCOUNT ROUTES ====================
 
 @api_router.post("/customer/register")
-async def register_customer(name: str, email: EmailStr, password: str, phone: str):
+async def register_customer(data: dict):
     """Register new customer account"""
     # Check if email already exists
-    existing = await db.users.find_one({"email": email})
+    existing = await db.users.find_one({"email": data.get("email")})
     if existing:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
     
     # Create user
-    hashed_password = pwd_context.hash(password)
+    hashed_password = pwd_context.hash(data.get("password"))
     user = User(
-        name=name,
-        email=email,
+        name=data.get("name"),
+        email=data.get("email"),
         password=hashed_password,
-        phone=phone,
+        phone=data.get("phone"),
         role="customer"
     )
     
@@ -1318,17 +1318,17 @@ async def register_customer(name: str, email: EmailStr, password: str, phone: st
     }
 
 @api_router.post("/customer/login")
-async def login_customer(email: EmailStr, password: str):
+async def login_customer(data: dict):
     """Customer login"""
-    user_doc = await db.users.find_one({"email": email})
+    user_doc = await db.users.find_one({"email": data.get("email")})
     if not user_doc:
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
     
-    if not pwd_context.verify(password, user_doc['password']):
+    if not pwd_context.verify(data.get("password"), user_doc['password']):
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
     
     # Generate token
-    token = create_access_token(data={"sub": email})
+    token = create_access_token(data={"sub": data.get("email")})
     
     return {
         "token": token,
