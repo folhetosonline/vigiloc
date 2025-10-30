@@ -77,6 +77,107 @@ const MyProfile = ({ user, onUpdate }) => {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-2">CPF</label>
+            <Input
+              required
+              value={formData.cpf}
+              onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+              placeholder="000.000.000-00"
+            />
+          </div>
+
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-lg font-semibold mb-4">Endereço</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2">CEP</label>
+                <Input
+                  value={formData.address.zip}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, zip: e.target.value }
+                  })}
+                  placeholder="00000-000"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2">Rua</label>
+                <Input
+                  value={formData.address.street}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, street: e.target.value }
+                  })}
+                  placeholder="Nome da rua"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Número</label>
+                <Input
+                  value={formData.address.number}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, number: e.target.value }
+                  })}
+                  placeholder="123"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Complemento</label>
+                <Input
+                  value={formData.address.complement}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, complement: e.target.value }
+                  })}
+                  placeholder="Apto, Bloco..."
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2">Bairro</label>
+                <Input
+                  value={formData.address.neighborhood}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, neighborhood: e.target.value }
+                  })}
+                  placeholder="Nome do bairro"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Cidade</label>
+                <Input
+                  value={formData.address.city}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, city: e.target.value }
+                  })}
+                  placeholder="Nome da cidade"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Estado</label>
+                <Input
+                  value={formData.address.state}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    address: { ...formData.address, state: e.target.value }
+                  })}
+                  placeholder="SP"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+          </div>
+
           <Button type="submit" disabled={loading}>
             <Save className="w-4 h-4 mr-2" />
             {loading ? 'Salvando...' : 'Salvar Alterações'}
