@@ -1353,29 +1353,28 @@ async def get_customer_profile(current_user: User = Depends(get_current_user)):
     }
 
 @api_router.put("/customer/profile")
-async def update_customer_profile(name: str, phone: str, current_user: User = Depends(get_current_user)):
+async def update_customer_profile(data: dict, current_user: User = Depends(get_current_user)):
     """Update customer profile"""
     await db.users.update_one(
         {"id": current_user.id},
-        {"$set": {"name": name, "phone": phone}}
+        {"$set": {"name": data.get("name"), "phone": data.get("phone")}}
     )
     return {"message": "Perfil atualizado com sucesso"}
 
 @api_router.put("/customer/change-password")
 async def change_customer_password(
-    current_password: str, 
-    new_password: str, 
+    data: dict,
     current_user: User = Depends(get_current_user)
 ):
     """Change customer password"""
     user_doc = await db.users.find_one({"id": current_user.id})
     
     # Verify current password
-    if not pwd_context.verify(current_password, user_doc['password']):
+    if not pwd_context.verify(data.get("current_password"), user_doc['password']):
         raise HTTPException(status_code=400, detail="Senha atual incorreta")
     
     # Update password
-    hashed_password = pwd_context.hash(new_password)
+    hashed_password = pwd_context.hash(data.get("new_password"))
     await db.users.update_one(
         {"id": current_user.id},
         {"$set": {"password": hashed_password}}
