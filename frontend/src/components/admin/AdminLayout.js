@@ -2,7 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, Package, ShoppingCart, Truck, FolderOpen, FileText, 
   MessageSquare, LogOut, Users, Settings, Eye, Image, Ticket, 
-  DollarSign, Wrench, Bell, ClipboardList, Building2, BoxIcon, Layout, Palette
+  DollarSign, Wrench, Bell, ClipboardList, Building2, BoxIcon, Layout, Palette, Menu, BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
