@@ -714,6 +714,45 @@ agent_communication:
       🚀 BACKEND SISTEMA COMPLETO E FUNCIONAL! Only 1 minor issue (duplicate email in user creation test).
   - agent: "testing"
     message: |
+      🎯 NEW FEATURES TESTING COMPLETE - ALL NEW SYSTEMS WORKING PERFECTLY!
+      
+      ✅ COMPREHENSIVE TESTING OF NEW FEATURES (100% SUCCESS RATE):
+      
+      📊 TESTED ALL NEW FEATURES AS REQUESTED:
+      
+      **1. PRODUCT BADGES AND PAGES SYSTEM (4/4 PASSED):**
+      - ✅ POST /api/admin/products: Creates products with badges ['novidade', 'top-linha'] and show_on_pages ['totens', 'home']
+      - ✅ GET /api/products/by-page/totens: Returns 3 products filtered by 'totens' page
+      - ✅ GET /api/products/by-page/totens?badges=novidade,top-linha: Filters products by both page and badges
+      - ✅ PUT /api/admin/products/{id}: Successfully updates badges to ['novidade', 'top-linha', 'oferta']
+      
+      **2. MANUAL ORDER CREATION (3/3 PASSED):**
+      - ✅ POST /api/admin/orders/create: Creates manual order ORD-00003 with correct totals
+      - ✅ Order calculation: Subtotal R$ 2599.98 + Shipping R$ 50.00 = Total R$ 2649.98
+      - ✅ GET /api/admin/orders: Manual order appears in orders list correctly
+      
+      **3. CONTENT BLOCKS CMS (8/8 PASSED):**
+      - ✅ POST /api/admin/pages: Creates custom page for content blocks
+      - ✅ POST /api/admin/content-blocks: Creates hero block with settings and content
+      - ✅ GET /api/admin/content-blocks/{page_id}: Lists 1 content block for page
+      - ✅ PUT /api/admin/content-blocks/{id}: Updates block content successfully
+      - ✅ PUT /api/admin/content-blocks/{id}/reorder: Changes block order (query param)
+      - ✅ GET /api/content-blocks/{page_id}/published: Returns only published blocks
+      - ✅ DELETE /api/admin/content-blocks/{id}: Removes block successfully
+      - ✅ Verification: Block deletion confirmed by re-checking page blocks
+      
+      🔍 VERIFIED CRITICAL FEATURES:
+      - Product badges system: ['novidade', 'lancamento', 'custo-beneficio', 'top-linha', 'oferta', 'destaque']
+      - Product pages system: ['home', 'totens', 'produtos', 'todas']
+      - Badge filtering with comma-separated values working correctly
+      - Page filtering with OR logic (show_on_pages contains page OR 'todas')
+      - Manual order creation with proper total calculations
+      - Content blocks with full CRUD operations and publication control
+      - CMS system ready for dynamic page building
+      
+      🚀 ALL NEW FEATURES WORKING PERFECTLY! Sistema pronto para produção.
+  - agent: "testing"
+    message: |
       🎯 NEW ADMIN FEATURES TESTING COMPLETE - ALL TESTS PASSED! 
       
       ✅ COMPREHENSIVE TESTING OF NEW ADMIN FEATURES (12/12 PASSED - 100% SUCCESS RATE):
