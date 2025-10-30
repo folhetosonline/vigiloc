@@ -143,6 +143,7 @@ function App() {
               <Route path="page-editor/:pageId" element={<ContentBlockEditor />} />
               <Route path="theme-customizer" element={<ThemeCustomizer />} />
               <Route path="navbar-customizer" element={<NavbarCustomizer />} />
+              <Route path="reports" element={<Reports />} />
             </Route>
           </Routes>
           <Toaster position="top-right" />
