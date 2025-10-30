@@ -646,6 +646,32 @@ frontend:
     needs_retesting: true
     status_history:
       - working: "NA"
+
+
+  - task: "Google Social Login Button"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/CustomerLogin.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 'Continuar com Google' button to both login and register tabs. Button redirects to Emergent Auth (https://auth.emergentagent.com) with redirect_url=/minha-conta. Includes Google logo SVG. NEEDS TESTING."
+
+  - task: "Google OAuth Callback Handling"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/CustomerAccount.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Google OAuth callback handler in CustomerAccount page. On mount, checks URL fragment for session_id, calls backend /api/auth/google/callback, stores token, cleans URL, shows success toast. Updated navigate paths from '/login' to '/entrar-cliente'. NEEDS TESTING."
+
         agent: "main"
         comment: "Added CPF and complete address fields to customer profile page. Address fields include: street, number, complement, neighborhood, city, state, zip. Organized in responsive grid layout. NEEDS TESTING."
 
