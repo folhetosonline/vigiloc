@@ -1450,6 +1450,370 @@ class CRMTester:
             self.failed_tests.append("New Admin Features")
             return False
 
+    def test_new_product_features(self) -> bool:
+        """Test NEW PRODUCT FEATURES: Badges and Pages System"""
+        self.log("\n=== TESTING NEW PRODUCT FEATURES: BADGES AND PAGES ===")
+        
+        try:
+            # 1. Create product with badges and show_on_pages
+            self.log("Testing POST /admin/products with badges and pages...")
+            product_data = {
+                "name": "Totem Ultra 360",
+                "category": "Totens",
+                "description": "Totem com câmera 360 graus",
+                "price": 1299.99,
+                "image": "test.jpg",
+                "features": ["360°", "Visão Noturna"],
+                "inStock": True,
+                "quantity": 10,
+                "show_on_pages": ["totens", "home"],
+                "badges": ["novidade", "top-linha"],
+                "published": True
+            }
+            
+            response = self.make_request("POST", "/admin/products", product_data)
+            
+            if response.status_code == 200:
+                created_product = response.json()
+                self.test_data['badge_product'] = created_product
+                self.log(f"✅ Product with badges created: {created_product['name']}")
+                self.log(f"  • Badges: {created_product.get('badges', [])}")
+                self.log(f"  • Show on pages: {created_product.get('show_on_pages', [])}")
+                self.passed_tests.append("Create Product with Badges and Pages")
+            else:
+                self.log(f"❌ Failed to create product with badges: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Product with Badges and Pages")
+                return False
+            
+            # 2. Test GET /api/products/by-page/totens
+            self.log("Testing GET /products/by-page/totens...")
+            response = self.make_request("GET", "/products/by-page/totens")
+            
+            if response.status_code == 200:
+                totens_products = response.json()
+                self.log(f"✅ Retrieved {len(totens_products)} products for 'totens' page")
+                
+                # Verify our product is in the list
+                our_product = next((p for p in totens_products if p['id'] == created_product['id']), None)
+                if our_product:
+                    self.log("✅ Product correctly appears in 'totens' page")
+                    self.passed_tests.append("Filter Products by Page - totens")
+                else:
+                    self.log("❌ Product not found in 'totens' page")
+                    self.failed_tests.append("Filter Products by Page - totens")
+                
+            else:
+                self.log(f"❌ Failed to get products by page: {response.status_code} - {response.text}")
+                self.failed_tests.append("Filter Products by Page - totens")
+            
+            # 3. Test GET /api/products/by-page/totens?badges=novidade,top-linha
+            self.log("Testing GET /products/by-page/totens?badges=novidade,top-linha...")
+            response = self.make_request("GET", "/products/by-page/totens", params={"badges": "novidade,top-linha"})
+            
+            if response.status_code == 200:
+                filtered_products = response.json()
+                self.log(f"✅ Retrieved {len(filtered_products)} products with badges filter")
+                
+                # Verify products have the requested badges
+                for product in filtered_products:
+                    product_badges = product.get('badges', [])
+                    has_badge = any(badge in product_badges for badge in ["novidade", "top-linha"])
+                    if not has_badge:
+                        self.log(f"❌ Product {product['name']} doesn't have required badges")
+                        self.failed_tests.append("Verify Badge Filter")
+                        break
+                else:
+                    self.log("✅ All filtered products have required badges")
+                    self.passed_tests.append("Filter Products by Badges")
+                
+            else:
+                self.log(f"❌ Failed to filter products by badges: {response.status_code} - {response.text}")
+                self.failed_tests.append("Filter Products by Badges")
+            
+            # 4. Test updating product to add more badges
+            self.log("Testing PUT /admin/products/{id} to add more badges...")
+            update_data = product_data.copy()
+            update_data['badges'] = ["novidade", "top-linha", "oferta"]
+            update_data['show_on_pages'] = ["totens", "home", "todas"]
+            
+            response = self.make_request("PUT", f"/admin/products/{created_product['id']}", update_data)
+            
+            if response.status_code == 200:
+                updated_product = response.json()
+                self.log(f"✅ Product updated with new badges: {updated_product.get('badges', [])}")
+                self.passed_tests.append("Update Product Badges")
+            else:
+                self.log(f"❌ Failed to update product badges: {response.status_code} - {response.text}")
+                self.failed_tests.append("Update Product Badges")
+            
+            return len([t for t in self.failed_tests if "Product" in t or "Badge" in t or "Page" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ New Product Features test error: {str(e)}", "ERROR")
+            self.failed_tests.append("New Product Features")
+            return False
+    
+    def test_manual_order_creation(self) -> bool:
+        """Test MANUAL ORDER CREATION"""
+        self.log("\n=== TESTING MANUAL ORDER CREATION ===")
+        
+        try:
+            # Get a product for the order
+            if not self.test_data.get('badge_product'):
+                self.log("❌ No product available for order creation")
+                self.failed_tests.append("Manual Order Creation - No Product")
+                return False
+            
+            product = self.test_data['badge_product']
+            
+            # Create manual order
+            self.log("Testing POST /admin/orders/create...")
+            order_data = {
+                "customer_name": "João Silva",
+                "customer_email": "joao@test.com",
+                "customer_phone": "11999999999",
+                "shipping_address": {
+                    "street": "Rua Teste",
+                    "number": "123",
+                    "neighborhood": "Centro",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "zipcode": "01234-567"
+                },
+                "shipping_method": "manual",
+                "shipping_cost": 50,
+                "payment_method": "pix",
+                "status": "confirmed",
+                "items": [
+                    {
+                        "product_id": product['id'],
+                        "product_name": product['name'],
+                        "price": product['price'],
+                        "quantity": 2,
+                        "image": product['image']
+                    }
+                ]
+            }
+            
+            response = self.make_request("POST", "/admin/orders/create", order_data)
+            
+            if response.status_code == 200:
+                created_order = response.json()
+                self.test_data['manual_order'] = created_order
+                self.log(f"✅ Manual order created: {created_order['order_number']}")
+                
+                # Verify totals calculation
+                expected_subtotal = product['price'] * 2
+                expected_total = expected_subtotal + 50  # shipping cost
+                
+                if (abs(created_order['subtotal'] - expected_subtotal) < 0.01 and 
+                    abs(created_order['total'] - expected_total) < 0.01):
+                    self.log("✅ Order totals calculated correctly")
+                    self.log(f"  • Subtotal: R$ {created_order['subtotal']:.2f}")
+                    self.log(f"  • Shipping: R$ {created_order['shipping_cost']:.2f}")
+                    self.log(f"  • Total: R$ {created_order['total']:.2f}")
+                    self.passed_tests.append("Manual Order - Correct Totals")
+                else:
+                    self.log("❌ Order totals not calculated correctly")
+                    self.failed_tests.append("Manual Order - Correct Totals")
+                
+                self.passed_tests.append("Create Manual Order")
+            else:
+                self.log(f"❌ Failed to create manual order: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Manual Order")
+                return False
+            
+            # Verify order appears in orders list
+            self.log("Testing GET /admin/orders to verify manual order...")
+            response = self.make_request("GET", "/admin/orders")
+            
+            if response.status_code == 200:
+                orders_list = response.json()
+                manual_order = next((o for o in orders_list if o['id'] == created_order['id']), None)
+                
+                if manual_order:
+                    self.log("✅ Manual order found in orders list")
+                    self.passed_tests.append("Verify Manual Order in List")
+                else:
+                    self.log("❌ Manual order not found in orders list")
+                    self.failed_tests.append("Verify Manual Order in List")
+            else:
+                self.log(f"❌ Failed to get orders list: {response.status_code} - {response.text}")
+                self.failed_tests.append("Verify Manual Order in List")
+            
+            return len([t for t in self.failed_tests if "Manual Order" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Manual Order Creation test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Manual Order Creation")
+            return False
+    
+    def test_content_blocks_cms(self) -> bool:
+        """Test CONTENT BLOCKS CMS"""
+        self.log("\n=== TESTING CONTENT BLOCKS CMS ===")
+        
+        try:
+            # First create a custom page to have a page_id
+            self.log("Creating custom page for content blocks...")
+            page_data = {
+                "slug": "test-cms-page",
+                "title": "Test CMS Page",
+                "meta_title": "Test CMS Page Meta",
+                "meta_description": "Test page for CMS content blocks",
+                "blocks": [],
+                "published": True
+            }
+            
+            response = self.make_request("POST", "/admin/pages", page_data)
+            
+            if response.status_code == 200:
+                created_page = response.json()
+                page_id = created_page['id']
+                self.test_data['cms_page'] = created_page
+                self.log(f"✅ Custom page created: {page_id}")
+            else:
+                self.log(f"❌ Failed to create custom page: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Custom Page for CMS")
+                return False
+            
+            # 1. Create content block - hero type
+            self.log("Testing POST /admin/content-blocks...")
+            block_data = {
+                "page_id": page_id,
+                "type": "hero",
+                "order": 0,
+                "settings": {
+                    "background_type": "image",
+                    "overlay_opacity": 0.5,
+                    "text_align": "center"
+                },
+                "content": {
+                    "background_url": "hero.jpg",
+                    "title": "Bem-vindo ao VigiLoc",
+                    "subtitle": "Segurança inteligente",
+                    "button_text": "Saiba Mais",
+                    "button_link": "/contato"
+                },
+                "published": True
+            }
+            
+            response = self.make_request("POST", "/admin/content-blocks", block_data)
+            
+            if response.status_code == 200:
+                created_block = response.json()
+                self.test_data['content_block'] = created_block
+                self.log(f"✅ Content block created: {created_block['type']} - {created_block['id']}")
+                self.passed_tests.append("Create Content Block")
+            else:
+                self.log(f"❌ Failed to create content block: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create Content Block")
+                return False
+            
+            # 2. List blocks for the page
+            self.log(f"Testing GET /admin/content-blocks/{page_id}...")
+            response = self.make_request("GET", f"/admin/content-blocks/{page_id}")
+            
+            if response.status_code == 200:
+                blocks_list = response.json()
+                self.log(f"✅ Retrieved {len(blocks_list)} content blocks for page")
+                
+                # Verify our block is in the list
+                our_block = next((b for b in blocks_list if b['id'] == created_block['id']), None)
+                if our_block:
+                    self.log("✅ Created block found in page blocks list")
+                    self.passed_tests.append("List Content Blocks")
+                else:
+                    self.log("❌ Created block not found in page blocks list")
+                    self.failed_tests.append("List Content Blocks")
+            else:
+                self.log(f"❌ Failed to list content blocks: {response.status_code} - {response.text}")
+                self.failed_tests.append("List Content Blocks")
+            
+            # 3. Update content block
+            self.log(f"Testing PUT /admin/content-blocks/{created_block['id']}...")
+            update_data = block_data.copy()
+            update_data['content']['title'] = "Bem-vindo ao VigiLoc - ATUALIZADO"
+            update_data['settings']['overlay_opacity'] = 0.7
+            
+            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}", update_data)
+            
+            if response.status_code == 200:
+                updated_block = response.json()
+                self.log("✅ Content block updated successfully")
+                
+                # Verify update
+                if updated_block['content']['title'] == "Bem-vindo ao VigiLoc - ATUALIZADO":
+                    self.log("✅ Content block content updated correctly")
+                    self.passed_tests.append("Update Content Block")
+                else:
+                    self.log("❌ Content block content not updated correctly")
+                    self.failed_tests.append("Update Content Block")
+            else:
+                self.log(f"❌ Failed to update content block: {response.status_code} - {response.text}")
+                self.failed_tests.append("Update Content Block")
+            
+            # 4. Reorder content block
+            self.log(f"Testing PUT /admin/content-blocks/{created_block['id']}/reorder...")
+            response = self.make_request("PUT", f"/admin/content-blocks/{created_block['id']}/reorder", {"new_order": 1})
+            
+            if response.status_code == 200:
+                self.log("✅ Content block reordered successfully")
+                self.passed_tests.append("Reorder Content Block")
+            else:
+                self.log(f"❌ Failed to reorder content block: {response.status_code} - {response.text}")
+                self.failed_tests.append("Reorder Content Block")
+            
+            # 5. Test public endpoint for published blocks
+            self.log(f"Testing GET /content-blocks/{page_id}/published...")
+            response = self.make_request("GET", f"/content-blocks/{page_id}/published")
+            
+            if response.status_code == 200:
+                published_blocks = response.json()
+                self.log(f"✅ Retrieved {len(published_blocks)} published content blocks")
+                
+                # Verify only published blocks are returned
+                all_published = all(b.get('published', False) for b in published_blocks)
+                if all_published:
+                    self.log("✅ All returned blocks are published")
+                    self.passed_tests.append("Get Published Content Blocks")
+                else:
+                    self.log("❌ Some returned blocks are not published")
+                    self.failed_tests.append("Get Published Content Blocks")
+            else:
+                self.log(f"❌ Failed to get published content blocks: {response.status_code} - {response.text}")
+                self.failed_tests.append("Get Published Content Blocks")
+            
+            # 6. Delete content block
+            self.log(f"Testing DELETE /admin/content-blocks/{created_block['id']}...")
+            response = self.make_request("DELETE", f"/admin/content-blocks/{created_block['id']}")
+            
+            if response.status_code == 200:
+                self.log("✅ Content block deleted successfully")
+                self.passed_tests.append("Delete Content Block")
+                
+                # Verify deletion
+                verify_response = self.make_request("GET", f"/admin/content-blocks/{page_id}")
+                if verify_response.status_code == 200:
+                    remaining_blocks = verify_response.json()
+                    deleted_block = next((b for b in remaining_blocks if b['id'] == created_block['id']), None)
+                    
+                    if not deleted_block:
+                        self.log("✅ Content block deletion verified")
+                        self.passed_tests.append("Verify Content Block Deletion")
+                    else:
+                        self.log("❌ Content block still exists after deletion")
+                        self.failed_tests.append("Verify Content Block Deletion")
+            else:
+                self.log(f"❌ Failed to delete content block: {response.status_code} - {response.text}")
+                self.failed_tests.append("Delete Content Block")
+            
+            return len([t for t in self.failed_tests if "Content Block" in t or "CMS" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Content Blocks CMS test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Content Blocks CMS")
+            return False
+
     def run_all_tests(self) -> bool:
         """Run all backend tests as requested in the review"""
         self.log("🚀 TESTE COMPLETO DE TODOS OS SISTEMAS DO BACKEND")
