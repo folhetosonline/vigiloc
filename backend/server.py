@@ -730,66 +730,7 @@ async def login(response: Response, user_data: UserLogin):
     
     return {"token": token, "user": {"id": user['id'], "email": user['email'], "name": user['name'], "is_admin": user.get('is_admin', False)}}
 
-@api_router.post("/auth/google/callback")
-async def google_callback(request: Request, response: Response):
-    session_id = request.headers.get('X-Session-ID')
-    if not session_id:
-        raise HTTPException(status_code=400, detail="Session ID required")
-    
-    import httpx
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-            headers={"X-Session-ID": session_id}
-        )
-        if resp.status_code != 200:
-            raise HTTPException(status_code=400, detail="Invalid session")
-        
-        session_data = resp.json()
-    
-    # Check if user exists
-    user = await db.users.find_one({"email": session_data['email']}, {"_id": 0})
-    
-    if not user:
-        # Create new user
-        new_user = User(
-            email=session_data['email'],
-            name=session_data['name'],
-            google_id=session_data['id'],
-            picture=session_data.get('picture'),
-            is_admin=False
-        )
-        doc = new_user.model_dump()
-        doc['created_at'] = doc['created_at'].isoformat()
-        await db.users.insert_one(doc)
-        user = doc
-    
-    # Create JWT token
-    token = create_access_token({"sub": user['id']})
-    
-    # Store session
-    session = Session(
-        user_id=user['id'],
-        session_token=session_data['session_token'],
-        expires_at=datetime.now(timezone.utc) + timedelta(days=7)
-    )
-    sess_doc = session.model_dump()
-    sess_doc['expires_at'] = sess_doc['expires_at'].isoformat()
-    sess_doc['created_at'] = sess_doc['created_at'].isoformat()
-    await db.sessions.insert_one(sess_doc)
-    
-    # Set httpOnly cookie
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=ACCESS_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        path="/"
-    )
-    
-    return {"token": token, "user": {"id": user['id'], "email": user['email'], "name": user['name'], "is_admin": user.get('is_admin', False)}}
+# Duplicate Google OAuth callback removed - using the correct implementation below
 
 @api_router.get("/auth/me")
 async def get_me(current_user: User = Depends(get_current_user)):
