@@ -399,6 +399,22 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Product filtering working perfectly. GET /api/products/by-page/totens returns 3 products for 'totens' page. GET /api/products/by-page/totens?badges=novidade,top-linha filters products by badges and returns only products with specified badges. All products correctly filtered by page and badge combinations. Filtering logic working as expected."
 
+  - task: "Customer Account Registration with Extended Fields"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: 'Dando erro ao criar a conta ainda' (Still getting error when creating account). KeyError: 'password' due to missing phone field in User model"
+      - working: "NA"
+        agent: "main"
+        comment: "FIXED: Added phone, cpf, and address fields (address_street, address_number, address_complement, address_neighborhood, address_city, address_state, address_zip) to User model. Fixed password_hash vs password inconsistency in customer registration endpoint. Updated customer/register to accept cpf. Updated customer/profile GET and PUT endpoints to handle address fields. Fixed customer/change-password to use password_hash. Backend restarted. NEEDS TESTING."
+
+
 frontend:
   - task: "Product Badges and Pages System"
     implemented: true
