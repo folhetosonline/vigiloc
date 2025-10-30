@@ -6,11 +6,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Pencil, Trash2, Key, Shield, User, Globe, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Key, Shield, User, Globe, Upload, TrendingUp, Code } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import TrackingManager from "./TrackingManager";
+import SEOManager from "./SEOManager";
 
 const Settings = () => {
   const [users, setUsers] = useState([]);
