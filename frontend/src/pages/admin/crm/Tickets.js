@@ -97,7 +97,7 @@ const Tickets = () => {
   const resetForm = () => {
     setFormData({
       customer_id: "",
-      equipment_id: "",
+      equipment_id: "none",
       title: "",
       description: "",
       priority: "medium",
