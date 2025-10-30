@@ -1904,7 +1904,9 @@ class CRMTester:
                 # Temporarily store admin token
                 admin_token = self.session.headers.get('Authorization')
                 # Set customer token
-                self.session.headers.update({"Authorization": f"Bearer {self.test_data['customer_token']}"})
+                customer_token = self.test_data['customer_token']
+                self.session.headers.update({"Authorization": f"Bearer {customer_token}"})
+                self.log(f"Using customer token: {customer_token[:50]}...")
                 
                 # 3. Get Customer Profile (GET /api/customer/me)
                 self.log("3. Testing Get Customer Profile (GET /customer/me)...")
