@@ -2329,6 +2329,29 @@ async def update_site_settings(settings_data: dict, current_user: User = Depends
     )
     return {"message": "Configurações do site atualizadas com sucesso"}
 
+# ==================== NAVBAR SETTINGS ROUTES ====================
+
+@api_router.get("/navbar-settings")
+async def get_navbar_settings():
+    """Get navbar settings - Public"""
+    settings = await db.navbar_settings.find_one({"id": "navbar_settings"}, {"_id": 0})
+    if not settings:
+        # Return defaults
+        return NavbarSettings().model_dump()
+    return settings
+
+@api_router.put("/admin/navbar-settings")
+async def update_navbar_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update navbar settings - Admin only"""
+    settings_data['id'] = "navbar_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.navbar_settings.update_one(
+        {"id": "navbar_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Configurações da navbar atualizadas com sucesso"}
 
 
 # ==================== NOTIFICATION/AUTOMATION ROUTES ====================
