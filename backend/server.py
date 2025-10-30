@@ -77,10 +77,20 @@ class User(BaseModel):
     name: str
     password_hash: Optional[str] = None
     is_admin: bool = False
-    role: str = "viewer"  # admin, manager, editor, viewer
+    role: str = "viewer"  # admin, manager, editor, viewer, customer
     google_id: Optional[str] = None
     picture: Optional[str] = None
     active: bool = True
+    # Customer fields
+    phone: Optional[str] = None
+    cpf: Optional[str] = None
+    address_street: Optional[str] = None
+    address_number: Optional[str] = None
+    address_complement: Optional[str] = None
+    address_neighborhood: Optional[str] = None
+    address_city: Optional[str] = None
+    address_state: Optional[str] = None
+    address_zip: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
 
