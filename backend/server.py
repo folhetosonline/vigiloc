@@ -2669,9 +2669,6 @@ async def calculate_shipping_melhor_envio(data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error calculating shipping: {str(e)}")
 
-    )
-    return {"message": "Shipping settings updated successfully"}
-
 async def get_menu(menu_name: str):
     """Get menu by name - Public"""
     menu = await db.menus.find_one({"name": menu_name, "active": True}, {"_id": 0})
