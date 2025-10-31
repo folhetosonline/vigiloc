@@ -827,6 +827,95 @@ async def logout(response: Response, current_user: User = Depends(get_current_us
     return {"message": "Logged out successfully"}
 
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(data: dict):
+    """Request password reset - sends email with reset token"""
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    
+    # Check if user exists
+    user = await db.users.find_one({"email": email})
+    if not user:
+        # Don't reveal if user exists or not for security
+        return {"message": "If the email exists, a reset link has been sent"}
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=1)  # Token expires in 1 hour
+    
+    # Store token in database
+    token_doc = {
+        "id": str(uuid.uuid4()),
+        "email": email,
+        "token": reset_token,
+        "used": False,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.password_reset_tokens.insert_one(token_doc)
+    
+    # Send email (if SendGrid is configured)
+    reset_link = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/admin/redefinir-senha?token={reset_token}"
+    
+    try:
+        await send_email(
+            to_email=email,
+            subject="Redefinir Senha - Admin",
+            html_content=f"""
+            <h2>Redefinir Senha</h2>
+            <p>Você solicitou a redefinição de senha da sua conta de administrador.</p>
+            <p>Clique no link abaixo para definir uma nova senha:</p>
+            <p><a href="{reset_link}">Redefinir Senha</a></p>
+            <p>Este link expira em 1 hora.</p>
+            <p>Se você não solicitou esta alteração, ignore este email.</p>
+            """
+        )
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        # Continue anyway - don't reveal if email was sent
+    
+    return {"message": "If the email exists, a reset link has been sent"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(data: dict):
+    """Reset password using token"""
+    token = data.get("token")
+    new_password = data.get("new_password")
+    
+    if not token or not new_password:
+        raise HTTPException(status_code=400, detail="Token and new password are required")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    # Find token
+    token_doc = await db.password_reset_tokens.find_one({"token": token, "used": False})
+    if not token_doc:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    
+    # Check if token is expired
+    expires_at = datetime.fromisoformat(token_doc['expires_at'])
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Token has expired")
+    
+    # Update user password
+    hashed_password = pwd_context.hash(new_password)
+    await db.users.update_one(
+        {"email": token_doc['email']},
+        {"$set": {"password_hash": hashed_password}}
+    )
+    
+    # Mark token as used
+    await db.password_reset_tokens.update_one(
+        {"token": token},
+        {"$set": {"used": True}}
+    )
+    
+    return {"message": "Password reset successfully"}
+
+
+
 # ==================== USER MANAGEMENT ROUTES ====================
 
 @api_router.get("/admin/users", response_model=List[User])
