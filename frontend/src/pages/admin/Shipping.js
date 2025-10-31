@@ -199,8 +199,8 @@ const Shipping = () => {
                 <TableRow key={rate.id}>
                   <TableCell>{rate.name}</TableCell>
                   <TableCell>{rate.type}</TableCell>
-                  <TableCell>R$ {rate.price.toFixed(2)}</TableCell>
-                  <TableCell>{rate.min_days}-{rate.max_days} dias</TableCell>
+                  <TableCell>R$ {(rate.price || 0).toFixed(2)}</TableCell>
+                  <TableCell>{rate.min_days || 0}-{rate.max_days || 0} dias</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded text-xs ${rate.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                       {rate.active ? 'Ativo' : 'Inativo'}
