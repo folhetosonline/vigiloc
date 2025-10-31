@@ -188,7 +188,7 @@ const Checkout = () => {
                 <SelectContent>
                   {shippingRates.map((rate) => (
                     <SelectItem key={rate.id} value={rate.id}>
-                      {rate.name} - R$ {rate.price.toFixed(2)} ({rate.min_days}-{rate.max_days} dias)
+                      {rate.name} - R$ {(rate.price || 0).toFixed(2)} ({rate.min_days || 0}-{rate.max_days || 0} dias)
                     </SelectItem>
                   ))}
                 </SelectContent>
