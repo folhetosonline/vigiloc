@@ -280,7 +280,7 @@ const CreateOrder = () => {
                       <SelectContent>
                         {products.map(product => (
                           <SelectItem key={product.id} value={product.id}>
-                            {product.name} - R$ {product.price.toFixed(2)}
+                            {product.name} - R$ {(product.price || 0).toFixed(2)}
                           </SelectItem>
                         ))}
                       </SelectContent>
