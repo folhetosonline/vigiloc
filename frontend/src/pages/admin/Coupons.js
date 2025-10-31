@@ -203,9 +203,9 @@ const Coupons = () => {
                   <TableCell className="font-mono font-bold">{coupon.code}</TableCell>
                   <TableCell>{coupon.discount_type === 'percentage' ? 'Percentual' : 'Fixo'}</TableCell>
                   <TableCell>
-                    {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `R$ ${coupon.discount_value.toFixed(2)}`}
+                    {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `R$ ${(coupon.discount_value || 0).toFixed(2)}`}
                   </TableCell>
-                  <TableCell>R$ {coupon.min_purchase.toFixed(2)}</TableCell>
+                  <TableCell>R$ {(coupon.min_purchase || 0).toFixed(2)}</TableCell>
                   <TableCell>
                     {coupon.uses_count} / {coupon.max_uses || '∞'}
                   </TableCell>
