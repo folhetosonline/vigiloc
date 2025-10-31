@@ -13,6 +13,8 @@ import Contact from "@/pages/Contact";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import Login from "@/pages/Login";
+import AdminForgotPassword from "@/pages/AdminForgotPassword";
+import AdminResetPassword from "@/pages/AdminResetPassword";
 import CustomerLogin from "@/pages/CustomerLogin";
 import CustomerAccount from "@/pages/CustomerAccount";
 import ForgotPassword from "@/pages/ForgotPassword";
