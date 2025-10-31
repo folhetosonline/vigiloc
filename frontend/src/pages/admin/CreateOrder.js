@@ -300,7 +300,7 @@ const CreateOrder = () => {
                     <label className="block text-sm font-medium mb-2">Subtotal</label>
                     <Input
                       disabled
-                      value={`R$ ${(item.price * item.quantity).toFixed(2)}`}
+                      value={`R$ ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}`}
                     />
                   </div>
                 </div>
