@@ -93,7 +93,7 @@ const Cart = () => {
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold">{product.name}</h3>
                         <p className="text-gray-600">Quantidade: {item.quantity}</p>
-                        <p className="text-blue-600 font-bold text-lg">R$ {item.price.toFixed(2)}</p>
+                        <p className="text-blue-600 font-bold text-lg">R$ {(item.price || 0).toFixed(2)}</p>
                       </div>
                       <Button
                         variant="destructive"
