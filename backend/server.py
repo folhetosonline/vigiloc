@@ -2558,6 +2558,8 @@ async def update_shipping_settings(settings_data: dict, current_user: User = Dep
         {"id": "shipping_settings"},
         {"$set": settings_data},
         upsert=True
+    )
+    return {"message": "Shipping settings updated successfully"}
 
 
 # ==================== MELHOR ENVIO SHIPPING CALCULATION ====================
