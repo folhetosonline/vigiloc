@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import TrackingManager from "./TrackingManager";
 import SEOManager from "./SEOManager";
 import PaymentSettings from "./PaymentSettings";
+import ShippingIntegration from "./ShippingIntegration";
 
 const Settings = () => {
   const [users, setUsers] = useState([]);
