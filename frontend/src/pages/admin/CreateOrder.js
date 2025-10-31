@@ -80,8 +80,8 @@ const CreateOrder = () => {
   };
 
   const calculateTotal = () => {
-    const subtotal = formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    return subtotal + formData.shipping_cost;
+    const subtotal = formData.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+    return subtotal + (formData.shipping_cost || 0);
   };
 
   const handleSubmit = async (e) => {
