@@ -173,7 +173,7 @@ const Payments = () => {
           <div className="space-y-4">
             <div>
               <p className="text-sm text-gray-600">Cliente: <span className="font-medium">{selectedPayment && getCustomerName(selectedPayment.customer_id)}</span></p>
-              <p className="text-sm text-gray-600">Valor: <span className="font-medium">R$ {selectedPayment?.amount.toFixed(2)}</span></p>
+              <p className="text-sm text-gray-600">Valor: <span className="font-medium">R$ {(selectedPayment?.amount || 0).toFixed(2)}</span></p>
               <p className="text-sm text-gray-600">Fatura: <span className="font-medium">{selectedPayment?.invoice_number}</span></p>
             </div>
             <div>
