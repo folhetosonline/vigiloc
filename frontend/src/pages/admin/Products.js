@@ -392,7 +392,7 @@ const Products = () => {
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>R$ {product.price.toFixed(2)}</TableCell>
+                  <TableCell>R$ {(product.price || 0).toFixed(2)}</TableCell>
                   <TableCell>{product.quantity || 0}</TableCell>
                   <TableCell>
                     <Badge className={product.published ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
