@@ -108,6 +108,16 @@ class SessionData(BaseModel):
     id: str
     email: str
     name: str
+
+class PasswordResetToken(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: EmailStr
+    token: str
+    used: bool = False
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
     picture: Optional[str] = None
     session_token: str
 
