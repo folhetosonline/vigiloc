@@ -523,6 +523,19 @@ class PaymentSettings(BaseModel):
     
     # PagSeguro
     pagseguro_enabled: bool = False
+
+class ShippingSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "shipping_settings"
+    
+    # Melhor Envio Integration
+    melhor_envio_enabled: bool = False
+    melhor_envio_token: Optional[str] = None
+    melhor_envio_sandbox: bool = False
+    origin_cep: Optional[str] = None  # CEP de origem dos produtos
+    
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
     pagseguro_email: Optional[str] = None
     pagseguro_token_production: Optional[str] = None
     pagseguro_token_sandbox: Optional[str] = None
