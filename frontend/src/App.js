@@ -126,6 +126,8 @@ function App() {
             
             {/* Admin Login - Secure URL */}
             <Route path="/painel-admin" element={<Login />} />
+            <Route path="/admin/recuperar-senha" element={<AdminForgotPassword />} />
+            <Route path="/admin/redefinir-senha" element={<AdminResetPassword />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
