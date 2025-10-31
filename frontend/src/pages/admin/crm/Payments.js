@@ -144,7 +144,7 @@ const Payments = () => {
                 <TableRow key={payment.id}>
                   <TableCell className="font-medium">{payment.invoice_number}</TableCell>
                   <TableCell>{getCustomerName(payment.customer_id)}</TableCell>
-                  <TableCell>R$ {payment.amount.toFixed(2)}</TableCell>
+                  <TableCell>R$ {(payment.amount || 0).toFixed(2)}</TableCell>
                   <TableCell>{formatDate(payment.due_date)}</TableCell>
                   <TableCell className="text-sm text-gray-600">{payment.pix_key || "N/A"}</TableCell>
                   <TableCell>
