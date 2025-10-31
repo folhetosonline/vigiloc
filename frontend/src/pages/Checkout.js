@@ -87,12 +87,12 @@ const Checkout = () => {
 
   const getSubtotal = () => {
     if (!cart || !cart.items) return 0;
-    return cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return cart.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
   };
 
   const getShippingCost = () => {
     const rate = shippingRates.find(r => r.id === formData.shipping_method);
-    return rate ? rate.price : 0;
+    return rate && rate.price ? rate.price : 0;
   };
 
   return (
