@@ -78,7 +78,7 @@ const CRMDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Receita Mensal</p>
-                <p className="text-3xl font-bold text-blue-600">R$ {stats.monthly_revenue.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-blue-600">R$ {(stats.monthly_revenue || 0).toFixed(2)}</p>
                 <p className="text-xs text-gray-500">{stats.total_contracts} contratos</p>
               </div>
               <DollarSign className="h-12 w-12 text-blue-600 opacity-20" />
