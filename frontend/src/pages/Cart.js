@@ -55,7 +55,7 @@ const Cart = () => {
 
   const getTotal = () => {
     if (!cart || !cart.items) return 0;
-    return cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return cart.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
   };
 
   if (!cart || cart.items.length === 0) {
