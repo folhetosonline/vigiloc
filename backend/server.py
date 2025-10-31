@@ -2558,6 +2558,115 @@ async def update_shipping_settings(settings_data: dict, current_user: User = Dep
         {"id": "shipping_settings"},
         {"$set": settings_data},
         upsert=True
+
+
+# ==================== MELHOR ENVIO SHIPPING CALCULATION ====================
+
+@api_router.post("/shipping/calculate-melhor-envio")
+async def calculate_shipping_melhor_envio(data: dict):
+    """Calculate shipping using Melhor Envio API"""
+    try:
+        # Get shipping settings
+        settings = await db.shipping_settings.find_one({"id": "shipping_settings"})
+        
+        if not settings or not settings.get('melhor_envio_enabled'):
+            raise HTTPException(status_code=400, detail="Melhor Envio integration not enabled")
+        
+        if not settings.get('melhor_envio_token'):
+            raise HTTPException(status_code=400, detail="Melhor Envio token not configured")
+        
+        # Extract request data
+        destination_cep = data.get('destination_cep', '').replace('-', '')
+        origin_cep = settings.get('origin_cep', '').replace('-', '')
+        products = data.get('products', [])
+        
+        if not destination_cep or len(destination_cep) != 8:
+            raise HTTPException(status_code=400, detail="Invalid destination CEP")
+        
+        if not origin_cep or len(origin_cep) != 8:
+            raise HTTPException(status_code=400, detail="Origin CEP not configured in settings")
+        
+        if not products:
+            raise HTTPException(status_code=400, detail="No products provided")
+        
+        # Prepare payload for Melhor Envio API
+        melhor_envio_products = []
+        for product in products:
+            melhor_envio_products.append({
+                "id": product.get('id', str(uuid.uuid4())),
+                "name": product.get('name', 'Product'),
+                "quantity": product.get('quantity', 1),
+                "unitary_value": float(product.get('price', 0)),
+                "weight": float(product.get('weight', 1)),
+                "width": int(product.get('width', 10)),
+                "height": int(product.get('height', 10)),
+                "length": int(product.get('length', 10))
+            })
+        
+        payload = {
+            "from": {"postal_code": origin_cep},
+            "to": {"postal_code": destination_cep},
+            "products": melhor_envio_products
+        }
+        
+        # Make request to Melhor Envio API
+        api_url = "https://sandbox.melhorenvio.com.br" if settings.get('melhor_envio_sandbox') else "https://melhorenvio.com.br"
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings['melhor_envio_token']}",
+            "User-Agent": "SecuShop/1.0"
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{api_url}/api/v2/me/shipment/calculate",
+                json=payload,
+                headers=headers,
+                timeout=30
+            )
+            
+            if response.status_code != 200:
+                error_detail = response.text
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"Melhor Envio API error: {error_detail}"
+                )
+            
+            api_response = response.json()
+        
+        # Parse and format response
+        shipping_options = []
+        for option in api_response:
+            shipping_options.append({
+                "id": str(option.get('id')),
+                "name": option.get('name', 'Unknown'),
+                "company": option.get('company', {}).get('name', 'Unknown'),
+                "price": float(option.get('custom_price', option.get('price', 0))),
+                "custom_price": float(option.get('custom_price', 0)),
+                "original_price": float(option.get('price', 0)),
+                "delivery_time": int(option.get('custom_delivery_time', option.get('delivery_time', 0))),
+                "custom_delivery_time": int(option.get('custom_delivery_time', 0)),
+                "delivery_range": option.get('delivery_range', {}),
+                "currency": option.get('currency', 'BRL'),
+                "packages": option.get('packages', [])
+            })
+        
+        # Sort by price
+        shipping_options.sort(key=lambda x: x['price'])
+        
+        return {
+            "success": True,
+            "origin_cep": origin_cep,
+            "destination_cep": destination_cep,
+            "options": shipping_options
+        }
+        
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to connect to Melhor Envio API: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error calculating shipping: {str(e)}")
+
     )
     return {"message": "Shipping settings updated successfully"}
 
