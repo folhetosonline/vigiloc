@@ -58,12 +58,12 @@ const Shipping = () => {
   const handleEdit = (rate) => {
     setEditingRate(rate);
     setFormData({
-      name: rate.name,
-      type: rate.type,
-      price: rate.price,
-      min_days: rate.min_days,
-      max_days: rate.max_days,
-      active: rate.active
+      name: rate.name || "",
+      type: rate.type || "fixed",
+      price: rate.price || 0,
+      min_days: rate.min_days || 0,
+      max_days: rate.max_days || 0,
+      active: rate.active !== undefined ? rate.active : true
     });
     setOpen(true);
   };
