@@ -101,7 +101,7 @@ const MyOrders = () => {
                     <div className="flex-1">
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-600">
-                        {item.quantity}x R$ {item.price.toFixed(2)}
+                        {item.quantity}x R$ {(item.price || 0).toFixed(2)}
                       </p>
                     </div>
                   </div>
