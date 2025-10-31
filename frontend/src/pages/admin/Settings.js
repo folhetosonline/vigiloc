@@ -267,6 +267,10 @@ const Settings = () => {
             <CreditCard className="w-4 h-4 mr-2" />
             Pagamentos
           </TabsTrigger>
+          <TabsTrigger value="shipping">
+            <Truck className="w-4 h-4 mr-2" />
+            Frete
+          </TabsTrigger>
           <TabsTrigger value="tracking">
             <Code className="w-4 h-4 mr-2" />
             Tracking
