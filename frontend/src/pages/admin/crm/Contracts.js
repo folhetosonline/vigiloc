@@ -243,7 +243,7 @@ const Contracts = () => {
                   <TableCell className="font-medium">{contract.contract_number}</TableCell>
                   <TableCell>{getCustomerName(contract.customer_id)}</TableCell>
                   <TableCell>{getServiceTypeLabel(contract.service_type)}</TableCell>
-                  <TableCell>R$ {contract.monthly_value.toFixed(2)}</TableCell>
+                  <TableCell>R$ {(contract.monthly_value || 0).toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(contract.status)}>{contract.status}</Badge>
                   </TableCell>
