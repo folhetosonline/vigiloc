@@ -536,6 +536,10 @@ const Settings = () => {
           <PaymentSettings />
         </TabsContent>
 
+        <TabsContent value="shipping">
+          <ShippingIntegration />
+        </TabsContent>
+
         <TabsContent value="tracking">
           <TrackingManager />
         </TabsContent>
