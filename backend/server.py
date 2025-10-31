@@ -193,7 +193,11 @@ class ShippingRate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     type: str  # 'cep', 'fixed', 'free'
+    price: float = 0.0
+    min_days: int = 0
+    max_days: int = 0
     regions: Optional[List[str]] = None
+    active: bool = True
 
 # ==================== CRM/ERP MODELS ====================
 
