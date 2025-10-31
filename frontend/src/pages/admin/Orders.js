@@ -98,7 +98,7 @@ const Orders = () => {
                     </div>
                   </TableCell>
                   <TableCell>{format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}</TableCell>
-                  <TableCell>R$ {order.total.toFixed(2)}</TableCell>
+                  <TableCell>R$ {(order.total || 0).toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(order.status)}>
                       {getStatusLabel(order.status)}
