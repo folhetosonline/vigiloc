@@ -2535,6 +2535,32 @@ async def update_payment_settings(settings_data: dict, current_user: User = Depe
 # ==================== MENU BUILDER ROUTES ====================
 
 @api_router.get("/menus/{menu_name}")
+
+
+# ==================== SHIPPING SETTINGS ROUTES ====================
+
+@api_router.get("/admin/shipping-settings")
+async def get_shipping_settings(current_user: User = Depends(get_current_admin)):
+    """Get shipping settings - Admin only"""
+    settings = await db.shipping_settings.find_one({"id": "shipping_settings"}, {"_id": 0})
+    if not settings:
+        default = ShippingSettings()
+        return default.model_dump()
+    return settings
+
+@api_router.put("/admin/shipping-settings")
+async def update_shipping_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update shipping settings - Admin only"""
+    settings_data['id'] = "shipping_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.shipping_settings.update_one(
+        {"id": "shipping_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Shipping settings updated successfully"}
+
 async def get_menu(menu_name: str):
     """Get menu by name - Public"""
     menu = await db.menus.find_one({"name": menu_name, "active": True}, {"_id": 0})
