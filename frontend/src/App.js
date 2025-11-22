@@ -31,6 +31,7 @@ import AdminContacts from "@/pages/admin/Contacts";
 import AdminBanners from "@/pages/admin/Banners";
 import AdminCoupons from "@/pages/admin/Coupons";
 import PageBuilder from "@/pages/admin/PageBuilder";
+import VisualPageBuilder from "@/pages/admin/VisualPageBuilder";
 import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
 import ContentBlockEditor from "@/pages/admin/ContentBlockEditor";
 import NavbarCustomizer from "@/pages/admin/NavbarCustomizer";
