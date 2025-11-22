@@ -456,10 +456,11 @@ class CustomPage(BaseModel):
     title: str
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
-    blocks: List[dict] = []  # Blocos JSON do page builder
+    components: List[dict] = []  # Componentes do visual builder
     published: bool = False
     published_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 # CMS Content Blocks
