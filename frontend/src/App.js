@@ -156,6 +156,7 @@ function App() {
               
               {/* Shopify-like Features */}
               <Route path="page-builder" element={<PageBuilder />} />
+              <Route path="visual-builder" element={<VisualPageBuilder />} />
               <Route path="page-editor/:pageId" element={<ContentBlockEditor />} />
               <Route path="theme-customizer" element={<ThemeCustomizer />} />
               <Route path="navbar-customizer" element={<NavbarCustomizer />} />
