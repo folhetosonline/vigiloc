@@ -1071,9 +1071,9 @@ async def upload_file(file: UploadFile = File(...), current_user: User = Depends
     async with aiofiles.open(file_path, 'wb') as f:
         await f.write(content)
     
-    # Get backend URL from env and use /api/media/ endpoint
+    # Get backend URL from env and construct full URL with /api/media/
     backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
-    full_url = f"{backend_url}/media/{file_name}"
+    full_url = f"{backend_url}/api/media/{file_name}"
     
     return {
         "url": f"/api/media/{file_name}",
