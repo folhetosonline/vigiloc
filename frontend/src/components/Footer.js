@@ -33,17 +33,24 @@ const Footer = () => {
           {/* Brand */}
           <div data-testid="footer-brand">
             <div className="flex items-center space-x-2 mb-4">
-              {siteSettings.logo_url ? (
+              {siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? (
                 <img 
                   src={siteSettings.logo_url} 
                   alt={siteSettings.site_name} 
-                  className="h-10 w-auto object-contain" 
+                  className="h-10 w-auto object-contain"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
                 />
-              ) : (
-                <div className="vigiloc-logo-footer" aria-label={siteSettings.site_name}>
-                  <span className="vigiloc-v-footer">V</span>
-                </div>
-              )}
+              ) : null}
+              <div 
+                className="vigiloc-logo-footer" 
+                aria-label={siteSettings.site_name}
+                style={{ display: siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? 'none' : 'flex' }}
+              >
+                <span className="vigiloc-v-footer">V</span>
+              </div>
               <span className="text-2xl font-bold">{siteSettings.site_name}</span>
             </div>
             <p className="text-gray-400">
