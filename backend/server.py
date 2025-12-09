@@ -355,6 +355,7 @@ class SiteSettings(BaseModel):
     contact_phone: Optional[str] = None
     whatsapp_number: Optional[str] = None
     address: Optional[str] = None
+    enable_cart_globally: bool = False  # Se habilita carrinho para todos os produtos (default: false)
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class NavbarSettings(BaseModel):
