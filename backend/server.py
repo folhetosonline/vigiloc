@@ -149,6 +149,7 @@ class Product(BaseModel):
     # New fields for pages and badges
     show_on_pages: List[str] = []  # ["home", "totens", "produtos", "todas"]
     badges: List[str] = []  # ["novidade", "lancamento", "custo-beneficio", "top-linha", "oferta", "destaque"]
+    enable_cart: bool = False  # Se permite adicionar ao carrinho (default: false para venda consultiva)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
