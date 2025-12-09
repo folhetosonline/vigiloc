@@ -38,17 +38,24 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
-            {siteSettings.logo_url ? (
+            {siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? (
               <img 
                 src={siteSettings.logo_url} 
                 alt={siteSettings.site_name} 
-                className="h-12 w-auto object-contain" 
+                className="h-12 w-auto object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
               />
-            ) : (
-              <div className="vigiloc-logo" aria-label={siteSettings.site_name}>
-                <span className="vigiloc-v">V</span>
-              </div>
-            )}
+            ) : null}
+            <div 
+              className="vigiloc-logo" 
+              aria-label={siteSettings.site_name}
+              style={{ display: siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? 'none' : 'flex' }}
+            >
+              <span className="vigiloc-v">V</span>
+            </div>
             <span className="text-2xl font-bold text-gray-900">{siteSettings.site_name}</span>
           </Link>
 
