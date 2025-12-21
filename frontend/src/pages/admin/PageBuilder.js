@@ -109,10 +109,10 @@ const PageBuilder = () => {
                 <Input
                   required
                   value={formData.slug}
-                  onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\\s+/g, '-')})}
+                  onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9-]/g, '')})}
                   placeholder="sobre-nos"
                 />
-                <p className="text-xs text-gray-500 mt-1">URL: /{formData.slug}</p>
+                <p className="text-xs text-gray-500 mt-1">URL: /p/{formData.slug}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Meta T\u00edtulo (SEO)</label>
