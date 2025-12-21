@@ -202,6 +202,7 @@ const VisualPageBuilder = () => {
   const [products, setProducts] = useState([]);
   const [pageTitle, setPageTitle] = useState('');
   const [pageSlug, setPageSlug] = useState('');
+  const [published, setPublished] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const sensors = useSensors(
