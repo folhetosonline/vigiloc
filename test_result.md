@@ -678,6 +678,30 @@ frontend:
         agent: "main"
         comment: "Added CPF and complete address fields to customer profile page. Address fields include: street, number, complement, neighborhood, city, state, zip. Organized in responsive grid layout. NEEDS TESTING."
 
+  - task: "Page Builder System - Visual Builder"
+    implemented: true
+    working: false
+    file: "frontend/src/pages/admin/VisualPageBuilder.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "TESTED: Page Builder system mostly working. ✅ Black Friday page (/p/black-friday) displays perfectly with all required elements: Hero '🔥 BLACK FRIDAY 2025', green button 'Falar com Consultor', section 'Por que escolher a VigiLoc?', blue CTA 'Não perca essa oportunidade!'. ✅ Visual Builder interface fully functional: Editor tab with Title/Slug fields, all component buttons (+ Hero, + Produto, + Texto, + CTA), Templates Prontos tab with all 5 templates (Black Friday, Natal, Ano Novo, Temporada, Litoral). ❌ CRITICAL ISSUE: New page creation shows success toast but doesn't persist - page /p/teste-auto returns 'Page not found'. API save appears to fail despite UI success feedback."
+
+  - task: "Dynamic Page Rendering System"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/DynamicPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Dynamic page rendering working perfectly. Black Friday page (/p/black-friday) renders all components correctly: Hero section with background image and CTA button, Text sections with proper styling, CTA section with blue background. All component types (hero, text, cta) render properly with WhatsApp integration and responsive design."
+
   - task: "App.js CRM Routes"
     implemented: true
     working: true
