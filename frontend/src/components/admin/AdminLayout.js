@@ -40,7 +40,7 @@ const AdminLayout = () => {
     { path: "/admin/page-builder", icon: <Layout />, label: "Page Builder" },
     { path: "/admin/visual-builder", icon: <Layout />, label: "Visual Builder ✨" },
     { path: "/admin/theme-customizer", icon: <Palette />, label: "Tema" },
-    { path: "/admin/navbar-customizer", icon: <Menu />, label: "Navbar" },
+    { path: "/admin/navbar", icon: <Menu />, label: "Menu Navegação" },
     { path: "/admin/reports", icon: <BarChart3 />, label: "Relatórios" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
