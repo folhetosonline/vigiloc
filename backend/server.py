@@ -2575,6 +2575,32 @@ async def create_content_block(block_data: dict, current_user: User = Depends(ge
     await db.content_blocks.insert_one(doc)
     return block
 
+
+# ==================== FOOTER SETTINGS ROUTES ====================
+
+@api_router.get("/footer-settings")
+async def get_footer_settings():
+    """Get footer settings"""
+    settings = await db.footer_settings.find_one({"id": "footer_settings"}, {"_id": 0})
+    if not settings:
+        default = FooterSettings()
+        return default.model_dump()
+    return settings
+
+@api_router.put("/admin/footer-settings")
+async def update_footer_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update footer settings - Admin only"""
+    settings_data['id'] = "footer_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.footer_settings.update_one(
+        {"id": "footer_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Footer settings updated successfully"}
+
+
 @api_router.put("/admin/content-blocks/{block_id}")
 async def update_content_block(block_id: str, block_data: dict, current_user: User = Depends(get_current_admin)):
     """Update content block"""
