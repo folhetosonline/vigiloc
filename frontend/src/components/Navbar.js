@@ -83,19 +83,64 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                data-testid={`nav-link-${link.label.toLowerCase()}`}
-                className={`text-lg font-medium transition-colors ${
-                  isActive(link.path)
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-700 hover:text-blue-600"
-                }`}
-              >
-                {link.label}
-              </Link>
+            {navLinks.map((link, index) => (
+              <div key={link.path || index} className="relative group">
+                {link.sublinks && link.sublinks.length > 0 ? (
+                  // Link with dropdown
+                  <div 
+                    className="relative"
+                    onMouseEnter={() => setOpenDropdown(index)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
+                    <button
+                      className={`flex items-center gap-1 text-lg font-medium transition-colors ${
+                        isActive(link.path)
+                          ? "text-blue-600"
+                          : "text-gray-700 hover:text-blue-600"
+                      }`}
+                      style={{ color: navbarSettings.text_color }}
+                    >
+                      {link.label}
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                    
+                    {openDropdown === index && (
+                      <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border py-2 min-w-[200px] z-50">
+                        <Link
+                          to={link.path}
+                          className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          {link.label}
+                        </Link>
+                        <div className="border-t my-1"></div>
+                        {link.sublinks.map((sublink, subIndex) => (
+                          <Link
+                            key={sublink.id || subIndex}
+                            to={sublink.url}
+                            className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                          >
+                            {sublink.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Simple link without dropdown
+                  <Link
+                    to={link.path}
+                    data-testid={`nav-link-${link.label.toLowerCase()}`}
+                    className={`text-lg font-medium transition-colors ${
+                      isActive(link.path)
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`}
+                    style={{ color: navbarSettings.text_color }}
+                  >
+                    {link.label}
+                  </Link>
+                )}
+              </div>
             ))}
             <Link to="/carrinho">
               <Button variant="ghost" size="icon">
