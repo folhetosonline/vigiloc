@@ -11,21 +11,33 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [siteSettings, setSiteSettings] = useState(null);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(`${API}/products/${id}`);
-        setProduct(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar produto:", error);
-        toast.error("Erro ao carregar produto");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProduct();
+    fetchSiteSettings();
   }, [id]);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get(`${API}/products/${id}`);
+      setProduct(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar produto:", error);
+      toast.error("Erro ao carregar produto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar configurações:", error);
+    }
+  };
 
   const handleWhatsAppContact = () => {
     const message = `Olá! Tenho interesse no produto: ${product.name}`;
