@@ -31,6 +31,7 @@ const Products = () => {
     weight: 0,
     show_on_pages: [],
     badges: [],
+    enable_cart: false,
   });
   const [uploading, setUploading] = useState(false);
 
