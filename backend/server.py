@@ -365,6 +365,21 @@ class NavbarSettings(BaseModel):
     text_color: str = "#1F2937"
     hover_color: str = "#3B82F6"
     font_family: str = "Inter"
+
+
+class FooterSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "footer_settings"
+    about_text: Optional[str] = "Referência em segurança eletrônica: câmeras, controle de acesso e totens de monitoramento."
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    whatsapp_number: Optional[str] = None
+    address: Optional[str] = None
+    facebook_url: Optional[str] = None
+    instagram_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
     font_size: str = "base"  # sm, base, lg
     height: str = "16"  # Tailwind units (16 = 4rem = 64px)
     logo_size: str = "10"  # Tailwind units
