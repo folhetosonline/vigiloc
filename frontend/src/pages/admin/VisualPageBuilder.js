@@ -390,20 +390,34 @@ const VisualPageBuilder = () => {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-2">
-              {pageSlug && (
-                <Button 
-                  variant="outline" 
-                  onClick={() => window.open(`/p/${pageSlug}`, '_blank')}
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Ver Página
+            <div className="mt-6 flex justify-between items-center">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={published}
+                  onChange={(e) => setPublished(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Publicar página (tornar visível ao público)
+                </span>
+              </label>
+              
+              <div className="flex gap-2">
+                {pageSlug && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => window.open(`/p/${pageSlug}`, '_blank')}
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Ver Página
+                  </Button>
+                )}
+                <Button onClick={savePage} disabled={loading}>
+                  <Save className="w-4 h-4 mr-2" />
+                  {loading ? 'Salvando...' : (published ? 'Publicar' : 'Salvar Rascunho')}
                 </Button>
-              )}
-              <Button onClick={savePage} disabled={loading}>
-                <Save className="w-4 h-4 mr-2" />
-                {loading ? 'Salvando...' : 'Salvar Página'}
-              </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
