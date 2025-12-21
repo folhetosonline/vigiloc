@@ -424,7 +424,7 @@ const VisualPageBuilder = () => {
   };
 
   const addComponent = (type) => {
-    const newComponent = {
+    const defaultProps = {
       id: `component-${Date.now()}`,
       type,
       title: '',
@@ -435,9 +435,16 @@ const VisualPageBuilder = () => {
       buttonText: '',
       whatsappText: '',
       productId: '',
-      price: 0
+      price: 0,
+      // New component defaults
+      images: [],
+      videoUrl: '',
+      items: type === 'faq' ? [{ question: '', answer: '' }] : [],
+      stats: type === 'stats' ? [{}, {}, {}, {}] : [],
+      features: [],
+      style: 'gradient'
     };
-    setComponents([...components, newComponent]);
+    setComponents([...components, defaultProps]);
   };
 
   const updateComponent = (index, updatedComponent) => {
