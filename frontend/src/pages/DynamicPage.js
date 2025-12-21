@@ -142,28 +142,177 @@ const CTARenderer = ({ component, whatsappNumber }) => {
 };
 
 // Renderizador de Banner
-const BannerRenderer = ({ component }) => {
+const BannerRenderer = ({ component, whatsappNumber }) => {
+  const handleWhatsApp = () => {
+    const message = encodeURIComponent(component.whatsappMessage || `Olá! Vi a promoção e gostaria de saber mais.`);
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  };
+
+  const styleClasses = {
+    gradient: 'bg-gradient-to-r from-blue-600 to-purple-600',
+    dark: 'bg-gray-900',
+    light: 'bg-gray-100 text-gray-900',
+    image: ''
+  };
+
   return (
-    <div className="relative overflow-hidden rounded-lg">
-      {component.image ? (
+    <div className={`relative overflow-hidden rounded-lg ${component.image ? '' : styleClasses[component.style] || styleClasses.gradient}`}>
+      {component.image && (
         <img 
           src={component.image} 
           alt={component.title || 'Banner'} 
-          className="w-full h-auto"
+          className="w-full h-auto absolute inset-0 object-cover"
         />
-      ) : (
-        <div className="bg-gradient-to-r from-gray-200 to-gray-300 h-48 flex items-center justify-center">
-          <p className="text-gray-500">Imagem não disponível</p>
-        </div>
       )}
-      {(component.title || component.subtitle) && (
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-center text-white p-4">
-          <div>
-            {component.title && <h3 className="text-2xl font-bold">{component.title}</h3>}
-            {component.subtitle && <p className="mt-2">{component.subtitle}</p>}
+      <div className={`relative z-10 py-16 px-8 text-center ${component.image ? 'bg-black/50' : ''} ${component.style === 'light' ? 'text-gray-900' : 'text-white'}`}>
+        {component.title && <h2 className="text-3xl md:text-4xl font-bold mb-4">{component.title}</h2>}
+        {component.subtitle && <p className="text-lg md:text-xl mb-6 opacity-90">{component.subtitle}</p>}
+        {component.buttonText && (
+          <Button onClick={handleWhatsApp} size="lg" className="bg-green-500 hover:bg-green-600 text-white gap-2">
+            <MessageCircle className="w-5 h-5" />
+            {component.buttonText}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Renderizador de Galeria
+const GalleryRenderer = ({ component }) => {
+  return (
+    <div className="py-8">
+      {component.title && (
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{component.title}</h2>
+      )}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {(component.images || []).map((url, index) => (
+          <div key={index} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
+            <img 
+              src={url} 
+              alt={`Galeria ${index + 1}`} 
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
           </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Renderizador de Vídeo
+const VideoRenderer = ({ component }) => {
+  const getEmbedUrl = (url) => {
+    if (!url) return null;
+    
+    // YouTube
+    const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s]+)/);
+    if (youtubeMatch) {
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+    
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) {
+      return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+    
+    return url;
+  };
+
+  const embedUrl = getEmbedUrl(component.videoUrl);
+
+  return (
+    <div className="py-8">
+      {component.title && (
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">{component.title}</h2>
+      )}
+      {component.description && (
+        <p className="text-gray-600 text-center mb-6 max-w-2xl mx-auto">{component.description}</p>
+      )}
+      {embedUrl && (
+        <div className="aspect-video max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg">
+          <iframe
+            src={embedUrl}
+            title={component.title || 'Video'}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         </div>
       )}
+    </div>
+  );
+};
+
+// Renderizador de FAQ
+const FAQRenderer = ({ component }) => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  return (
+    <div className="py-8 max-w-3xl mx-auto">
+      {component.title && (
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{component.title}</h2>
+      )}
+      <div className="space-y-4">
+        {(component.items || []).map((item, index) => (
+          <div key={index} className="border rounded-lg overflow-hidden">
+            <button
+              className="w-full p-4 text-left flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors"
+              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            >
+              <span className="font-semibold">{item.question}</span>
+              <span className="text-xl">{openIndex === index ? '−' : '+'}</span>
+            </button>
+            {openIndex === index && (
+              <div className="p-4 bg-white border-t">
+                <p className="text-gray-700 whitespace-pre-wrap">{item.answer}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Renderizador de Estatísticas
+const StatsRenderer = ({ component }) => {
+  return (
+    <div className="py-12 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl">
+      {component.title && (
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">{component.title}</h2>
+      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto px-4">
+        {(component.stats || []).filter(s => s.value).map((stat, index) => (
+          <div key={index} className="text-center">
+            <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
+            <div className="text-sm md:text-base opacity-80">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Renderizador de Características
+const FeaturesRenderer = ({ component }) => {
+  return (
+    <div className="py-8">
+      {component.title && (
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">{component.title}</h2>
+      )}
+      {component.description && (
+        <p className="text-gray-600 mb-6">{component.description}</p>
+      )}
+      <ul className="space-y-3">
+        {(component.features || []).map((feature, index) => (
+          <li key={index} className="flex items-start gap-3">
+            <span className="text-green-500 mt-1">✓</span>
+            <span className="text-gray-700">{feature}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
