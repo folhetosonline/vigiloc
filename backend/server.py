@@ -1151,9 +1151,9 @@ async def get_products(category: Optional[str] = None):
     return products
 
 
-@api_router.get("/categories")
-async def get_categories():
-    """Get all unique categories from published products"""
+@api_router.get("/product-categories")
+async def get_product_categories():
+    """Get all unique categories from published products (returns strings only)"""
     products = await db.products.find({"published": True}, {"_id": 0, "category": 1}).to_list(1000)
     categories = list(set([p['category'] for p in products if p.get('category')]))
     return sorted(categories)
