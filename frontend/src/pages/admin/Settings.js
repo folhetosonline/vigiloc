@@ -29,7 +29,8 @@ const Settings = () => {
     contact_email: "",
     contact_phone: "",
     whatsapp_number: "",
-    address: ""
+    address: "",
+    enable_cart_globally: false
   });
   const [uploadingLogo, setUploadingLogo] = useState(false);
   
