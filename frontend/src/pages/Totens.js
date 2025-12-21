@@ -7,11 +7,12 @@ import { CheckCircle, Camera, Bell, Users, DollarSign, Shield } from "lucide-rea
 import axios from "axios";
 import { API } from "@/App";
 import SEO from "@/components/SEO";
+import ProductFilter from "@/components/ProductFilter";
 
 const Totens = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBadges, setSelectedBadges] = useState([]);
+  const [filters, setFilters] = useState({});
 
   const badgeConfig = {
     "novidade": { label: "🆕 Novidade", color: "bg-green-100 text-green-800" },
@@ -24,25 +25,36 @@ const Totens = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedBadges]);
+  }, [filters]);
 
   const fetchProducts = async () => {
     try {
-      const badgesParam = selectedBadges.length > 0 ? `?badges=${selectedBadges.join(',')}` : '';
-      const response = await axios.get(`${API}/products/by-page/totens${badgesParam}`);
-      setProducts(response.data);
+      let url = `${API}/products`;
+      const params = new URLSearchParams();
+      
+      if (filters.category) {
+        params.append('category', filters.category);
+      }
+      
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+      
+      let response = await axios.get(url);
+      let filteredProducts = response.data;
+      
+      // Filter by badge on frontend if needed
+      if (filters.badge) {
+        filteredProducts = filteredProducts.filter(p => 
+          p.badges && p.badges.includes(filters.badge)
+        );
+      }
+      
+      setProducts(filteredProducts);
     } catch (error) {
       console.error("Erro ao carregar produtos");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const toggleBadgeFilter = (badge) => {
-    if (selectedBadges.includes(badge)) {
-      setSelectedBadges(selectedBadges.filter(b => b !== badge));
-    } else {
-      setSelectedBadges([...selectedBadges, badge]);
     }
   };
 
