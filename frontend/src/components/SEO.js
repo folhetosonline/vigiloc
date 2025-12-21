@@ -4,8 +4,8 @@ const SEO = ({
   title = "VigiLoc - Soluções em Segurança Eletrônica",
   description = "Sistemas de vigilância, controle de acesso, fechaduras inteligentes e totens de monitoramento para condomínios e empresas. Instalação profissional e suporte 24/7.",
   keywords = "segurança eletrônica, câmeras de vigilância, controle de acesso, fechaduras inteligentes, totens de monitoramento, CCTV, alarmes, segurança para condomínios, segurança empresarial, vigilância 24h",
-  image = "https://secushop.preview.emergentagent.com/og-image.jpg",
-  url = "https://secushop.preview.emergentagent.com",
+  image = "https://pagebuilder-debug.preview.emergentagent.com/og-image.jpg",
+  url = "https://pagebuilder-debug.preview.emergentagent.com",
   type = "website",
   schema = null
 }) => {
@@ -18,7 +18,7 @@ const SEO = ({
     "name": "VigiLoc",
     "description": description,
     "url": url,
-    "logo": "https://secushop.preview.emergentagent.com/logo.png",
+    "logo": "https://pagebuilder-debug.preview.emergentagent.com/logo.png",
     "telephone": "+55-11-99999-9999",
     "address": {
       "@type": "PostalAddress",
@@ -126,12 +126,12 @@ const SEO = ({
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": siteName,
-          "url": "https://secushop.preview.emergentagent.com",
+          "url": "https://pagebuilder-debug.preview.emergentagent.com",
           "potentialAction": {
             "@type": "SearchAction",
             "target": {
               "@type": "EntryPoint",
-              "urlTemplate": "https://secushop.preview.emergentagent.com/produtos?q={search_term_string}"
+              "urlTemplate": "https://pagebuilder-debug.preview.emergentagent.com/produtos?q={search_term_string}"
             },
             "query-input": "required name=search_term_string"
           }
@@ -157,7 +157,7 @@ export const generateProductSchema = (product) => ({
   },
   "offers": {
     "@type": "Offer",
-    "url": `https://secushop.preview.emergentagent.com/produto/${product.id}`,
+    "url": `https://pagebuilder-debug.preview.emergentagent.com/produto/${product.id}`,
     "priceCurrency": "BRL",
     "price": product.price,
     "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
