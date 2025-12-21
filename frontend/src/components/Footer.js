@@ -136,20 +136,26 @@ const Footer = () => {
           <div data-testid="footer-contact">
             <h3 className="text-lg font-semibold mb-4">Contato</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>(11) 9999-9999</li>
-              <li>contato@vigiloc.com.br</li>
-              <li>Av. Paulista, 1000<br />São Paulo, SP</li>
+              {footerSettings.contact_phone && <li>{footerSettings.contact_phone}</li>}
+              {footerSettings.contact_email && <li>{footerSettings.contact_email}</li>}
+              {footerSettings.address && <li dangerouslySetInnerHTML={{ __html: footerSettings.address.replace(/\n/g, '<br />') }} />}
             </ul>
             <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="facebook-link">
-                <Facebook className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="instagram-link">
-                <Instagram className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="linkedin-link">
-                <Linkedin className="h-6 w-6" />
-              </a>
+              {footerSettings.facebook_url && (
+                <a href={footerSettings.facebook_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="facebook-link" target="_blank" rel="noopener noreferrer">
+                  <Facebook className="h-6 w-6" />
+                </a>
+              )}
+              {footerSettings.instagram_url && (
+                <a href={footerSettings.instagram_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="instagram-link" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-6 w-6" />
+                </a>
+              )}
+              {footerSettings.linkedin_url && (
+                <a href={footerSettings.linkedin_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="linkedin-link" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-6 w-6" />
+                </a>
+              )}
             </div>
           </div>
         </div>
