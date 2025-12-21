@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { GripVertical, Plus, Trash2, Eye, Save, Settings } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GripVertical, Plus, Trash2, Eye, Save, Settings, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { API } from "@/App";
+import PageTemplates from "./PageTemplates";
 
 // Componente arrastável
 const SortableComponent = ({ id, component, onUpdate, onDelete, products }) => {
