@@ -188,6 +188,192 @@ const ComponentEditor = ({ component, onUpdate, products }) => {
             />
           </div>
         );
+
+      case 'gallery':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-pink-600">🖼️ Galeria de Imagens</div>
+            <Input
+              placeholder="Título da Galeria"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <Textarea
+              placeholder="URLs das imagens (uma por linha)"
+              value={component.images?.join('\n') || ''}
+              onChange={(e) => handleChange('images', e.target.value.split('\n').filter(url => url.trim()))}
+              rows={4}
+            />
+            <p className="text-xs text-gray-500">Cole as URLs das imagens, uma por linha</p>
+          </div>
+        );
+
+      case 'video':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-red-600">🎬 Vídeo</div>
+            <Input
+              placeholder="Título do Vídeo"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <Input
+              placeholder="URL do YouTube ou Vimeo"
+              value={component.videoUrl || ''}
+              onChange={(e) => handleChange('videoUrl', e.target.value)}
+            />
+            <Textarea
+              placeholder="Descrição (opcional)"
+              value={component.description || ''}
+              onChange={(e) => handleChange('description', e.target.value)}
+              rows={2}
+            />
+            <p className="text-xs text-gray-500">Ex: https://youtube.com/watch?v=xxxxx</p>
+          </div>
+        );
+
+      case 'faq':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-cyan-600">❓ FAQ - Perguntas Frequentes</div>
+            <Input
+              placeholder="Título da Seção"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <div className="space-y-2">
+              {(component.items || []).map((item, idx) => (
+                <div key={idx} className="p-3 bg-gray-50 rounded space-y-2">
+                  <Input
+                    placeholder={`Pergunta ${idx + 1}`}
+                    value={item.question || ''}
+                    onChange={(e) => {
+                      const newItems = [...(component.items || [])];
+                      newItems[idx] = { ...newItems[idx], question: e.target.value };
+                      handleChange('items', newItems);
+                    }}
+                  />
+                  <Textarea
+                    placeholder="Resposta"
+                    value={item.answer || ''}
+                    rows={2}
+                    onChange={(e) => {
+                      const newItems = [...(component.items || [])];
+                      newItems[idx] = { ...newItems[idx], answer: e.target.value };
+                      handleChange('items', newItems);
+                    }}
+                  />
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleChange('items', [...(component.items || []), { question: '', answer: '' }])}
+              >
+                <Plus className="w-4 h-4 mr-1" /> Adicionar Pergunta
+              </Button>
+            </div>
+          </div>
+        );
+
+      case 'stats':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-indigo-600">📊 Estatísticas/Contadores</div>
+            <Input
+              placeholder="Título da Seção"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <div className="grid grid-cols-2 gap-2">
+              {[0, 1, 2, 3].map((idx) => (
+                <div key={idx} className="p-2 bg-gray-50 rounded space-y-1">
+                  <Input
+                    placeholder={`Número ${idx + 1}`}
+                    value={component.stats?.[idx]?.value || ''}
+                    onChange={(e) => {
+                      const newStats = [...(component.stats || [{}, {}, {}, {}])];
+                      newStats[idx] = { ...newStats[idx], value: e.target.value };
+                      handleChange('stats', newStats);
+                    }}
+                  />
+                  <Input
+                    placeholder="Descrição"
+                    value={component.stats?.[idx]?.label || ''}
+                    onChange={(e) => {
+                      const newStats = [...(component.stats || [{}, {}, {}, {}])];
+                      newStats[idx] = { ...newStats[idx], label: e.target.value };
+                      handleChange('stats', newStats);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'features':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-emerald-600">✅ Lista de Características</div>
+            <Input
+              placeholder="Título"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <Textarea
+              placeholder="Descrição"
+              value={component.description || ''}
+              onChange={(e) => handleChange('description', e.target.value)}
+              rows={2}
+            />
+            <Textarea
+              placeholder="Características (uma por linha)"
+              value={component.features?.join('\n') || ''}
+              onChange={(e) => handleChange('features', e.target.value.split('\n').filter(f => f.trim()))}
+              rows={4}
+            />
+            <p className="text-xs text-gray-500">Digite uma característica por linha</p>
+          </div>
+        );
+
+      case 'banner':
+        return (
+          <div className="space-y-3">
+            <div className="font-semibold text-amber-600">🎨 Banner Promocional</div>
+            <Input
+              placeholder="Título"
+              value={component.title || ''}
+              onChange={(e) => handleChange('title', e.target.value)}
+            />
+            <Input
+              placeholder="Subtítulo"
+              value={component.subtitle || ''}
+              onChange={(e) => handleChange('subtitle', e.target.value)}
+            />
+            <Input
+              placeholder="URL da Imagem de Fundo"
+              value={component.image || ''}
+              onChange={(e) => handleChange('image', e.target.value)}
+            />
+            <Input
+              placeholder="Texto do Botão"
+              value={component.buttonText || ''}
+              onChange={(e) => handleChange('buttonText', e.target.value)}
+            />
+            <select
+              className="w-full border rounded p-2"
+              value={component.style || 'gradient'}
+              onChange={(e) => handleChange('style', e.target.value)}
+            >
+              <option value="gradient">Gradiente Azul</option>
+              <option value="dark">Escuro</option>
+              <option value="light">Claro</option>
+              <option value="image">Apenas Imagem</option>
+            </select>
+          </div>
+        );
       
       default:
         return <div>Tipo desconhecido: {component.type}</div>;
