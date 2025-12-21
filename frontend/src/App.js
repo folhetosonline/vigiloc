@@ -36,6 +36,7 @@ import VisualPageBuilder from "@/pages/admin/VisualPageBuilder";
 import ThemeCustomizer from "@/pages/admin/ThemeCustomizer";
 import ContentBlockEditor from "@/pages/admin/ContentBlockEditor";
 import NavbarCustomizer from "@/pages/admin/NavbarCustomizer";
+import NavbarManager from "@/pages/admin/NavbarManager";
 import Reports from "@/pages/admin/Reports";
 
 // CRM pages
