@@ -70,6 +70,7 @@ const Settings = () => {
   useEffect(() => {
     fetchUsers();
     fetchSiteSettings();
+    fetchFooterSettings();
   }, []);
 
   const fetchSiteSettings = async () => {
@@ -78,6 +79,15 @@ const Settings = () => {
       setSiteSettings(response.data);
     } catch (error) {
       toast.error("Erro ao carregar configurações do site");
+    }
+  };
+
+  const fetchFooterSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/footer-settings`);
+      setFooterSettings(response.data);
+    } catch (error) {
+      toast.error("Erro ao carregar configurações do footer");
     }
   };
 
