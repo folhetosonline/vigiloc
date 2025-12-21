@@ -433,6 +433,18 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Customer Account Registration and Management System working perfectly! All 5 test scenarios passed: 1) Customer Registration (POST /customer/register) - Creates customer with name, email, password, phone, CPF and returns token + user data. 2) Customer Login (POST /customer/login) - Authenticates with credentials and returns token. 3) Get Customer Profile (GET /customer/me) - Returns complete profile with name, email, phone, CPF, and address object with all 7 address fields (street, number, complement, neighborhood, city, state, zip). 4) Update Customer Profile (PUT /customer/profile) - Successfully updates profile with Brazilian address data (Avenida Paulista, 1000, Apto 101, Bela Vista, São Paulo, SP, 01310-100). All updates verified and persisted correctly. 5) Change Password (PUT /customer/change-password) - Changes password successfully and verifies login with new password works. FIXED ISSUES: Fixed customer login endpoint to use password_hash instead of password. Fixed JWT token resolution to prioritize Authorization header over session cookies for API calls. All customer endpoints now accept and return new fields correctly, address fields are properly stored and retrieved, password change works with password_hash field. Customer registration works without KeyError."
 
+  - task: "Page Builder Backend APIs"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Page Builder APIs working perfectly. GET /api/admin/pages lists custom pages. POST /api/admin/pages creates page with UUID ID. PUT /api/admin/pages/{id} updates page and handles publication status. DELETE /api/admin/pages/{id} removes page successfully. GET /api/pages/{slug} retrieves published pages for public access. Black Friday page exists and accessible at /api/pages/black-friday with proper components structure."
+
 
 frontend:
   - task: "Product Badges and Pages System"
