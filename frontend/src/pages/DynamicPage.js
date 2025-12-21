@@ -366,7 +366,12 @@ const DynamicPage = () => {
       'product': <ProductRenderer key={index} component={component} whatsappNumber={whatsappNumber} />,
       'text': <TextRenderer key={index} component={component} />,
       'cta': <CTARenderer key={index} component={component} whatsappNumber={whatsappNumber} />,
-      'banner': <BannerRenderer key={index} component={component} />,
+      'banner': <BannerRenderer key={index} component={component} whatsappNumber={whatsappNumber} />,
+      'gallery': <GalleryRenderer key={index} component={component} />,
+      'video': <VideoRenderer key={index} component={component} />,
+      'faq': <FAQRenderer key={index} component={component} />,
+      'stats': <StatsRenderer key={index} component={component} />,
+      'features': <FeaturesRenderer key={index} component={component} />,
     };
 
     return componentMap[component.type] || (
