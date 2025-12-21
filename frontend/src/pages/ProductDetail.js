@@ -40,8 +40,9 @@ const ProductDetail = () => {
   };
 
   const handleWhatsAppContact = () => {
+    const whatsappNumber = siteSettings?.whatsapp_number || '5511999999999';
     const message = `Olá! Tenho interesse no produto: ${product.name}`;
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
