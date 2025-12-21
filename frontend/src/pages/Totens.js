@@ -122,32 +122,13 @@ const Totens = () => {
         {/* Products Section */}
         <div className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-8">Nossos Totens</h2>
+            <h2 className="text-3xl font-bold text-center mb-8">Nossos Produtos</h2>
             
-            {/* Badge Filters */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {Object.entries(badgeConfig).map(([key, config]) => (
-                <Badge
-                  key={key}
-                  className={`cursor-pointer text-sm py-2 px-4 ${
-                    selectedBadges.includes(key) 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                  onClick={() => toggleBadgeFilter(key)}
-                >
-                  {config.label}
-                </Badge>
-              ))}
-              {selectedBadges.length > 0 && (
-                <Badge
-                  className="cursor-pointer bg-red-100 text-red-800 hover:bg-red-200"
-                  onClick={() => setSelectedBadges([])}
-                >
-                  Limpar Filtros
-                </Badge>
-              )}
-            </div>
+            {/* New Visual Filter */}
+            <ProductFilter 
+              onFilterChange={setFilters}
+              activeFilters={filters}
+            />
 
             {loading ? (
               <div className="text-center py-12">
@@ -155,7 +136,7 @@ const Totens = () => {
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-600">Nenhum totem disponível no momento.</p>
+                <p className="text-gray-600">Nenhum produto disponível no momento.</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
