@@ -168,7 +168,7 @@ const PageBuilder = () => {
                   <Pencil className="h-4 w-4 mr-1" />
                   Editar Conteúdo
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => window.open(page.slug, '_blank')}>
+                <Button size="sm" variant="outline" onClick={() => window.open(`/p/${page.slug}`, '_blank')}>
                   <Eye className="h-4 w-4 mr-1" />
                   Preview
                 </Button>
