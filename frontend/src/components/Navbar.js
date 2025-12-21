@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { API } from "@/App";
@@ -8,10 +8,13 @@ import { API } from "@/App";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState({ site_name: "VigiLoc", logo_url: null });
+  const [navbarSettings, setNavbarSettings] = useState({ links: [], background_color: "#FFFFFF", text_color: "#1F2937" });
+  const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
     fetchSiteSettings();
+    fetchNavbarSettings();
   }, []);
 
   const fetchSiteSettings = async () => {
@@ -23,14 +26,33 @@ const Navbar = () => {
     }
   };
 
+  const fetchNavbarSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/navbar-settings`);
+      setNavbarSettings(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar configurações da navbar");
+    }
+  };
+
   const isActive = (path) => location.pathname === path;
 
-  const navLinks = [
+  // Default links if none configured
+  const defaultLinks = [
     { path: "/", label: "Início" },
     { path: "/produtos", label: "Produtos" },
     { path: "/totens", label: "Totens" },
     { path: "/contato", label: "Contato" }
   ];
+
+  // Use configured links or defaults
+  const navLinks = navbarSettings.links && navbarSettings.links.length > 0 
+    ? navbarSettings.links.map(link => ({
+        path: link.url,
+        label: link.label,
+        sublinks: link.sublinks || []
+      }))
+    : defaultLinks;
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50" data-testid="navbar">
