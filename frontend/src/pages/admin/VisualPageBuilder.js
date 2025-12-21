@@ -276,10 +276,11 @@ const VisualPageBuilder = () => {
         title: pageTitle,
         slug: pageSlug,
         components: components,
-        published: false
+        published: published
       });
-      toast.success('Página salva com sucesso!');
+      toast.success(published ? 'Página publicada com sucesso!' : 'Página salva como rascunho!');
     } catch (error) {
+      console.error('Save error:', error);
       toast.error('Erro ao salvar página');
     } finally {
       setLoading(false);
