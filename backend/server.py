@@ -358,6 +358,13 @@ class SiteSettings(BaseModel):
     enable_cart_globally: bool = False  # Se habilita carrinho para todos os produtos (default: false)
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class NavLink(BaseModel):
+    """Navigation link model"""
+    id: str = ""
+    label: str
+    url: str
+    sublinks: List[dict] = []  # List of {id, label, url}
+
 class NavbarSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = "navbar_settings"
@@ -365,6 +372,7 @@ class NavbarSettings(BaseModel):
     text_color: str = "#1F2937"
     hover_color: str = "#3B82F6"
     font_family: str = "Inter"
+    links: List[dict] = []  # List of NavLink objects
 
 
 class FooterSettings(BaseModel):
