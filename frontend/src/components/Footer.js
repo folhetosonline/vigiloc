@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "@/App";
