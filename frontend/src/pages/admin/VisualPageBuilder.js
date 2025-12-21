@@ -541,6 +541,28 @@ const VisualPageBuilder = () => {
               </Button>
             </div>
 
+            {/* Second row of component buttons */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              <Button onClick={() => addComponent('gallery')} variant="outline" size="sm">
+                🖼️ Galeria
+              </Button>
+              <Button onClick={() => addComponent('video')} variant="outline" size="sm">
+                🎬 Vídeo
+              </Button>
+              <Button onClick={() => addComponent('faq')} variant="outline" size="sm">
+                ❓ FAQ
+              </Button>
+              <Button onClick={() => addComponent('stats')} variant="outline" size="sm">
+                📊 Estatísticas
+              </Button>
+              <Button onClick={() => addComponent('features')} variant="outline" size="sm">
+                ✅ Características
+              </Button>
+              <Button onClick={() => addComponent('banner')} variant="outline" size="sm">
+                🎨 Banner
+              </Button>
+            </div>
+
             <div className="grid grid-cols-2 gap-6">
               {/* Editor */}
               <div>
