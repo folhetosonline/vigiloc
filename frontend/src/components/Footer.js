@@ -68,13 +68,13 @@ const Footer = () => {
               <span className="text-2xl font-bold">{siteSettings.site_name}</span>
             </div>
             <p className="text-gray-400">
-              Soluções inteligentes em segurança eletrônica: câmeras, controle de acesso e totens de monitoramento.
+              {footerSettings.about_text}
             </p>
-            {siteSettings.contact_email && (
-              <p className="text-gray-400 mt-2">Email: {siteSettings.contact_email}</p>
+            {footerSettings.contact_email && (
+              <p className="text-gray-400 mt-2">Email: {footerSettings.contact_email}</p>
             )}
-            {siteSettings.contact_phone && (
-              <p className="text-gray-400">Tel: {siteSettings.contact_phone}</p>
+            {footerSettings.contact_phone && (
+              <p className="text-gray-400">Tel: {footerSettings.contact_phone}</p>
             )}
           </div>
 
