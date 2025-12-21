@@ -389,6 +389,15 @@ const VisualPageBuilder = () => {
             </div>
 
             <div className="mt-6 flex justify-end gap-2">
+              {pageSlug && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open(`/p/${pageSlug}`, '_blank')}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Ver Página
+                </Button>
+              )}
               <Button onClick={savePage} disabled={loading}>
                 <Save className="w-4 h-4 mr-2" />
                 {loading ? 'Salvando...' : 'Salvar Página'}
