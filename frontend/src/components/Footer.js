@@ -141,6 +141,11 @@ const Footer = () => {
               {footerSettings.address && <li dangerouslySetInnerHTML={{ __html: footerSettings.address.replace(/\n/g, '<br />') }} />}
             </ul>
             <div className="flex space-x-4 mt-4">
+              {footerSettings.whatsapp_number && (
+                <a href={`https://wa.me/${footerSettings.whatsapp_number.replace(/\D/g, '')}`} className="text-gray-400 hover:text-green-400 transition-colors" data-testid="whatsapp-link" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-6 w-6" />
+                </a>
+              )}
               {footerSettings.facebook_url && (
                 <a href={footerSettings.facebook_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="facebook-link" target="_blank" rel="noopener noreferrer">
                   <Facebook className="h-6 w-6" />
