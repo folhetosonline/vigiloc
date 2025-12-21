@@ -598,6 +598,106 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="footer">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações do Footer</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveFooterSettings} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Texto Sobre a Empresa</label>
+                  <textarea
+                    className="w-full p-2 border rounded"
+                    rows="3"
+                    value={footerSettings.about_text}
+                    onChange={(e) => setFooterSettings({...footerSettings, about_text: e.target.value})}
+                    placeholder="Breve descrição da empresa"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email de Contato</label>
+                    <Input
+                      type="email"
+                      value={footerSettings.contact_email}
+                      onChange={(e) => setFooterSettings({...footerSettings, contact_email: e.target.value})}
+                      placeholder="contato@empresa.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Telefone</label>
+                    <Input
+                      value={footerSettings.contact_phone}
+                      onChange={(e) => setFooterSettings({...footerSettings, contact_phone: e.target.value})}
+                      placeholder="(11) 1234-5678"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">WhatsApp (com código do país)</label>
+                  <Input
+                    value={footerSettings.whatsapp_number}
+                    onChange={(e) => setFooterSettings({...footerSettings, whatsapp_number: e.target.value})}
+                    placeholder="5511999999999"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Formato: código do país + DDD + número (ex: 5511999999999)</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Endereço Completo</label>
+                  <textarea
+                    className="w-full p-2 border rounded"
+                    rows="2"
+                    value={footerSettings.address}
+                    onChange={(e) => setFooterSettings({...footerSettings, address: e.target.value})}
+                    placeholder="Rua, Número, Bairro, Cidade - Estado, CEP"
+                  />
+                </div>
+
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold mb-4">Redes Sociais</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Facebook (URL completa)</label>
+                      <Input
+                        value={footerSettings.facebook_url}
+                        onChange={(e) => setFooterSettings({...footerSettings, facebook_url: e.target.value})}
+                        placeholder="https://facebook.com/suapagina"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Instagram (URL completa)</label>
+                      <Input
+                        value={footerSettings.instagram_url}
+                        onChange={(e) => setFooterSettings({...footerSettings, instagram_url: e.target.value})}
+                        placeholder="https://instagram.com/seuperfil"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">LinkedIn (URL completa)</label>
+                      <Input
+                        value={footerSettings.linkedin_url}
+                        onChange={(e) => setFooterSettings({...footerSettings, linkedin_url: e.target.value})}
+                        placeholder="https://linkedin.com/company/suaempresa"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full">
+                  Salvar Configurações do Footer
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="payments">
           <PaymentSettings />
         </TabsContent>
