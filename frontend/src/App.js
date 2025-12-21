@@ -18,6 +18,7 @@ import AdminResetPassword from "@/pages/AdminResetPassword";
 import CustomerLogin from "@/pages/CustomerLogin";
 import CustomerAccount from "@/pages/CustomerAccount";
 import ForgotPassword from "@/pages/ForgotPassword";
+import DynamicPage from "@/pages/DynamicPage";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin/Dashboard";
