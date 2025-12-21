@@ -313,11 +313,18 @@ const VisualPageBuilder = () => {
                 value={pageTitle}
                 onChange={(e) => setPageTitle(e.target.value)}
               />
-              <Input
-                placeholder="Slug (URL: /slug)"
-                value={pageSlug}
-                onChange={(e) => setPageSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-              />
+              <div>
+                <Input
+                  placeholder="Slug (URL)"
+                  value={pageSlug}
+                  onChange={(e) => setPageSlug(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))}
+                />
+                {pageSlug && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    URL: <span className="text-blue-600">/p/{pageSlug}</span>
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="flex gap-2 mb-6">
