@@ -13,7 +13,6 @@ import { Plus, Pencil, Trash2, Key, Shield, User, Globe, Upload, TrendingUp, Cod
 import axios from "axios";
 import { API } from "@/App";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import TrackingManager from "./TrackingManager";
 import SEOManager from "./SEOManager";
 import PaymentSettings from "./PaymentSettings";
