@@ -299,6 +299,10 @@ const Settings = () => {
             <Globe className="w-4 h-4 mr-2" />
             Site
           </TabsTrigger>
+          <TabsTrigger value="footer">
+            <Globe className="w-4 h-4 mr-2" />
+            Footer
+          </TabsTrigger>
           <TabsTrigger value="payments">
             <CreditCard className="w-4 h-4 mr-2" />
             Pagamentos
