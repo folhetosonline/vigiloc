@@ -375,6 +375,32 @@ const Settings = () => {
                   />
                 </div>
 
+                <div className="border-t pt-4">
+                  <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <ShoppingCart className="w-5 h-5 text-orange-600" />
+                      <div>
+                        <Label htmlFor="enable_cart_globally" className="font-semibold">
+                          Habilitar Carrinho Globalmente
+                        </Label>
+                        <p className="text-sm text-gray-600">
+                          Ativa carrinho para TODOS os produtos (pode sobrescrever por produto)
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      id="enable_cart_globally"
+                      checked={siteSettings.enable_cart_globally}
+                      onCheckedChange={(checked) => 
+                        setSiteSettings({...siteSettings, enable_cart_globally: checked})
+                      }
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    ⚠️ Se desabilitado, priorizará venda consultiva via WhatsApp. Configure individualmente em cada produto.
+                  </p>
+                </div>
+
                 <Button type="submit" className="w-full">
                   Salvar Configurações do Site
                 </Button>
