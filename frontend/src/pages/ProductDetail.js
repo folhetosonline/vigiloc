@@ -145,25 +145,37 @@ const ProductDetail = () => {
 
             {/* CTA Buttons */}
             <div className="space-y-4">
-              <Button
-                data-testid="add-to-cart-btn"
-                onClick={handleAddToCart}
-                size="lg"
-                className="w-full btn-primary text-lg py-6"
-              >
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Adicionar ao Carrinho
-              </Button>
+              {/* Lógica: Mostrar carrinho se enable_cart do produto OU enable_cart_globally */}
+              {(product.enable_cart || siteSettings?.enable_cart_globally) ? (
+                <Button
+                  data-testid="add-to-cart-btn"
+                  onClick={handleAddToCart}
+                  size="lg"
+                  className="w-full btn-primary text-lg py-6"
+                >
+                  <ShoppingCart className="mr-2 h-5 w-5" />
+                  Adicionar ao Carrinho
+                </Button>
+              ) : null}
+              
+              {/* Botão WhatsApp - sempre visível com ícone pulsante */}
               <Button
                 data-testid="whatsapp-contact-btn"
                 onClick={handleWhatsAppContact}
                 size="lg"
-                variant="outline"
-                className="w-full text-lg py-6"
+                variant={product.enable_cart || siteSettings?.enable_cart_globally ? "outline" : "default"}
+                className={`w-full text-lg py-6 ${!(product.enable_cart || siteSettings?.enable_cart_globally) ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
               >
-                <MessageCircle className="mr-2 h-5 w-5" />
-                Consultar via WhatsApp
+                <div className="relative mr-2">
+                  <MessageCircle className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  </span>
+                </div>
+                {!(product.enable_cart || siteSettings?.enable_cart_globally) ? 'Solicitar Orçamento via WhatsApp' : 'Consultar via WhatsApp'}
               </Button>
+              
               <Link to="/contato">
                 <Button
                   data-testid="request-quote-btn"
