@@ -103,6 +103,18 @@ const Settings = () => {
     }
   };
 
+
+  const handleSaveFooterSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`${API}/admin/footer-settings`, footerSettings);
+      toast.success("Configurações do footer atualizadas!");
+    } catch (error) {
+      toast.error("Erro ao salvar configurações do footer");
+    }
+  };
+
+
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
