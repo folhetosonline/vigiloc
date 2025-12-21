@@ -155,6 +155,7 @@ function App() {
               <Route path="crm/notifications" element={<CRMNotifications />} />
               <Route path="crm/settings" element={<CRMSettings />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="navbar" element={<NavbarManager />} />
               
               {/* Shopify-like Features */}
               <Route path="page-builder" element={<PageBuilder />} />
