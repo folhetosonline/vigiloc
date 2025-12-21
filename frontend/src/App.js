@@ -163,6 +163,9 @@ function App() {
               <Route path="navbar-customizer" element={<NavbarCustomizer />} />
               <Route path="reports" element={<Reports />} />
             </Route>
+
+            {/* Dynamic Pages - Page Builder (Must be last to catch custom slugs) */}
+            <Route path="/p/:slug" element={<><Navbar /><DynamicPage /><Footer /><WhatsAppButton /></>} />
           </Routes>
           <Toaster position="top-right" />
         </BrowserRouter>
