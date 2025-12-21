@@ -290,86 +290,105 @@ const VisualPageBuilder = () => {
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-4">Visual Page Builder</h1>
         
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <Input
-            placeholder="Título da Página"
-            value={pageTitle}
-            onChange={(e) => setPageTitle(e.target.value)}
-          />
-          <Input
-            placeholder="Slug (URL: /slug)"
-            value={pageSlug}
-            onChange={(e) => setPageSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-          />
-        </div>
+        <Tabs defaultValue="builder" className="w-full">
+          <TabsList>
+            <TabsTrigger value="builder">Editor</TabsTrigger>
+            <TabsTrigger value="templates">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Templates Prontos
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="flex gap-2 mb-6">
-          <Button onClick={() => addComponent('hero')} variant="outline">
-            <Plus className="w-4 h-4 mr-2" />
-            Hero
-          </Button>
-          <Button onClick={() => addComponent('product')} variant="outline">
-            <Plus className="w-4 h-4 mr-2" />
-            Produto
-          </Button>
-          <Button onClick={() => addComponent('text')} variant="outline">
-            <Plus className="w-4 h-4 mr-2" />
-            Texto
-          </Button>
-          <Button onClick={() => addComponent('cta')} variant="outline">
-            <Plus className="w-4 h-4 mr-2" />
-            CTA
-          </Button>
-        </div>
-      </div>
+          <TabsContent value="templates">
+            <PageTemplates onApplyTemplate={(templateComponents) => {
+              setComponents(templateComponents);
+              toast.success('Template aplicado! Personalize como quiser.');
+            }} />
+          </TabsContent>
 
-      <div className="grid grid-cols-2 gap-6">
-        {/* Editor */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Editor</h2>
-          {components.length === 0 ? (
-            <Card className="p-8 text-center text-gray-500">
-              Adicione componentes clicando nos botões acima
-            </Card>
-          ) : (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={components.map(c => c.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {components.map((component, index) => (
-                  <SortableComponent
-                    key={component.id}
-                    id={component.id}
-                    component={component}
-                    products={products}
-                    onUpdate={(updated) => updateComponent(index, updated)}
-                    onDelete={() => deleteComponent(index)}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          )}
-        </div>
+          <TabsContent value="builder">
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <Input
+                placeholder="Título da Página"
+                value={pageTitle}
+                onChange={(e) => setPageTitle(e.target.value)}
+              />
+              <Input
+                placeholder="Slug (URL: /slug)"
+                value={pageSlug}
+                onChange={(e) => setPageSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+              />
+            </div>
 
-        {/* Preview */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Preview</h2>
-          <Card className="p-4 bg-gray-50">
-            <PagePreview components={components} />
-          </Card>
-        </div>
-      </div>
+            <div className="flex gap-2 mb-6">
+              <Button onClick={() => addComponent('hero')} variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Hero
+              </Button>
+              <Button onClick={() => addComponent('product')} variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Produto
+              </Button>
+              <Button onClick={() => addComponent('text')} variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Texto
+              </Button>
+              <Button onClick={() => addComponent('cta')} variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                CTA
+              </Button>
+            </div>
 
-      <div className="mt-6 flex justify-end gap-2">
-        <Button onClick={savePage} disabled={loading}>
-          <Save className="w-4 h-4 mr-2" />
-          {loading ? 'Salvando...' : 'Salvar Página'}
-        </Button>
+            <div className="grid grid-cols-2 gap-6">
+              {/* Editor */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Editor</h2>
+                {components.length === 0 ? (
+                  <Card className="p-8 text-center text-gray-500">
+                    Adicione componentes ou use um template pronto
+                  </Card>
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={components.map(c => c.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {components.map((component, index) => (
+                        <SortableComponent
+                          key={component.id}
+                          id={component.id}
+                          component={component}
+                          products={products}
+                          onUpdate={(updated) => updateComponent(index, updated)}
+                          onDelete={() => deleteComponent(index)}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                )}
+              </div>
+
+              {/* Preview */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Preview</h2>
+                <Card className="p-4 bg-gray-50">
+                  <PagePreview components={components} />
+                </Card>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <Button onClick={savePage} disabled={loading}>
+                <Save className="w-4 h-4 mr-2" />
+                {loading ? 'Salvando...' : 'Salvar Página'}
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
