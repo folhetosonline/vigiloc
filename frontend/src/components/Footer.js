@@ -12,17 +12,31 @@ const Footer = () => {
     contact_phone: "",
     address: ""
   });
+  const [footerSettings, setFooterSettings] = useState({
+    about_text: "Referência em segurança eletrônica: câmeras, controle de acesso e totens de monitoramento.",
+    contact_email: "",
+    contact_phone: "",
+    whatsapp_number: "",
+    address: "",
+    facebook_url: "",
+    instagram_url: "",
+    linkedin_url: ""
+  });
 
   useEffect(() => {
-    fetchSiteSettings();
+    fetchSettings();
   }, []);
 
-  const fetchSiteSettings = async () => {
+  const fetchSettings = async () => {
     try {
-      const response = await axios.get(`${API}/site-settings`);
-      setSiteSettings(response.data);
+      const [siteRes, footerRes] = await Promise.all([
+        axios.get(`${API}/site-settings`),
+        axios.get(`${API}/footer-settings`)
+      ]);
+      setSiteSettings(siteRes.data);
+      setFooterSettings(footerRes.data);
     } catch (error) {
-      console.error("Erro ao carregar configurações");
+      console.error("Erro ao carregar configurações:", error);
     }
   };
 
