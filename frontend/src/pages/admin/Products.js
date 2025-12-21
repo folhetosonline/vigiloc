@@ -365,6 +365,26 @@ const Products = () => {
                 </div>
               </div>
 
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <ShoppingCart className="w-5 h-5 text-blue-600" />
+                    <div>
+                      <Label htmlFor="enable_cart" className="font-semibold">Habilitar Carrinho</Label>
+                      <p className="text-sm text-gray-600">Permitir adicionar este produto ao carrinho</p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="enable_cart"
+                    checked={formData.enable_cart}
+                    onCheckedChange={(checked) => setFormData({ ...formData, enable_cart: checked })}
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  ⚠️ Se desabilitado, o produto só terá botão de WhatsApp (venda consultiva)
+                </p>
+              </div>
+
               <Button type="submit" className="w-full">
                 {editingProduct ? "Atualizar" : "Criar"} Produto
               </Button>
