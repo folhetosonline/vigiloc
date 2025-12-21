@@ -1135,6 +1135,15 @@ async def get_products(category: Optional[str] = None):
             product['published_at'] = datetime.fromisoformat(product['published_at'])
     return products
 
+
+@api_router.get("/categories")
+async def get_categories():
+    """Get all unique categories from published products"""
+    products = await db.products.find({"published": True}, {"_id": 0, "category": 1}).to_list(1000)
+    categories = list(set([p['category'] for p in products if p.get('category')]))
+    return sorted(categories)
+
+
 @api_router.get("/products/by-page/{page_name}", response_model=List[Product])
 async def get_products_by_page(page_name: str, badges: Optional[str] = None):
     """Get products filtered by page and optionally by badges"""
