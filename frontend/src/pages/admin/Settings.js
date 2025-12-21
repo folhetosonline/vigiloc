@@ -34,6 +34,17 @@ const Settings = () => {
     address: "",
     enable_cart_globally: false
   });
+  
+  const [footerSettings, setFooterSettings] = useState({
+    about_text: "",
+    contact_email: "",
+    contact_phone: "",
+    whatsapp_number: "",
+    address: "",
+    facebook_url: "",
+    instagram_url: "",
+    linkedin_url: ""
+  });
   const [uploadingLogo, setUploadingLogo] = useState(false);
   
   const [formData, setFormData] = useState({
