@@ -129,6 +129,9 @@ function App() {
             <Route path="/recuperar-senha" element={<><Navbar /><ForgotPassword /><Footer /><WhatsAppButton /></>} />
             <Route path="/minha-conta" element={<><Navbar /><CustomerAccount /><Footer /><WhatsAppButton /></>} />
             
+            {/* Service Pages */}
+            <Route path="/servico/:slug" element={<><Navbar /><ServicePage /><Footer /><WhatsAppButton /></>} />
+            
             {/* Admin Login - Secure URL */}
             <Route path="/painel-admin" element={<Login />} />
             <Route path="/admin/recuperar-senha" element={<AdminForgotPassword />} />
