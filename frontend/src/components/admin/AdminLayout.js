@@ -2,7 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, Package, ShoppingCart, Truck, FolderOpen, FileText, 
   MessageSquare, LogOut, Users, Settings, Eye, Image, Ticket, 
-  DollarSign, Wrench, Bell, ClipboardList, Building2, BoxIcon, Layout, Palette, Menu, BarChart3
+  DollarSign, Wrench, Bell, ClipboardList, Building2, BoxIcon, Layout, Palette, Menu, BarChart3, Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
@@ -29,18 +29,15 @@ const AdminLayout = () => {
 
   const menuItems = [
     { path: "/admin", icon: <LayoutDashboard />, label: "Dashboard", exact: true },
-    { path: "/admin/products", icon: <Package />, label: "Produtos" },
+    { path: "/admin/services", icon: <Briefcase />, label: "Serviços" },
     { path: "/admin/categories", icon: <FolderOpen />, label: "Categorias" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
-    { path: "/admin/shipping", icon: <Truck />, label: "Frete" },
     { path: "/admin/banners", icon: <Image />, label: "Banners" },
-    { path: "/admin/coupons", icon: <Ticket />, label: "Cupons" },
-    { path: "/admin/content", icon: <FileText />, label: "Conteúdo" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
     { path: "/admin/page-builder", icon: <Layout />, label: "Page Builder" },
     { path: "/admin/visual-builder", icon: <Layout />, label: "Visual Builder ✨" },
-    { path: "/admin/theme-customizer", icon: <Palette />, label: "Tema" },
     { path: "/admin/navbar", icon: <Menu />, label: "Menu Navegação" },
+    { path: "/admin/theme-customizer", icon: <Palette />, label: "Tema" },
     { path: "/admin/reports", icon: <BarChart3 />, label: "Relatórios" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
