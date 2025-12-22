@@ -96,57 +96,49 @@ const Footer = () => {
             )}
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links - Dynamic from Navbar */}
           <div data-testid="footer-links">
             <h3 className="text-lg font-semibold mb-4">Links Rápidos</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to="/produtos" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Produtos
-                </Link>
-              </li>
-              <li>
-                <Link to="/totens" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Totens
-                </Link>
-              </li>
-              <li>
-                <Link to="/contato" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Contato
-                </Link>
-              </li>
+              {quickLinks.map((link, index) => (
+                <li key={index}>
+                  <Link to={link.url} className="text-gray-400 hover:text-blue-400 transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Products */}
+          {/* Services/Categories - Dynamic */}
           <div data-testid="footer-products">
-            <h3 className="text-lg font-semibold mb-4">Produtos</h3>
+            <h3 className="text-lg font-semibold mb-4">Serviços</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/produtos?category=cameras" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Câmeras de Vigilância
-                </Link>
-              </li>
-              <li>
-                <Link to="/produtos?category=controle-acesso" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Controle de Acesso
-                </Link>
-              </li>
-              <li>
-                <Link to="/produtos?category=fechaduras" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Fechaduras Inteligentes
-                </Link>
-              </li>
-              <li>
-                <Link to="/totens" className="text-gray-400 hover:text-blue-400 transition-colors">
-                  Totens de Monitoramento
-                </Link>
-              </li>
+              {categories.length > 0 ? (
+                categories.slice(0, 5).map((cat, index) => (
+                  <li key={index}>
+                    <Link 
+                      to={`/totens?categoria=${cat.slug}`} 
+                      className="text-gray-400 hover:text-blue-400 transition-colors"
+                    >
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li>
+                    <Link to="/totens" className="text-gray-400 hover:text-blue-400 transition-colors">
+                      Totens de Monitoramento
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/produtos" className="text-gray-400 hover:text-blue-400 transition-colors">
+                      Produtos
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
