@@ -1367,6 +1367,56 @@ async def delete_category(category_id: str, current_user: User = Depends(get_cur
         raise HTTPException(status_code=404, detail="Category not found")
     return {"message": "Category deleted successfully"}
 
+# ==================== SERVICE ROUTES ====================
+
+@api_router.get("/services")
+async def get_public_services():
+    """Get all published services"""
+    services = await db.services.find({"published": True}, {"_id": 0}).to_list(100)
+    return services
+
+@api_router.get("/services/{slug}")
+async def get_service_by_slug(slug: str):
+    """Get a service by slug for public view"""
+    service = await db.services.find_one({"slug": slug, "published": True}, {"_id": 0})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return service
+
+@api_router.get("/admin/services")
+async def get_admin_services(current_user: User = Depends(get_current_admin)):
+    """Get all services for admin"""
+    services = await db.services.find({}, {"_id": 0}).to_list(100)
+    return services
+
+@api_router.post("/admin/services", response_model=Service)
+async def create_service(service_data: ServiceCreate, current_user: User = Depends(get_current_admin)):
+    """Create a new service"""
+    service = Service(**service_data.model_dump())
+    await db.services.insert_one(service.model_dump())
+    return service
+
+@api_router.put("/admin/services/{service_id}")
+async def update_service(service_id: str, service_data: ServiceCreate, current_user: User = Depends(get_current_admin)):
+    """Update a service"""
+    update_data = service_data.model_dump()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.services.update_one({"id": service_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    service = await db.services.find_one({"id": service_id}, {"_id": 0})
+    return service
+
+@api_router.delete("/admin/services/{service_id}")
+async def delete_service(service_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete a service"""
+    result = await db.services.delete_one({"id": service_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"message": "Service deleted successfully"}
+
 # ==================== CART ROUTES ====================
 
 @api_router.get("/cart")
