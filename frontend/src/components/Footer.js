@@ -22,6 +22,8 @@ const Footer = () => {
     instagram_url: "",
     linkedin_url: ""
   });
+  const [navbarLinks, setNavbarLinks] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     fetchSettings();
@@ -29,16 +31,32 @@ const Footer = () => {
 
   const fetchSettings = async () => {
     try {
-      const [siteRes, footerRes] = await Promise.all([
+      const [siteRes, footerRes, navbarRes, categoriesRes] = await Promise.all([
         axios.get(`${API}/site-settings`),
-        axios.get(`${API}/footer-settings`)
+        axios.get(`${API}/footer-settings`),
+        axios.get(`${API}/navbar-settings`),
+        axios.get(`${API}/categories`)
       ]);
       setSiteSettings(siteRes.data);
       setFooterSettings(footerRes.data);
+      setNavbarLinks(navbarRes.data.links || []);
+      setCategories(categoriesRes.data || []);
     } catch (error) {
       console.error("Erro ao carregar configurações:", error);
     }
   };
+
+  // Default links if none configured
+  const defaultLinks = [
+    { label: "Início", url: "/" },
+    { label: "Produtos", url: "/produtos" },
+    { label: "Totens", url: "/totens" },
+    { label: "Contato", url: "/contato" }
+  ];
+
+  const quickLinks = navbarLinks.length > 0 
+    ? navbarLinks.map(l => ({ label: l.label, url: l.url }))
+    : defaultLinks;
 
   return (
     <footer className="bg-gray-900 text-white" data-testid="footer">
