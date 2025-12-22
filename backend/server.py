@@ -186,6 +186,65 @@ class CategoryCreate(BaseModel):
     icon: str
     image: Optional[str] = None
 
+# Service Model for the 6 service categories
+class ServiceFeature(BaseModel):
+    title: str
+    description: str
+    icon: Optional[str] = None
+
+class HeaderBanner(BaseModel):
+    type: str = 'image'  # 'image' | 'video' | 'gradient'
+    mediaUrl: Optional[str] = None
+    overlayColor: str = 'rgba(0,0,0,0.5)'
+    overlayOpacity: int = 50
+    title: Optional[str] = None
+    titleColor: str = '#FFFFFF'
+    titleSize: str = '4xl'
+    titleFont: str = 'Inter'
+    titlePosition: str = 'center'
+    subtitle: Optional[str] = None
+    subtitleColor: str = '#FFFFFF'
+    subtitleSize: str = 'xl'
+    ctaText: Optional[str] = None
+    ctaUrl: Optional[str] = None
+    ctaColor: str = '#22C55E'
+    ctaTextColor: str = '#FFFFFF'
+    height: str = '70vh'
+    textAlign: str = 'center'
+    verticalAlign: str = 'center'
+
+class Service(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    slug: str
+    categoryId: Optional[str] = None
+    shortDescription: Optional[str] = None
+    fullDescription: Optional[str] = None
+    icon: Optional[str] = None
+    published: bool = True
+    headerBanner: Optional[dict] = None
+    features: List[dict] = []
+    gallery: List[str] = []
+    ctaWhatsapp: Optional[str] = None
+    pageContent: List[dict] = []  # Page builder components
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
+
+class ServiceCreate(BaseModel):
+    name: str
+    slug: str
+    categoryId: Optional[str] = None
+    shortDescription: Optional[str] = None
+    fullDescription: Optional[str] = None
+    icon: Optional[str] = None
+    published: bool = True
+    headerBanner: Optional[dict] = None
+    features: List[dict] = []
+    gallery: List[str] = []
+    ctaWhatsapp: Optional[str] = None
+    pageContent: List[dict] = []
+
 class CartItem(BaseModel):
     product_id: str
     quantity: int
