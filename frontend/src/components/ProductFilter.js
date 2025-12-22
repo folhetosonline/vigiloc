@@ -78,7 +78,13 @@ const ProductFilter = ({ onFilterChange, activeFilters = {} }) => {
                 <span className="text-sm font-medium">Filtros ativos:</span>
                 {activeFilters.category && (
                   <Badge variant="secondary" className="gap-1">
-                    {activeFilters.category}
+                    {/* Find category name from slug */}
+                    {(() => {
+                      const cat = categories.find(c => 
+                        (typeof c === 'object' ? c.slug : c) === activeFilters.category
+                      );
+                      return typeof cat === 'object' ? cat.name : activeFilters.category;
+                    })()}
                     <X 
                       className="w-3 h-3 cursor-pointer hover:text-red-600" 
                       onClick={() => handleCategoryClick(activeFilters.category)}
