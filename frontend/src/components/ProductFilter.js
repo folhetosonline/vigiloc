@@ -112,16 +112,23 @@ const ProductFilter = ({ onFilterChange, activeFilters = {} }) => {
                 <h3 className="font-semibold text-lg">Categorias</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={activeFilters.category === category ? "default" : "outline"}
-                    className="justify-start"
-                    onClick={() => handleCategoryClick(category)}
-                  >
-                    {category}
-                  </Button>
-                ))}
+                {categories.map((category) => {
+                  // Handle both object and string formats
+                  const categorySlug = typeof category === 'object' ? category.slug : category;
+                  const categoryName = typeof category === 'object' ? category.name : category;
+                  const categoryId = typeof category === 'object' ? category.id : category;
+                  
+                  return (
+                    <Button
+                      key={categoryId}
+                      variant={activeFilters.category === categorySlug ? "default" : "outline"}
+                      className="justify-start"
+                      onClick={() => handleCategoryClick(categorySlug)}
+                    >
+                      {categoryName}
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
