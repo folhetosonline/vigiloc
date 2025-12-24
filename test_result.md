@@ -1608,3 +1608,27 @@ agent_communication:
       - Páginas públicas: `/p/{slug}` (ex: /p/black-friday)
       - Visual Builder Admin: `/admin/visual-builder`
       - Templates: Tab "Templates Prontos" no Visual Builder
+
+---
+## Testing Session - Services Feature
+Date: 2024-12-22
+
+### Features to Test:
+1. Admin Services Page - CRUD operations
+2. Header/Banner Editor with video background
+3. Public Service Pages
+4. Navbar Dropdown with Services
+5. Footer integration
+
+### Test Credentials:
+- Admin URL: /painel-admin
+- Email: admin@vigiloc.com
+- Password: admin123
+
+### Services Created:
+1. Portaria Autônoma (/servico/portaria-autonoma) - video background
+2. Armários Inteligentes (/servico/armarios-inteligentes) - gradient
+3. Mini Mercados Autônomos (/servico/mini-mercados) - image
+4. Garantidora Financeira (/servico/garantidora-financeira) - gradient
+5. Lavanderia Inteligente (/servico/lavanderia) - image
+6. Controle de Acesso (/servico/controle-acesso) - video background
