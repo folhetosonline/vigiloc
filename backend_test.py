@@ -2440,6 +2440,10 @@ class CRMTester:
         # Run tests in the specified order from the review request
         test_results = []
         
+        # SERVICES API - Test as specifically requested in Portuguese review
+        self.log("\n🎯 SERVICES API TESTING AS REQUESTED:")
+        test_results.append(self.test_services_api())
+        
         # PRIORITY: Customer Account Registration and Management System
         self.log("\n🎯 PRIORITY TEST - CUSTOMER ACCOUNT SYSTEM:")
         test_results.append(self.test_customer_account_system())
