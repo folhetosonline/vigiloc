@@ -117,6 +117,18 @@ user_problem_statement: |
   - Customer registration with phone, CPF, and address fields
 
 backend:
+  - task: "Services API Endpoints"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All 7 Services API tests passed (100% success rate). TESTE 1: GET /api/services returns 6 published services with all required fields (id, name, slug, shortDescription, icon, published, headerBanner, features). TESTE 2: GET /api/services/portaria-autonoma returns complete service with headerBanner containing type, mediaUrl, title, ctaText, ctaColor. TESTE 3: GET /api/admin/services returns 6 services including unpublished (with authentication). TESTE 4: POST /api/admin/services creates new service 'Teste Backend' with ID. TESTE 5: PUT /api/admin/services/{id} updates service name to 'Teste Backend Atualizado'. TESTE 6: DELETE /api/admin/services/{id} deletes service successfully. TESTE 7: GET /api/navbar-settings shows 'Serviços' link with 6 sublinks (Portaria Autônoma, Armários Inteligentes, Mini Mercados Autônomos, Garantidora Financeira, Lavanderia Inteligente, Controle de Acesso). All CRUD operations working perfectly with proper authentication and field validation."
+
   - task: "CRM Models (Customer, Contract, Equipment, Payment, MaintenanceTicket, Notification, CRMSettings)"
     implemented: true
     working: true
