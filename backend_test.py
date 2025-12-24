@@ -2221,6 +2221,213 @@ class CRMTester:
             self.failed_tests.append("Google OAuth Endpoint")
             return False
 
+    def test_services_api(self) -> bool:
+        """Test Services API endpoints as requested in Portuguese review"""
+        self.log("\n=== TESTING SERVICES API ENDPOINTS ===")
+        
+        try:
+            # TESTE 1: Listar Serviços Públicos (sem autenticação)
+            self.log("TESTE 1: GET /api/services (sem autenticação)")
+            response = self.session.get(f"{BASE_URL}/services")  # No auth headers
+            
+            if response.status_code == 200:
+                services = response.json()
+                self.log(f"✅ Retrieved {len(services)} public services")
+                
+                # Verificar se cada serviço tem os campos necessários
+                if services:
+                    service = services[0]
+                    required_fields = ['id', 'name', 'slug', 'shortDescription', 'icon', 'published', 'headerBanner', 'features']
+                    missing_fields = [field for field in required_fields if field not in service]
+                    
+                    if not missing_fields:
+                        self.log("✅ All required service fields present")
+                        self.passed_tests.append("Services - Required Fields")
+                    else:
+                        self.log(f"❌ Missing service fields: {missing_fields}")
+                        self.failed_tests.append("Services - Required Fields")
+                
+                self.passed_tests.append("GET Public Services")
+                self.test_data['public_services'] = services
+            else:
+                self.log(f"❌ Failed to get public services: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Public Services")
+            
+            # TESTE 2: Buscar Serviço por Slug (sem autenticação)
+            self.log("TESTE 2: GET /api/services/portaria-autonoma (sem autenticação)")
+            response = self.session.get(f"{BASE_URL}/services/portaria-autonoma")  # No auth headers
+            
+            if response.status_code == 200:
+                service = response.json()
+                self.log(f"✅ Retrieved service by slug: {service.get('name', 'N/A')}")
+                
+                # Verificar se headerBanner contém os campos necessários
+                header_banner = service.get('headerBanner', {})
+                if header_banner:
+                    banner_fields = ['type', 'mediaUrl', 'title', 'ctaText', 'ctaColor']
+                    missing_banner_fields = [field for field in banner_fields if field not in header_banner]
+                    
+                    if not missing_banner_fields:
+                        self.log("✅ HeaderBanner contains all required fields")
+                        self.passed_tests.append("Service HeaderBanner Fields")
+                    else:
+                        self.log(f"❌ Missing headerBanner fields: {missing_banner_fields}")
+                        self.failed_tests.append("Service HeaderBanner Fields")
+                
+                self.passed_tests.append("GET Service by Slug")
+            else:
+                self.log(f"❌ Failed to get service by slug: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Service by Slug")
+            
+            # TESTE 3: Listar Serviços Admin (com autenticação)
+            self.log("TESTE 3: GET /api/admin/services (com autenticação)")
+            response = self.make_request("GET", "/admin/services")
+            
+            if response.status_code == 200:
+                admin_services = response.json()
+                self.log(f"✅ Retrieved {len(admin_services)} admin services (including unpublished)")
+                self.passed_tests.append("GET Admin Services")
+                self.test_data['admin_services'] = admin_services
+            else:
+                self.log(f"❌ Failed to get admin services: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Admin Services")
+            
+            # TESTE 4: Criar Novo Serviço (com autenticação)
+            self.log("TESTE 4: POST /api/admin/services (criar novo serviço)")
+            new_service_data = {
+                "name": "Teste Backend",
+                "slug": "teste-backend",
+                "shortDescription": "Serviço criado via teste de API",
+                "icon": "🧪",
+                "published": True,
+                "headerBanner": {
+                    "type": "gradient",
+                    "title": "Teste API",
+                    "ctaText": "Testar"
+                },
+                "features": [
+                    {"icon": "✅", "title": "Feature 1", "description": "Teste"}
+                ]
+            }
+            
+            response = self.make_request("POST", "/admin/services", new_service_data)
+            
+            if response.status_code == 200:
+                created_service = response.json()
+                self.test_data['created_service'] = created_service
+                self.log(f"✅ Service created with ID: {created_service.get('id')}")
+                
+                # Verificar se retorna o serviço criado com id
+                if 'id' in created_service:
+                    self.log("✅ Created service has ID")
+                    self.passed_tests.append("Service Creation - ID Present")
+                else:
+                    self.log("❌ Created service missing ID")
+                    self.failed_tests.append("Service Creation - ID Present")
+                
+                self.passed_tests.append("Create New Service")
+            else:
+                self.log(f"❌ Failed to create service: {response.status_code} - {response.text}")
+                self.failed_tests.append("Create New Service")
+            
+            # TESTE 5: Atualizar Serviço (com autenticação)
+            if 'created_service' in self.test_data:
+                service_id = self.test_data['created_service']['id']
+                self.log(f"TESTE 5: PUT /api/admin/services/{service_id} (atualizar serviço)")
+                
+                update_data = {
+                    "name": "Teste Backend Atualizado",
+                    "slug": "teste-backend",
+                    "shortDescription": "Serviço atualizado via teste de API",
+                    "icon": "🧪",
+                    "published": True,
+                    "headerBanner": {
+                        "type": "gradient",
+                        "title": "Teste API Atualizado",
+                        "ctaText": "Testar"
+                    },
+                    "features": [
+                        {"icon": "✅", "title": "Feature 1", "description": "Teste Atualizado"}
+                    ]
+                }
+                
+                response = self.make_request("PUT", f"/admin/services/{service_id}", update_data)
+                
+                if response.status_code == 200:
+                    updated_service = response.json()
+                    self.log(f"✅ Service updated: {updated_service.get('name')}")
+                    
+                    # Verificar se o nome foi atualizado
+                    if updated_service.get('name') == "Teste Backend Atualizado":
+                        self.log("✅ Service name updated correctly")
+                        self.passed_tests.append("Service Update - Name Change")
+                    else:
+                        self.log("❌ Service name not updated correctly")
+                        self.failed_tests.append("Service Update - Name Change")
+                    
+                    self.passed_tests.append("Update Service")
+                else:
+                    self.log(f"❌ Failed to update service: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Update Service")
+            
+            # TESTE 6: Deletar Serviço (com autenticação)
+            if 'created_service' in self.test_data:
+                service_id = self.test_data['created_service']['id']
+                self.log(f"TESTE 6: DELETE /api/admin/services/{service_id} (deletar serviço)")
+                
+                response = self.make_request("DELETE", f"/admin/services/{service_id}")
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    self.log(f"✅ Service deleted: {result.get('message', 'Success')}")
+                    self.passed_tests.append("Delete Service")
+                else:
+                    self.log(f"❌ Failed to delete service: {response.status_code} - {response.text}")
+                    self.failed_tests.append("Delete Service")
+            
+            # TESTE 7: Verificar Navbar Settings
+            self.log("TESTE 7: GET /api/navbar-settings (verificar configurações do navbar)")
+            response = self.session.get(f"{BASE_URL}/navbar-settings")  # No auth headers
+            
+            if response.status_code == 200:
+                navbar_settings = response.json()
+                self.log("✅ Navbar settings retrieved")
+                
+                # Verificar se links contém "Serviços" com sublinks dos 6 serviços
+                links = navbar_settings.get('links', [])
+                services_link = None
+                
+                for link in links:
+                    if 'Serviços' in link.get('label', ''):
+                        services_link = link
+                        break
+                
+                if services_link:
+                    sublinks = services_link.get('sublinks', [])
+                    self.log(f"✅ Found 'Serviços' link with {len(sublinks)} sublinks")
+                    
+                    if len(sublinks) >= 6:
+                        self.log("✅ Navbar has 6+ service sublinks")
+                        self.passed_tests.append("Navbar Services Sublinks")
+                    else:
+                        self.log(f"❌ Expected 6+ service sublinks, found {len(sublinks)}")
+                        self.failed_tests.append("Navbar Services Sublinks")
+                else:
+                    self.log("❌ 'Serviços' link not found in navbar")
+                    self.failed_tests.append("Navbar Services Link")
+                
+                self.passed_tests.append("GET Navbar Settings")
+            else:
+                self.log(f"❌ Failed to get navbar settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Navbar Settings")
+            
+            return len([t for t in self.failed_tests if "Service" in t or "Navbar" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Services API test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Services API")
+            return False
+
     def run_all_tests(self) -> bool:
         """Run all backend tests as requested in the review"""
         self.log("🚀 TESTE COMPLETO DE TODOS OS SISTEMAS DO BACKEND")
