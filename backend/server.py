@@ -3033,6 +3033,110 @@ async def reject_review(review_id: str, current_user: User = Depends(get_current
     await db.reviews.update_one({"id": review_id}, {"$set": {"status": "rejected"}})
     return {"message": "Review rejected"}
 
+# ==================== SOCIAL REVIEWS / TESTIMONIALS ROUTES ====================
+
+@api_router.get("/social-reviews")
+async def get_public_social_reviews():
+    """Get published social reviews for public display"""
+    reviews = await db.social_reviews.find(
+        {"published": True},
+        {"_id": 0}
+    ).sort([("featured", -1), ("order", 1), ("created_at", -1)]).to_list(100)
+    return reviews
+
+@api_router.get("/social-reviews/featured")
+async def get_featured_social_reviews():
+    """Get featured social reviews for homepage"""
+    reviews = await db.social_reviews.find(
+        {"published": True, "featured": True},
+        {"_id": 0}
+    ).sort([("order", 1), ("created_at", -1)]).to_list(20)
+    return reviews
+
+@api_router.get("/admin/social-reviews")
+async def get_all_social_reviews(current_user: User = Depends(get_current_admin)):
+    """Get all social reviews - Admin"""
+    reviews = await db.social_reviews.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return reviews
+
+@api_router.post("/admin/social-reviews")
+async def create_social_review(review_data: SocialReviewCreate, current_user: User = Depends(get_current_admin)):
+    """Create social review - Admin"""
+    review = SocialReview(
+        author_name=review_data.author_name,
+        author_avatar=review_data.author_avatar,
+        rating=review_data.rating,
+        text=review_data.text,
+        source=review_data.source,
+        source_url=review_data.source_url,
+        published=review_data.published,
+        featured=review_data.featured,
+        order=review_data.order
+    )
+    if review_data.review_date:
+        review.review_date = datetime.fromisoformat(review_data.review_date.replace('Z', '+00:00'))
+    
+    doc = review.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('review_date'):
+        doc['review_date'] = doc['review_date'].isoformat()
+    
+    await db.social_reviews.insert_one(doc)
+    return {**doc, "_id": None}
+
+@api_router.put("/admin/social-reviews/{review_id}")
+async def update_social_review(review_id: str, review_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update social review - Admin"""
+    update_data = {k: v for k, v in review_data.items() if k != 'id' and k != '_id'}
+    if 'review_date' in update_data and update_data['review_date']:
+        try:
+            update_data['review_date'] = datetime.fromisoformat(update_data['review_date'].replace('Z', '+00:00')).isoformat()
+        except:
+            pass
+    
+    await db.social_reviews.update_one(
+        {"id": review_id},
+        {"$set": update_data}
+    )
+    updated = await db.social_reviews.find_one({"id": review_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/admin/social-reviews/{review_id}")
+async def delete_social_review(review_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete social review - Admin"""
+    result = await db.social_reviews.delete_one({"id": review_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return {"message": "Review deleted"}
+
+@api_router.patch("/admin/social-reviews/{review_id}/toggle-publish")
+async def toggle_social_review_publish(review_id: str, current_user: User = Depends(get_current_admin)):
+    """Toggle publish status of social review - Admin"""
+    review = await db.social_reviews.find_one({"id": review_id})
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    new_status = not review.get('published', False)
+    await db.social_reviews.update_one(
+        {"id": review_id},
+        {"$set": {"published": new_status}}
+    )
+    return {"published": new_status}
+
+@api_router.patch("/admin/social-reviews/{review_id}/toggle-featured")
+async def toggle_social_review_featured(review_id: str, current_user: User = Depends(get_current_admin)):
+    """Toggle featured status of social review - Admin"""
+    review = await db.social_reviews.find_one({"id": review_id})
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    new_status = not review.get('featured', False)
+    await db.social_reviews.update_one(
+        {"id": review_id},
+        {"$set": {"featured": new_status}}
+    )
+    return {"featured": new_status}
+
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.post("/analytics/track")
