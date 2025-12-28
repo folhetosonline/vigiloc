@@ -38,8 +38,10 @@ import {
   Link as LinkIcon,
   Star,
   Import,
-  Copy
+  Copy,
+  HelpCircle
 } from "lucide-react";
+import AdminGuidePopup from "@/components/admin/AdminGuidePopup";
 
 const SEODashboard = () => {
   const [seoReport, setSeoReport] = useState(null);
