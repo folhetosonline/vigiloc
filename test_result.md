@@ -848,7 +848,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "SEO Dashboard and Admin Guide System - TESTED AND WORKING"
+    - "SEO Files Manager System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
