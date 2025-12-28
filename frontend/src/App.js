@@ -175,6 +175,7 @@ function App() {
               <Route path="theme-customizer" element={<ThemeCustomizer />} />
               <Route path="navbar-customizer" element={<NavbarCustomizer />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="seo" element={<SEODashboard />} />
             </Route>
 
             {/* Dynamic Pages - Page Builder (Must be last to catch custom slugs) */}
