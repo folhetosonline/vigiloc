@@ -31,6 +31,7 @@ const AdminLayout = () => {
     { path: "/admin", icon: <LayoutDashboard />, label: "Dashboard", exact: true },
     { path: "/admin/services", icon: <Briefcase />, label: "Serviços" },
     { path: "/admin/categories", icon: <FolderOpen />, label: "Categorias" },
+    { path: "/admin/reviews", icon: <Star />, label: "Avaliações ⭐" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
     { path: "/admin/banners", icon: <Image />, label: "Banners" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
