@@ -346,6 +346,164 @@ const CTASection = ({ siteSettings }) => {
   );
 };
 
+// Source icons configuration
+const SOURCE_ICONS = {
+  google: { icon: "🔴", name: "Google", color: "text-red-500" },
+  facebook: { icon: "🔵", name: "Facebook", color: "text-blue-600" },
+  instagram: { icon: "📸", name: "Instagram", color: "text-pink-500" },
+  whatsapp: { icon: "💬", name: "WhatsApp", color: "text-green-500" },
+  manual: { icon: "✍️", name: "Cliente", color: "text-gray-500" }
+};
+
+// Star Display Component
+const StarDisplay = ({ rating }) => (
+  <div className="flex gap-0.5">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <svg
+        key={star}
+        className={`w-4 h-4 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+    ))}
+  </div>
+);
+
+// Reviews Section
+const ReviewsSection = ({ reviews }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // Auto-rotate reviews
+  useEffect(() => {
+    if (reviews.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [reviews.length]);
+
+  if (!reviews || reviews.length === 0) return null;
+
+  const getSourceConfig = (source) => SOURCE_ICONS[source] || SOURCE_ICONS.manual;
+
+  // For mobile: show one at a time with dots
+  // For desktop: show grid of 3
+  const visibleReviews = reviews.slice(0, 6);
+
+  return (
+    <section className="py-20 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-14">
+          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+            Depoimentos
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-4 text-gray-900">
+            O que nossos <span className="text-blue-600">clientes</span> dizem
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
+            Veja as avaliações de quem já confia na VigiLoc
+          </p>
+        </div>
+
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visibleReviews.map((review, index) => {
+            const sourceConfig = getSourceConfig(review.source);
+            return (
+              <Card key={review.id || index} className="bg-white hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {review.author_avatar ? (
+                        <img 
+                          src={review.author_avatar} 
+                          alt={review.author_name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                          {review.author_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-semibold text-gray-900">{review.author_name}</p>
+                        <StarDisplay rating={review.rating} />
+                      </div>
+                    </div>
+                    <span className="text-xl" title={sourceConfig.name}>
+                      {sourceConfig.icon}
+                    </span>
+                  </div>
+                  
+                  {/* Quote */}
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                    "{review.text}"
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Mobile Carousel */}
+        <div className="md:hidden">
+          <div className="relative">
+            {reviews.length > 0 && (
+              <Card className="bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {reviews[currentIndex].author_avatar ? (
+                        <img 
+                          src={reviews[currentIndex].author_avatar} 
+                          alt={reviews[currentIndex].author_name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                          {reviews[currentIndex].author_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-semibold text-gray-900">{reviews[currentIndex].author_name}</p>
+                        <StarDisplay rating={reviews[currentIndex].rating} />
+                      </div>
+                    </div>
+                    <span className="text-xl">
+                      {getSourceConfig(reviews[currentIndex].source).icon}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    "{reviews[currentIndex].text}"
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Dots */}
+            {reviews.length > 1 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {reviews.slice(0, 6).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      idx === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // Main Home Component
 const Home = () => {
   const [services, setServices] = useState([]);
