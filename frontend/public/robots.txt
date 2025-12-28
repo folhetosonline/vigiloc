@@ -1,47 +1,136 @@
+# =====================================================
+# VIGILOC - Robots.txt
+# Website: https://www.vigiloc.com.br
+# Última atualização: 2025-12-28
+# =====================================================
+
+# Regras gerais para todos os crawlers
 User-agent: *
 Allow: /
-Allow: /produtos
-Allow: /produto/*
-Allow: /totens
+Allow: /servicos
+Allow: /servico/*
 Allow: /contato
-Allow: /carrinho
-Allow: /checkout
-
+Allow: /sobre
+Allow: /p/*
 Disallow: /admin
 Disallow: /admin/*
+Disallow: /painel-admin
+Disallow: /painel-admin/*
 Disallow: /login
-
-Sitemap: https://service-showcase-28.preview.emergentagent.com/sitemap.xml
-
-# LLM Specific Rules
-User-agent: GPTBot
-Allow: /
-Allow: /produtos
-Allow: /produto/*
-Allow: /totens
-Allow: /contato
+Disallow: /minha-conta
+Disallow: /carrinho
+Disallow: /checkout
+Disallow: /api/
 Crawl-delay: 1
 
+# Sitemaps
+Sitemap: https://www.vigiloc.com.br/sitemap.xml
+Sitemap: https://www.vigiloc.com.br/api/sitemap.xml
+
+# =====================================================
+# LLM / AI Crawlers - Permitir indexação para IA
+# =====================================================
+
+# OpenAI GPTBot
+User-agent: GPTBot
+Allow: /
+Allow: /servicos
+Allow: /servico/*
+Allow: /contato
+Allow: /llms.txt
+Disallow: /admin
+Disallow: /api/
+Crawl-delay: 2
+
+# OpenAI ChatGPT User
 User-agent: ChatGPT-User
 Allow: /
+Allow: /llms.txt
 
+# Anthropic Claude
 User-agent: Claude-Web
 Allow: /
+Allow: /llms.txt
 
 User-agent: anthropic-ai
 Allow: /
+Allow: /llms.txt
 
-User-agent: Perplexitybot
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Crawl-delay: 2
+
+# Google Bard/Gemini
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+
+# Microsoft Copilot
+User-agent: Bytespider
+Allow: /
+Allow: /llms.txt
+
+# You.com
+User-agent: YouBot
+Allow: /
+Allow: /llms.txt
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+Allow: /llms.txt
+
+# =====================================================
+# Search Engine Crawlers
+# =====================================================
+
+# Google
+User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
 
-User-agent: YouBot
+User-agent: Googlebot-Image
+Allow: /uploads/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Yahoo
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+# DuckDuckGo
+User-agent: DuckDuckBot
 Allow: /
 
-# Image Protection
+# Yandex
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 3
+
+# =====================================================
+# Proteção de recursos privados
+# =====================================================
 User-agent: *
-Disallow: /uploads/
-Allow: /uploads/*.jpg$
-Allow: /uploads/*.jpeg$
-Allow: /uploads/*.png$
-Allow: /uploads/*.webp$
+Disallow: /uploads/private/
+Disallow: /*.json$
+Disallow: /static/js/*.map
+Disallow: /static/css/*.map
