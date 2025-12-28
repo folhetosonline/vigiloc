@@ -313,6 +313,67 @@ const SEOFilesManager = () => {
     );
   }
 
+  // Sync/Update all SEO data
+  const handleSyncAll = async () => {
+    setSyncing(true);
+    setSyncResults(null);
+    
+    const results = {
+      llms: { status: "pending", message: "" },
+      sitemap: { status: "pending", message: "" },
+      structuredData: { status: "pending", message: "" },
+      files: { status: "pending", message: "" }
+    };
+    
+    try {
+      // Update LLMs txt (regenerate from database)
+      if (syncOptions.updateLlms) {
+        try {
+          const llmsRes = await axios.get(`${API}/llms.txt`);
+          results.llms = { status: "success", message: `llms.txt atualizado (${llmsRes.data.length} caracteres)` };
+        } catch (e) {
+          results.llms = { status: "error", message: "Erro ao atualizar llms.txt" };
+        }
+      }
+      
+      // Update Sitemap (trigger regeneration)
+      if (syncOptions.updateSitemap) {
+        try {
+          const sitemapRes = await axios.get(`${API}/sitemap.xml`);
+          results.sitemap = { status: "success", message: "Sitemap regenerado com sucesso" };
+        } catch (e) {
+          results.sitemap = { status: "error", message: "Erro ao regenerar sitemap" };
+        }
+      }
+      
+      // Update Structured Data
+      if (syncOptions.updateStructuredData) {
+        try {
+          const structuredRes = await axios.get(`${API}/seo/structured-data`);
+          results.structuredData = { status: "success", message: `Schema.org atualizado (${structuredRes.data['@graph']?.length || 0} entidades)` };
+        } catch (e) {
+          results.structuredData = { status: "error", message: "Erro ao atualizar dados estruturados" };
+        }
+      }
+      
+      // Refresh files
+      await fetchFiles();
+      await fetchHealthCheck();
+      results.files = { status: "success", message: "Arquivos recarregados" };
+      
+      setSyncResults(results);
+      
+      const successCount = Object.values(results).filter(r => r.status === "success").length;
+      toast.success(`Sincronização completa! ${successCount}/${Object.keys(results).length} operações bem-sucedidas`);
+      
+    } catch (error) {
+      toast.error("Erro durante a sincronização");
+      console.error(error);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -323,10 +384,98 @@ const SEOFilesManager = () => {
             Edite arquivos, monitore crawlers e visualize logs em tempo real
           </p>
         </div>
-        <Button onClick={fetchAll} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Atualizar Tudo
-        </Button>
+        <div className="flex gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">
+                <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                🔄 Atualizar SEO & LLMs
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-bold text-sm mb-2">Opções de Atualização</h4>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Selecione o que deseja atualizar e sincronizar
+                  </p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-4 h-4 text-purple-500" />
+                      <Label htmlFor="updateLlms" className="text-sm">Atualizar LLMs (llms.txt)</Label>
+                    </div>
+                    <Switch 
+                      id="updateLlms"
+                      checked={syncOptions.updateLlms}
+                      onCheckedChange={(checked) => setSyncOptions({...syncOptions, updateLlms: checked})}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-blue-500" />
+                      <Label htmlFor="updateSitemap" className="text-sm">Regenerar Sitemap</Label>
+                    </div>
+                    <Switch 
+                      id="updateSitemap"
+                      checked={syncOptions.updateSitemap}
+                      onCheckedChange={(checked) => setSyncOptions({...syncOptions, updateSitemap: checked})}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Code className="w-4 h-4 text-green-500" />
+                      <Label htmlFor="updateStructuredData" className="text-sm">Dados Estruturados</Label>
+                    </div>
+                    <Switch 
+                      id="updateStructuredData"
+                      checked={syncOptions.updateStructuredData}
+                      onCheckedChange={(checked) => setSyncOptions({...syncOptions, updateStructuredData: checked})}
+                    />
+                  </div>
+                </div>
+                
+                {syncResults && (
+                  <div className="border-t pt-3 mt-3">
+                    <h5 className="text-xs font-bold mb-2">Resultados:</h5>
+                    <div className="space-y-1">
+                      {Object.entries(syncResults).map(([key, result]) => (
+                        <div key={key} className="flex items-center gap-2 text-xs">
+                          {result.status === "success" ? (
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                          ) : result.status === "error" ? (
+                            <XCircle className="w-3 h-3 text-red-500" />
+                          ) : (
+                            <Clock className="w-3 h-3 text-gray-400" />
+                          )}
+                          <span className={result.status === "error" ? "text-red-600" : ""}>{result.message || key}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <Button 
+                  onClick={handleSyncAll} 
+                  disabled={syncing}
+                  className="w-full"
+                >
+                  {syncing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {syncing ? "Sincronizando..." : "Executar Atualização"}
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
+          <Button onClick={fetchAll} variant="outline">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Recarregar
+          </Button>
+        </div>
       </div>
 
       {/* Health Score Card */}
