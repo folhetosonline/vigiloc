@@ -131,6 +131,7 @@ function App() {
             <Route path="/minha-conta" element={<><Navbar /><CustomerAccount /><Footer /><WhatsAppButton /></>} />
             
             {/* Service Pages */}
+            <Route path="/servicos" element={<><Navbar /><ServicesPage /><Footer /><WhatsAppButton /></>} />
             <Route path="/servico/:slug" element={<><Navbar /><ServicePage /><Footer /><WhatsAppButton /></>} />
             
             {/* Admin Login - Secure URL */}
