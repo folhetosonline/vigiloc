@@ -304,7 +304,7 @@ backend:
         comment: "File upload endpoint for images and videos with admin authentication"
       - working: true
         agent: "testing"
-        comment: "✅ TESTED RAPIDLY: File upload API working perfectly! POST /api/admin/upload successfully uploads PNG test image. Returns complete file_url (https://pagebuilder-debug.preview.emergentagent.com/uploads/filename.png), relative url, file size, and content type. File correctly saved to /app/backend/uploads directory. Admin authentication required and working. FIXED: Added REACT_APP_BACKEND_URL to backend .env for correct external URL generation."
+        comment: "✅ TESTED RAPIDLY: File upload API working perfectly! POST /api/admin/upload successfully uploads PNG test image. Returns complete file_url (https://service-showcase-28.preview.emergentagent.com/uploads/filename.png), relative url, file size, and content type. File correctly saved to /app/backend/uploads directory. Admin authentication required and working. FIXED: Added REACT_APP_BACKEND_URL to backend .env for correct external URL generation."
 
   - task: "Admin Dashboard Analytics API"
     implemented: true
@@ -1027,7 +1027,7 @@ agent_communication:
       - ✅ Responsive design: Site adapts to different screen sizes
       
       **❌ CRITICAL ISSUE FOUND:**
-      - Logo URL malformation: URLs like "https://pagebuilder-debug.preview.emergentagent.comhttps//securetracker-crm.preview.emergentagent.com/uploads/..." causing 500+ console errors per page load
+      - Logo URL malformation: URLs like "https://service-showcase-28.preview.emergentagent.comhttps//securetracker-crm.preview.emergentagent.com/uploads/..." causing 500+ console errors per page load
       - This is a URL concatenation bug where base URL is being doubled
       - Site remains functional but performance is impacted
       
@@ -1063,7 +1063,7 @@ agent_communication:
       
       **2. UPLOAD & MÍDIA (4/4 PASSED):**
       - ✅ POST /api/admin/upload: PNG image uploaded successfully
-      - ✅ file_url completo retornado: "https://pagebuilder-debug.preview.emergentagent.com/uploads/[uuid].png"
+      - ✅ file_url completo retornado: "https://service-showcase-28.preview.emergentagent.com/uploads/[uuid].png"
       - ✅ File saved to /app/backend/uploads: 15 files total, PNG files verified
       - ✅ All response fields present: url, size, type
       
@@ -1420,7 +1420,7 @@ agent_communication:
       
       🔧 FIXED CRITICAL URL ISSUE:
       - Found backend was using localhost URL instead of external URL for file_url
-      - Added REACT_APP_BACKEND_URL="https://pagebuilder-debug.preview.emergentagent.com" to backend/.env
+      - Added REACT_APP_BACKEND_URL="https://service-showcase-28.preview.emergentagent.com" to backend/.env
       - Restarted backend service to apply environment variable changes
       
       📊 TESTED ENDPOINT AS REQUESTED:
@@ -1435,7 +1435,7 @@ agent_communication:
          - Admin authentication required and working
       
       3. ✅ Response Verification:
-         - file_url: "https://pagebuilder-debug.preview.emergentagent.com/uploads/[uuid].png" ✅
+         - file_url: "https://service-showcase-28.preview.emergentagent.com/uploads/[uuid].png" ✅
          - url: "/uploads/[uuid].png" ✅
          - size: "0.00MB" ✅
          - type: "image/png" ✅
