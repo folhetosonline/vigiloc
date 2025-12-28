@@ -738,6 +738,18 @@ frontend:
         agent: "main"
         comment: "Added CPF and complete address fields to customer profile page. Address fields include: street, number, complement, neighborhood, city, state, zip. Organized in responsive grid layout. NEEDS TESTING."
 
+  - task: "Social Reviews Management System"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/admin/SocialReviews.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEEDS TESTING: Complete Social Reviews system implemented with admin management page (/admin/reviews) featuring statistics cards (Total, Published, Featured, Average), reviews table with CRUD operations, create/edit dialog with all fields (name, source, rating, text, avatar, date, link, publish/featured switches), and homepage integration showing customer reviews section. Backend APIs include GET/POST/PUT/DELETE endpoints for admin management and public endpoints for homepage display."
+
   - task: "Page Builder System - Visual Builder"
     implemented: true
     working: false
