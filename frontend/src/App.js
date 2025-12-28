@@ -43,6 +43,7 @@ import Reports from "@/pages/admin/Reports";
 import Services from "@/pages/admin/Services";
 import SocialReviews from "@/pages/admin/SocialReviews";
 import SEODashboard from "@/pages/admin/SEODashboard";
+import SEOFilesManager from "@/pages/admin/SEOFilesManager";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
