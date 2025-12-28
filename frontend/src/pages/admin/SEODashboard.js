@@ -152,6 +152,14 @@ const SEODashboard = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <AdminGuidePopup 
+            trigger={
+              <Button variant="outline" className="gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300 text-yellow-700 hover:from-yellow-100 hover:to-orange-100">
+                <HelpCircle className="w-4 h-4" />
+                📚 Guia Completo
+              </Button>
+            }
+          />
           <Button variant="outline" onClick={() => setImportDialogOpen(true)}>
             <Import className="w-4 h-4 mr-2" />
             Importar Review
