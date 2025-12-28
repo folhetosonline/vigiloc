@@ -508,18 +508,21 @@ const ReviewsSection = ({ reviews }) => {
 const Home = () => {
   const [services, setServices] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [servicesRes, settingsRes] = await Promise.all([
+        const [servicesRes, settingsRes, reviewsRes] = await Promise.all([
           axios.get(`${API}/services`),
-          axios.get(`${API}/site-settings`)
+          axios.get(`${API}/site-settings`),
+          axios.get(`${API}/social-reviews/featured`).catch(() => ({ data: [] }))
         ]);
         
         setServices(servicesRes.data);
         setSiteSettings(settingsRes.data);
+        setReviews(reviewsRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -546,6 +549,9 @@ const Home = () => {
 
       {/* Why Choose Us */}
       <WhyChooseUsSection />
+
+      {/* Customer Reviews */}
+      <ReviewsSection reviews={reviews} />
 
       {/* CTA */}
       <CTASection siteSettings={siteSettings} />
