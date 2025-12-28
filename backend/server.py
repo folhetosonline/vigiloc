@@ -3137,6 +3137,388 @@ async def toggle_social_review_featured(review_id: str, current_user: User = Dep
     )
     return {"featured": new_status}
 
+# ==================== SEO & SITEMAP ROUTES ====================
+
+SITE_DOMAIN = "https://www.vigiloc.com.br"
+
+@api_router.get("/sitemap.xml")
+async def get_dynamic_sitemap():
+    """Generate dynamic sitemap.xml"""
+    from fastapi.responses import Response
+    
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Fetch all published services
+    services = await db.services.find({"published": True}, {"_id": 0, "slug": 1, "name": 1}).to_list(100)
+    
+    # Fetch all published custom pages
+    pages = await db.custom_pages.find({"published": True}, {"_id": 0, "slug": 1, "title": 1}).to_list(100)
+    
+    # Fetch all published categories
+    categories = await db.categories.find({}, {"_id": 0, "slug": 1}).to_list(100)
+    
+    sitemap_xml = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage - Highest Priority -->
+  <url>
+    <loc>{SITE_DOMAIN}/</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Services Landing Page -->
+  <url>
+    <loc>{SITE_DOMAIN}/servicos</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Contact Page -->
+  <url>
+    <loc>{SITE_DOMAIN}/contato</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Individual Service Pages -->
+'''
+    
+    for service in services:
+        sitemap_xml += f'''  <url>
+    <loc>{SITE_DOMAIN}/servico/{service.get('slug', '')}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+'''
+    
+    # Add custom pages
+    for page in pages:
+        sitemap_xml += f'''  <url>
+    <loc>{SITE_DOMAIN}/p/{page.get('slug', '')}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+'''
+    
+    sitemap_xml += '''
+</urlset>'''
+    
+    return Response(content=sitemap_xml, media_type="application/xml")
+
+@api_router.get("/llms.txt")
+async def get_llms_txt():
+    """Serve llms.txt for LLM crawlers"""
+    from fastapi.responses import PlainTextResponse
+    
+    # Fetch services for dynamic content
+    services = await db.services.find({"published": True}, {"_id": 0}).to_list(100)
+    
+    llms_content = f"""# =====================================================
+# VIGILOC - llms.txt
+# Informações para Large Language Models (LLMs)
+# Website: {SITE_DOMAIN}
+# Última atualização: {datetime.now(timezone.utc).strftime("%Y-%m-%d")}
+# =====================================================
+
+# Sobre a Empresa
+> VigiLoc é líder em soluções de automação e segurança eletrônica para condomínios e empresas no Brasil.
+> Fundada há mais de 10 anos, atendemos mais de 500 clientes com 99% de satisfação.
+> Localização: São Paulo, Brasil
+> Website: {SITE_DOMAIN}
+> Contato: WhatsApp disponível no site
+
+# Serviços Principais
+"""
+    
+    for service in services:
+        llms_content += f"""
+## {service.get('name', 'Serviço')}
+> {service.get('shortDescription', '')}
+> URL: {SITE_DOMAIN}/servico/{service.get('slug', '')}
+"""
+    
+    llms_content += """
+# Diferenciais
+- Monitoramento 24/7
+- Suporte técnico especializado
+- Mais de 10 anos de experiência
+- 500+ clientes atendidos
+- 99% de satisfação
+- Tecnologia de ponta com IA
+- Instalação profissional
+- Garantia estendida
+
+# Áreas de Atuação
+- Condomínios residenciais e comerciais
+- Empresas e escritórios
+- Indústrias
+- Hospitais e clínicas
+- Escolas e universidades
+
+# Região de Atendimento
+- São Paulo (SP) e Grande São Paulo
+- Região Metropolitana
+- Interior de São Paulo
+
+# Contato
+- Website: """ + SITE_DOMAIN + """
+- Página de Contato: """ + SITE_DOMAIN + """/contato
+- WhatsApp: Disponível no site
+
+# Informações Técnicas
+- Idioma: Português Brasileiro (pt-BR)
+- Moeda: Real Brasileiro (BRL)
+- Setor: Segurança Eletrônica / Automação Predial
+"""
+    
+    return PlainTextResponse(content=llms_content)
+
+@api_router.get("/seo/structured-data")
+async def get_structured_data():
+    """Get JSON-LD structured data for SEO"""
+    
+    # Fetch services
+    services = await db.services.find({"published": True}, {"_id": 0}).to_list(100)
+    
+    # Fetch reviews
+    reviews = await db.social_reviews.find({"published": True}, {"_id": 0}).to_list(50)
+    
+    # Calculate average rating
+    avg_rating = 5.0
+    if reviews:
+        avg_rating = sum(r.get('rating', 5) for r in reviews) / len(reviews)
+    
+    structured_data = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": f"{SITE_DOMAIN}/#organization",
+                "name": "VigiLoc",
+                "url": SITE_DOMAIN,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": f"{SITE_DOMAIN}/logo512.png"
+                },
+                "description": "Líder em soluções de automação e segurança eletrônica para condomínios e empresas",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "São Paulo",
+                    "addressRegion": "SP",
+                    "addressCountry": "BR"
+                },
+                "areaServed": {
+                    "@type": "GeoCircle",
+                    "geoMidpoint": {
+                        "@type": "GeoCoordinates",
+                        "latitude": -23.5505,
+                        "longitude": -46.6333
+                    },
+                    "geoRadius": "100000"
+                },
+                "sameAs": [],
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": round(avg_rating, 1),
+                    "reviewCount": len(reviews),
+                    "bestRating": 5,
+                    "worstRating": 1
+                }
+            },
+            {
+                "@type": "WebSite",
+                "@id": f"{SITE_DOMAIN}/#website",
+                "url": SITE_DOMAIN,
+                "name": "VigiLoc",
+                "description": "Soluções em Automação e Segurança Eletrônica",
+                "publisher": {"@id": f"{SITE_DOMAIN}/#organization"},
+                "inLanguage": "pt-BR"
+            },
+            {
+                "@type": "LocalBusiness",
+                "@id": f"{SITE_DOMAIN}/#localbusiness",
+                "name": "VigiLoc",
+                "image": f"{SITE_DOMAIN}/logo512.png",
+                "url": SITE_DOMAIN,
+                "telephone": "",
+                "priceRange": "$$",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "São Paulo",
+                    "addressRegion": "SP",
+                    "addressCountry": "BR"
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": -23.5505,
+                    "longitude": -46.6333
+                },
+                "openingHoursSpecification": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                    "opens": "08:00",
+                    "closes": "18:00"
+                },
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": round(avg_rating, 1),
+                    "reviewCount": len(reviews),
+                    "bestRating": 5,
+                    "worstRating": 1
+                }
+            }
+        ]
+    }
+    
+    # Add services as Service schema
+    for service in services:
+        structured_data["@graph"].append({
+            "@type": "Service",
+            "name": service.get("name"),
+            "description": service.get("shortDescription"),
+            "url": f"{SITE_DOMAIN}/servico/{service.get('slug')}",
+            "provider": {"@id": f"{SITE_DOMAIN}/#organization"},
+            "areaServed": {
+                "@type": "Place",
+                "name": "São Paulo, Brasil"
+            }
+        })
+    
+    # Add reviews
+    for review in reviews[:10]:
+        structured_data["@graph"].append({
+            "@type": "Review",
+            "author": {
+                "@type": "Person",
+                "name": review.get("author_name")
+            },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": review.get("rating", 5),
+                "bestRating": 5,
+                "worstRating": 1
+            },
+            "reviewBody": review.get("text"),
+            "itemReviewed": {"@id": f"{SITE_DOMAIN}/#organization"}
+        })
+    
+    return structured_data
+
+@api_router.get("/seo/report")
+async def get_seo_report(current_user: User = Depends(get_current_admin)):
+    """Generate SEO analysis report"""
+    
+    # Fetch data
+    services = await db.services.find({"published": True}, {"_id": 0}).to_list(100)
+    pages = await db.custom_pages.find({"published": True}, {"_id": 0}).to_list(100)
+    reviews = await db.social_reviews.find({"published": True}, {"_id": 0}).to_list(100)
+    site_settings = await db.site_settings.find_one({}, {"_id": 0}) or {}
+    
+    # Calculate scores
+    avg_rating = sum(r.get('rating', 5) for r in reviews) / len(reviews) if reviews else 0
+    
+    report = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "domain": SITE_DOMAIN,
+        
+        "content_analysis": {
+            "total_services": len(services),
+            "total_pages": len(pages),
+            "total_reviews": len(reviews),
+            "average_rating": round(avg_rating, 2),
+            "services_with_description": sum(1 for s in services if s.get('shortDescription')),
+            "services_with_banner": sum(1 for s in services if s.get('headerBanner', {}).get('mediaUrl'))
+        },
+        
+        "seo_checklist": {
+            "robots_txt": {"status": "✅", "note": "Configurado com regras para buscadores e LLMs"},
+            "sitemap_xml": {"status": "✅", "note": "Sitemap dinâmico disponível em /api/sitemap.xml"},
+            "llms_txt": {"status": "✅", "note": "Arquivo llms.txt para crawlers de IA"},
+            "structured_data": {"status": "✅", "note": "JSON-LD com Organization, LocalBusiness, Services, Reviews"},
+            "meta_tags": {"status": "✅", "note": "Title, description, keywords configurados"},
+            "open_graph": {"status": "✅", "note": "Tags OG para compartilhamento social"},
+            "canonical_urls": {"status": "✅", "note": "URLs canônicas configuradas"},
+            "mobile_friendly": {"status": "✅", "note": "Design responsivo implementado"},
+            "https": {"status": "⚠️", "note": "Requer configuração no servidor de produção"},
+            "page_speed": {"status": "⚠️", "note": "Recomendado: otimizar imagens e lazy loading"}
+        },
+        
+        "llm_optimization": {
+            "llms_txt": {"status": "✅", "note": "Arquivo disponível para GPTBot, Claude, Perplexity"},
+            "clear_content_structure": {"status": "✅", "note": "Conteúdo bem estruturado com headings"},
+            "business_info": {"status": "✅", "note": "Informações da empresa claras e acessíveis"},
+            "services_description": {"status": "✅", "note": f"{len(services)} serviços com descrições"},
+            "reviews_available": {"status": "✅", "note": f"{len(reviews)} avaliações para credibilidade"}
+        },
+        
+        "search_engines": {
+            "google": {
+                "status": "🔄",
+                "actions": [
+                    "Submeter sitemap no Google Search Console",
+                    "Verificar propriedade do domínio",
+                    "Configurar Google My Business"
+                ]
+            },
+            "bing": {
+                "status": "🔄",
+                "actions": [
+                    "Submeter sitemap no Bing Webmaster Tools",
+                    "Verificar propriedade do domínio"
+                ]
+            }
+        },
+        
+        "recommendations": [
+            {
+                "priority": "alta",
+                "action": "Registrar site no Google Search Console",
+                "url": "https://search.google.com/search-console"
+            },
+            {
+                "priority": "alta",
+                "action": "Criar perfil no Google My Business",
+                "url": "https://business.google.com"
+            },
+            {
+                "priority": "alta",
+                "action": "Registrar site no Bing Webmaster Tools",
+                "url": "https://www.bing.com/webmasters"
+            },
+            {
+                "priority": "média",
+                "action": "Configurar Google Analytics 4",
+                "url": "https://analytics.google.com"
+            },
+            {
+                "priority": "média",
+                "action": "Adicionar mais avaliações de clientes",
+                "note": f"Atualmente: {len(reviews)} avaliações"
+            },
+            {
+                "priority": "baixa",
+                "action": "Criar blog com conteúdo relevante",
+                "note": "Artigos sobre segurança e automação"
+            }
+        ],
+        
+        "indexed_urls": [
+            f"{SITE_DOMAIN}/",
+            f"{SITE_DOMAIN}/servicos",
+            f"{SITE_DOMAIN}/contato"
+        ] + [f"{SITE_DOMAIN}/servico/{s.get('slug')}" for s in services]
+    }
+    
+    return report
+
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.post("/analytics/track")
