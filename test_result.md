@@ -824,7 +824,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Social Reviews Management System"
+    - "Social Reviews Management System - TESTED"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
