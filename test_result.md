@@ -836,7 +836,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Social Reviews Management System - TESTED"
+    - "SEO Dashboard and Admin Guide System - TESTED AND WORKING"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
