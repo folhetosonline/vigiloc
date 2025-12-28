@@ -4,10 +4,11 @@ import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { API } from "@/App";
+import VigiLocLogo from "./VigiLocLogo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [siteSettings, setSiteSettings] = useState({ site_name: "VigiLoc", logo_url: null });
+  const [siteSettings, setSiteSettings] = useState({ site_name: "VigiLoc", logo_url: null, use_animated_logo: true });
   const [navbarSettings, setNavbarSettings] = useState({ links: [], background_color: "#FFFFFF", text_color: "#1F2937" });
   const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
@@ -54,31 +55,37 @@ const Navbar = () => {
       }))
     : defaultLinks;
 
+  // Render logo based on settings
+  const renderLogo = () => {
+    // If custom logo URL is set, use it
+    if (siteSettings.logo_url && siteSettings.logo_url.trim() !== '') {
+      return (
+        <img 
+          src={siteSettings.logo_url} 
+          alt={siteSettings.site_name} 
+          className="h-12 w-auto object-contain"
+        />
+      );
+    }
+    
+    // Use animated logo
+    return (
+      <VigiLocLogo 
+        size={44} 
+        variant="header" 
+        showText={true}
+        textColor="#111827"
+      />
+    );
+  };
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50" data-testid="navbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" data-testid="logo-link">
-            {siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? (
-              <img 
-                src={siteSettings.logo_url} 
-                alt={siteSettings.site_name} 
-                className="h-12 w-auto object-contain"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div 
-              className="vigiloc-logo" 
-              aria-label={siteSettings.site_name}
-              style={{ display: siteSettings.logo_url && siteSettings.logo_url.trim() !== '' ? 'none' : 'flex' }}
-            >
-              <span className="vigiloc-v">V</span>
-            </div>
-            <span className="text-2xl font-bold text-gray-900">{siteSettings.site_name}</span>
+            {renderLogo()}
           </Link>
 
           {/* Desktop Navigation */}
