@@ -1,58 +1,112 @@
 import { Helmet } from "react-helmet-async";
 
+const SITE_DOMAIN = "https://www.vigiloc.com.br";
+const SITE_NAME = "VigiLoc";
+
 const SEO = ({
-  title = "VigiLoc - Soluções em Segurança Eletrônica",
-  description = "Sistemas de vigilância, controle de acesso, fechaduras inteligentes e totens de monitoramento para condomínios e empresas. Instalação profissional e suporte 24/7.",
-  keywords = "segurança eletrônica, câmeras de vigilância, controle de acesso, fechaduras inteligentes, totens de monitoramento, CCTV, alarmes, segurança para condomínios, segurança empresarial, vigilância 24h",
-  image = "https://service-showcase-28.preview.emergentagent.com/og-image.jpg",
-  url = "https://service-showcase-28.preview.emergentagent.com",
+  title = "VigiLoc - Soluções em Automação e Segurança Eletrônica",
+  description = "Líder em portaria autônoma, armários inteligentes, mini mercados autônomos e soluções de segurança eletrônica para condomínios e empresas. Atendimento 24/7 em São Paulo.",
+  keywords = "portaria autônoma, armários inteligentes, mini mercados autônomos, lavanderia autônoma, segurança eletrônica, automação comercial, condomínios inteligentes, controle de acesso, totens de monitoramento, São Paulo",
+  image = `${SITE_DOMAIN}/og-image.jpg`,
+  url = SITE_DOMAIN,
   type = "website",
-  schema = null
+  schema = null,
+  noindex = false
 }) => {
-  const siteName = "VigiLoc";
   const fullTitle = title.includes("VigiLoc") ? title : `${title} | VigiLoc`;
 
   const defaultSchema = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "VigiLoc",
-    "description": description,
-    "url": url,
-    "logo": "https://service-showcase-28.preview.emergentagent.com/logo.png",
-    "telephone": "+55-11-99999-9999",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Av. Paulista, 1000",
-      "addressLocality": "São Paulo",
-      "addressRegion": "SP",
-      "postalCode": "01310-100",
-      "addressCountry": "BR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": -23.5505,
-      "longitude": -46.6333
-    },
-    "openingHoursSpecification": [
+    "@graph": [
       {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "08:00",
-        "closes": "18:00"
+        "@type": "Organization",
+        "@id": `${SITE_DOMAIN}/#organization`,
+        "name": SITE_NAME,
+        "url": SITE_DOMAIN,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${SITE_DOMAIN}/logo512.png`,
+          "width": 512,
+          "height": 512
+        },
+        "description": description,
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "São Paulo",
+          "addressRegion": "SP",
+          "addressCountry": "BR"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "availableLanguage": "Portuguese"
+        },
+        "sameAs": [
+          "https://facebook.com/vigiloc",
+          "https://instagram.com/vigiloc",
+          "https://linkedin.com/company/vigiloc"
+        ]
       },
       {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Saturday",
-        "opens": "09:00",
-        "closes": "13:00"
+        "@type": "WebSite",
+        "@id": `${SITE_DOMAIN}/#website`,
+        "url": SITE_DOMAIN,
+        "name": SITE_NAME,
+        "description": "Soluções em Automação e Segurança Eletrônica",
+        "publisher": { "@id": `${SITE_DOMAIN}/#organization` },
+        "inLanguage": "pt-BR",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${SITE_DOMAIN}/servicos?q={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": `${SITE_DOMAIN}/#localbusiness`,
+        "name": SITE_NAME,
+        "image": `${SITE_DOMAIN}/logo512.png`,
+        "url": SITE_DOMAIN,
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "São Paulo",
+          "addressRegion": "SP",
+          "addressCountry": "BR"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -23.5505,
+          "longitude": -46.6333
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "08:00",
+            "closes": "18:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Saturday",
+            "opens": "09:00",
+            "closes": "13:00"
+          }
+        ],
+        "areaServed": {
+          "@type": "GeoCircle",
+          "geoMidpoint": {
+            "@type": "GeoCoordinates",
+            "latitude": -23.5505,
+            "longitude": -46.6333
+          },
+          "geoRadius": "100000"
+        }
       }
-    ],
-    "sameAs": [
-      "https://facebook.com/vigiloc",
-      "https://instagram.com/vigiloc",
-      "https://linkedin.com/company/vigiloc"
-    ],
-    "priceRange": "$$"
+    ]
   };
 
   return (
@@ -61,8 +115,8 @@ const SEO = ({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content={siteName} />
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="author" content={SITE_NAME} />
+      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
       <link rel="canonical" href={url} />
       
       {/* Language and Locale */}
@@ -77,7 +131,7 @@ const SEO = ({
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content={siteName} />
+      <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="pt_BR" />
       
       {/* Twitter Card */}
@@ -101,41 +155,21 @@ const SEO = ({
       <meta name="ICBM" content="-23.5505, -46.6333" />
       
       {/* Business Information */}
-      <meta name="business:contact_data:street_address" content="Av. Paulista, 1000" />
       <meta name="business:contact_data:locality" content="São Paulo" />
       <meta name="business:contact_data:region" content="SP" />
-      <meta name="business:contact_data:postal_code" content="01310-100" />
       <meta name="business:contact_data:country_name" content="Brasil" />
       
       {/* LLM Optimization Tags */}
       <meta name="ai:description" content={description} />
-      <meta name="ai:category" content="Security, E-commerce, Technology" />
-      <meta name="ai:price_range" content="R$ 599 - R$ 3499" />
-      <meta name="ai:services" content="Câmeras de Vigilância, Controle de Acesso, Fechaduras Inteligentes, Totens de Monitoramento, Instalação Profissional, Suporte 24/7" />
+      <meta name="ai:category" content="Automação, Segurança Eletrônica, Tecnologia" />
+      <meta name="ai:services" content="Portaria Autônoma, Armários Inteligentes, Mini Mercados Autônomos, Lavanderia Autônoma, Controle de Acesso" />
       <meta name="ai:target_audience" content="Condomínios, Empresas, Indústrias, Comércios" />
       <meta name="ai:location" content="São Paulo, Brasil" />
+      <meta name="ai:language" content="pt-BR" />
       
       {/* Structured Data / JSON-LD */}
       <script type="application/ld+json">
         {JSON.stringify(schema || defaultSchema)}
-      </script>
-      
-      {/* Additional LLM Context */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": siteName,
-          "url": "https://service-showcase-28.preview.emergentagent.com",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://service-showcase-28.preview.emergentagent.com/produtos?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-          }
-        })}
       </script>
     </Helmet>
   );
@@ -143,34 +177,24 @@ const SEO = ({
 
 export default SEO;
 
-// Product Schema Generator
-export const generateProductSchema = (product) => ({
+// Service Schema Generator
+export const generateServiceSchema = (service) => ({
   "@context": "https://schema.org",
-  "@type": "Product",
-  "name": product.name,
-  "description": product.description,
-  "image": product.image,
-  "sku": product.sku || product.id,
-  "brand": {
-    "@type": "Brand",
-    "name": "VigiLoc"
+  "@type": "Service",
+  "name": service.name,
+  "description": service.shortDescription || service.description,
+  "url": `${SITE_DOMAIN}/servico/${service.slug}`,
+  "image": service.headerBanner?.mediaUrl,
+  "provider": {
+    "@type": "Organization",
+    "name": SITE_NAME,
+    "url": SITE_DOMAIN
   },
-  "offers": {
-    "@type": "Offer",
-    "url": `https://service-showcase-28.preview.emergentagent.com/produto/${product.id}`,
-    "priceCurrency": "BRL",
-    "price": product.price,
-    "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    "seller": {
-      "@type": "Organization",
-      "name": "VigiLoc"
-    }
+  "areaServed": {
+    "@type": "Place",
+    "name": "São Paulo, Brasil"
   },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "127"
-  }
+  "serviceType": service.name
 });
 
 // Breadcrumb Schema Generator
@@ -182,5 +206,49 @@ export const generateBreadcrumbSchema = (items) => ({
     "position": index + 1,
     "name": item.name,
     "item": item.url
+  }))
+});
+
+// FAQ Schema Generator
+export const generateFAQSchema = (faqs) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+});
+
+// Review Schema Generator
+export const generateReviewSchema = (reviews, itemName) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": itemName,
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": reviews.length > 0 
+      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+      : "5.0",
+    "reviewCount": reviews.length,
+    "bestRating": 5,
+    "worstRating": 1
+  },
+  "review": reviews.map(review => ({
+    "@type": "Review",
+    "author": {
+      "@type": "Person",
+      "name": review.author_name
+    },
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": review.rating,
+      "bestRating": 5,
+      "worstRating": 1
+    },
+    "reviewBody": review.text
   }))
 });
