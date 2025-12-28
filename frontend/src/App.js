@@ -41,6 +41,7 @@ import NavbarCustomizer from "@/pages/admin/NavbarCustomizer";
 import NavbarManager from "@/pages/admin/NavbarManager";
 import Reports from "@/pages/admin/Reports";
 import Services from "@/pages/admin/Services";
+import SocialReviews from "@/pages/admin/SocialReviews";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
