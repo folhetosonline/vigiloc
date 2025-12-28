@@ -821,9 +821,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Homepage Redesign with Services - TESTED"
-    - "Services Section Display - TESTED"
-    - "WhatsApp CTA Buttons - TESTED"
+    - "Social Reviews Management System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
