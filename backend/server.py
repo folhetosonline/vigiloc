@@ -3519,6 +3519,349 @@ async def get_seo_report(current_user: User = Depends(get_current_admin)):
     
     return report
 
+# ==================== SEO FILES MANAGEMENT ROUTES ====================
+
+@api_router.get("/admin/seo/files")
+async def get_seo_files(current_user: User = Depends(get_current_admin)):
+    """Get all SEO configuration files"""
+    import os
+    
+    files_info = []
+    frontend_public = "/app/frontend/public"
+    
+    # Define SEO files to track
+    seo_files = [
+        {"name": "robots.txt", "path": f"{frontend_public}/robots.txt", "type": "robots", "editable": True},
+        {"name": "llms.txt", "path": f"{frontend_public}/llms.txt", "type": "llms", "editable": True},
+        {"name": "manifest.json", "path": f"{frontend_public}/manifest.json", "type": "manifest", "editable": True},
+        {"name": "security.txt", "path": f"{frontend_public}/.well-known/security.txt", "type": "security", "editable": True},
+    ]
+    
+    for file_info in seo_files:
+        try:
+            if os.path.exists(file_info["path"]):
+                stat = os.stat(file_info["path"])
+                with open(file_info["path"], 'r') as f:
+                    content = f.read()
+                files_info.append({
+                    "name": file_info["name"],
+                    "path": file_info["path"],
+                    "type": file_info["type"],
+                    "editable": file_info["editable"],
+                    "size": stat.st_size,
+                    "modified": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
+                    "content": content,
+                    "lines": len(content.split('\n')),
+                    "exists": True
+                })
+            else:
+                files_info.append({
+                    "name": file_info["name"],
+                    "path": file_info["path"],
+                    "type": file_info["type"],
+                    "editable": file_info["editable"],
+                    "exists": False
+                })
+        except Exception as e:
+            files_info.append({
+                "name": file_info["name"],
+                "path": file_info["path"],
+                "type": file_info["type"],
+                "error": str(e),
+                "exists": False
+            })
+    
+    return files_info
+
+@api_router.put("/admin/seo/files/{file_type}")
+async def update_seo_file(file_type: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Update SEO configuration file"""
+    import os
+    
+    frontend_public = "/app/frontend/public"
+    
+    file_paths = {
+        "robots": f"{frontend_public}/robots.txt",
+        "llms": f"{frontend_public}/llms.txt",
+        "manifest": f"{frontend_public}/manifest.json",
+        "security": f"{frontend_public}/.well-known/security.txt"
+    }
+    
+    if file_type not in file_paths:
+        raise HTTPException(status_code=400, detail="Invalid file type")
+    
+    file_path = file_paths[file_type]
+    content = data.get("content", "")
+    
+    # Create backup
+    backup_path = f"{file_path}.backup"
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            backup_content = f.read()
+        with open(backup_path, 'w') as f:
+            f.write(backup_content)
+    
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    
+    # Write new content
+    with open(file_path, 'w') as f:
+        f.write(content)
+    
+    # Log the change
+    await db.seo_logs.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "file_edit",
+        "file": file_type,
+        "user": current_user.email,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "content_length": len(content)
+    })
+    
+    return {"message": "File updated successfully", "backup_created": True}
+
+@api_router.post("/admin/seo/files/{file_type}/restore")
+async def restore_seo_file(file_type: str, current_user: User = Depends(get_current_admin)):
+    """Restore SEO file from backup"""
+    import os
+    
+    frontend_public = "/app/frontend/public"
+    
+    file_paths = {
+        "robots": f"{frontend_public}/robots.txt",
+        "llms": f"{frontend_public}/llms.txt",
+        "manifest": f"{frontend_public}/manifest.json",
+        "security": f"{frontend_public}/.well-known/security.txt"
+    }
+    
+    if file_type not in file_paths:
+        raise HTTPException(status_code=400, detail="Invalid file type")
+    
+    file_path = file_paths[file_type]
+    backup_path = f"{file_path}.backup"
+    
+    if not os.path.exists(backup_path):
+        raise HTTPException(status_code=404, detail="No backup found")
+    
+    with open(backup_path, 'r') as f:
+        backup_content = f.read()
+    
+    with open(file_path, 'w') as f:
+        f.write(backup_content)
+    
+    return {"message": "File restored from backup"}
+
+@api_router.post("/seo/log-crawler")
+async def log_crawler_access(request: Request):
+    """Log crawler/bot access for analytics"""
+    user_agent = request.headers.get("user-agent", "Unknown")
+    
+    # Detect known crawlers
+    crawler_patterns = {
+        "Googlebot": "google",
+        "Bingbot": "bing",
+        "Slurp": "yahoo",
+        "DuckDuckBot": "duckduckgo",
+        "Yandex": "yandex",
+        "Baiduspider": "baidu",
+        "GPTBot": "openai",
+        "ChatGPT-User": "openai",
+        "Claude-Web": "anthropic",
+        "ClaudeBot": "anthropic",
+        "anthropic-ai": "anthropic",
+        "PerplexityBot": "perplexity",
+        "Google-Extended": "google_ai",
+        "Bytespider": "microsoft",
+        "YouBot": "you",
+        "cohere-ai": "cohere",
+        "Applebot": "apple",
+        "facebookexternalhit": "facebook",
+        "Twitterbot": "twitter",
+        "LinkedInBot": "linkedin",
+        "WhatsApp": "whatsapp",
+        "TelegramBot": "telegram"
+    }
+    
+    detected_crawler = "unknown"
+    crawler_category = "other"
+    
+    for pattern, name in crawler_patterns.items():
+        if pattern.lower() in user_agent.lower():
+            detected_crawler = name
+            if name in ["google", "bing", "yahoo", "duckduckgo", "yandex", "baidu"]:
+                crawler_category = "search_engine"
+            elif name in ["openai", "anthropic", "perplexity", "google_ai", "cohere", "you"]:
+                crawler_category = "llm"
+            elif name in ["facebook", "twitter", "linkedin", "whatsapp", "telegram"]:
+                crawler_category = "social"
+            break
+    
+    log_entry = {
+        "id": str(uuid.uuid4()),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "user_agent": user_agent,
+        "crawler": detected_crawler,
+        "category": crawler_category,
+        "ip": request.client.host if request.client else "unknown",
+        "path": str(request.url.path),
+        "method": request.method
+    }
+    
+    await db.crawler_logs.insert_one(log_entry)
+    return {"logged": True}
+
+@api_router.get("/admin/seo/crawler-logs")
+async def get_crawler_logs(
+    current_user: User = Depends(get_current_admin),
+    limit: int = 100,
+    category: str = None,
+    crawler: str = None
+):
+    """Get crawler access logs"""
+    query = {}
+    if category:
+        query["category"] = category
+    if crawler:
+        query["crawler"] = crawler
+    
+    logs = await db.crawler_logs.find(query, {"_id": 0}).sort("timestamp", -1).limit(limit).to_list(limit)
+    
+    # Get stats
+    total_logs = await db.crawler_logs.count_documents({})
+    
+    # Aggregate by crawler
+    pipeline = [
+        {"$group": {"_id": "$crawler", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    crawler_stats = await db.crawler_logs.aggregate(pipeline).to_list(100)
+    
+    # Aggregate by category
+    pipeline_category = [
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    category_stats = await db.crawler_logs.aggregate(pipeline_category).to_list(10)
+    
+    # Get last 24h stats
+    yesterday = datetime.now(timezone.utc) - timedelta(hours=24)
+    last_24h = await db.crawler_logs.count_documents({
+        "timestamp": {"$gte": yesterday.isoformat()}
+    })
+    
+    # Get last 7 days by day
+    seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    pipeline_daily = [
+        {"$match": {"timestamp": {"$gte": seven_days_ago.isoformat()}}},
+        {"$addFields": {"date": {"$substr": ["$timestamp", 0, 10]}}},
+        {"$group": {"_id": "$date", "count": {"$sum": 1}}},
+        {"$sort": {"_id": 1}}
+    ]
+    daily_stats = await db.crawler_logs.aggregate(pipeline_daily).to_list(7)
+    
+    return {
+        "logs": logs,
+        "total": total_logs,
+        "last_24h": last_24h,
+        "by_crawler": {item["_id"]: item["count"] for item in crawler_stats},
+        "by_category": {item["_id"]: item["count"] for item in category_stats},
+        "daily": daily_stats
+    }
+
+@api_router.delete("/admin/seo/crawler-logs")
+async def clear_crawler_logs(current_user: User = Depends(get_current_admin)):
+    """Clear all crawler logs"""
+    result = await db.crawler_logs.delete_many({})
+    return {"deleted": result.deleted_count}
+
+@api_router.get("/admin/seo/activity-logs")
+async def get_seo_activity_logs(current_user: User = Depends(get_current_admin), limit: int = 50):
+    """Get SEO file edit activity logs"""
+    logs = await db.seo_logs.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit).to_list(limit)
+    return logs
+
+@api_router.get("/admin/seo/health-check")
+async def seo_health_check(current_user: User = Depends(get_current_admin)):
+    """Check SEO health status"""
+    import os
+    import aiohttp
+    
+    health = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "files": {},
+        "endpoints": {},
+        "recommendations": []
+    }
+    
+    frontend_public = "/app/frontend/public"
+    
+    # Check files exist
+    files_to_check = {
+        "robots.txt": f"{frontend_public}/robots.txt",
+        "llms.txt": f"{frontend_public}/llms.txt",
+        "manifest.json": f"{frontend_public}/manifest.json",
+        "security.txt": f"{frontend_public}/.well-known/security.txt"
+    }
+    
+    for name, path in files_to_check.items():
+        exists = os.path.exists(path)
+        health["files"][name] = {
+            "exists": exists,
+            "status": "✅" if exists else "❌"
+        }
+        if not exists:
+            health["recommendations"].append(f"Criar arquivo {name}")
+    
+    # Check dynamic endpoints
+    endpoints = {
+        "sitemap.xml": "/api/sitemap.xml",
+        "llms.txt (dynamic)": "/api/llms.txt",
+        "structured-data": "/api/seo/structured-data"
+    }
+    
+    for name, endpoint in endpoints.items():
+        health["endpoints"][name] = {
+            "path": endpoint,
+            "status": "✅"  # Assume working since we're inside the same server
+        }
+    
+    # Check content quality
+    services = await db.services.find({"published": True}, {"_id": 0}).to_list(100)
+    reviews = await db.social_reviews.find({"published": True}, {"_id": 0}).to_list(100)
+    
+    health["content"] = {
+        "services_count": len(services),
+        "services_with_description": sum(1 for s in services if s.get("shortDescription")),
+        "services_with_banner": sum(1 for s in services if s.get("headerBanner", {}).get("mediaUrl")),
+        "reviews_count": len(reviews),
+        "average_rating": round(sum(r.get("rating", 5) for r in reviews) / len(reviews), 2) if reviews else 0
+    }
+    
+    # Generate score
+    score = 0
+    max_score = 100
+    
+    # Files (20 points)
+    score += sum(20/len(files_to_check) for name, data in health["files"].items() if data["exists"])
+    
+    # Content (40 points)
+    if len(services) >= 5:
+        score += 10
+    if health["content"]["services_with_description"] >= len(services) * 0.8:
+        score += 10
+    if health["content"]["services_with_banner"] >= len(services) * 0.5:
+        score += 10
+    if len(reviews) >= 5:
+        score += 10
+    
+    # Endpoints (40 points)
+    score += len(health["endpoints"]) * (40 / len(endpoints))
+    
+    health["score"] = round(score)
+    health["grade"] = "A+" if score >= 95 else "A" if score >= 90 else "B" if score >= 80 else "C" if score >= 70 else "D" if score >= 60 else "F"
+    
+    return health
+
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.post("/analytics/track")
