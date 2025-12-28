@@ -20,6 +20,7 @@ import CustomerAccount from "@/pages/CustomerAccount";
 import ForgotPassword from "@/pages/ForgotPassword";
 import DynamicPage from "@/pages/DynamicPage";
 import ServicePage from "@/pages/ServicePage";
+import ServicesPage from "@/pages/ServicesPage";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin/Dashboard";
