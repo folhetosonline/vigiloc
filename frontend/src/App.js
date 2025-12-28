@@ -179,6 +179,7 @@ function App() {
               <Route path="reports" element={<Reports />} />
               <Route path="seo" element={<SEODashboard />} />
               <Route path="seo/files" element={<SEOFilesManager />} />
+              <Route path="logo" element={<LogoManager />} />
             </Route>
 
             {/* Dynamic Pages - Page Builder (Must be last to catch custom slugs) */}
