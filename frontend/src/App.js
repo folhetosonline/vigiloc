@@ -149,6 +149,7 @@ function App() {
               <Route path="shipping" element={<AdminShipping />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="services" element={<Services />} />
+              <Route path="reviews" element={<SocialReviews />} />
               <Route path="content" element={<AdminContent />} />
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="banners" element={<AdminBanners />} />
