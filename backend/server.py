@@ -673,6 +673,34 @@ class Review(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     approved_at: Optional[datetime] = None
 
+class SocialReview(BaseModel):
+    """Social/Testimonial reviews from Google, Facebook, Instagram, etc."""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    author_name: str
+    author_avatar: Optional[str] = None  # URL to avatar image
+    rating: int = 5  # 1-5 stars
+    text: str
+    source: str = "google"  # google, facebook, instagram, whatsapp, manual
+    source_url: Optional[str] = None  # Link to original review
+    published: bool = True
+    featured: bool = False  # Show in homepage
+    order: int = 0  # Display order
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    review_date: Optional[datetime] = None  # Original review date
+
+class SocialReviewCreate(BaseModel):
+    author_name: str
+    author_avatar: Optional[str] = None
+    rating: int = 5
+    text: str
+    source: str = "google"
+    source_url: Optional[str] = None
+    published: bool = True
+    featured: bool = False
+    order: int = 0
+    review_date: Optional[str] = None
+
 class AnalyticsEvent(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
