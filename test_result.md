@@ -773,9 +773,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Homepage Redesign with Services - NEEDS TESTING"
-    - "Services Section Display - NEEDS TESTING"
-    - "WhatsApp CTA Buttons - NEEDS TESTING"
+    - "Homepage Redesign with Services - TESTED"
+    - "Services Section Display - TESTED"
+    - "WhatsApp CTA Buttons - TESTED"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
