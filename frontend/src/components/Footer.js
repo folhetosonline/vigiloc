@@ -3,6 +3,7 @@ import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import VigiLocLogo from "./VigiLocLogo";
 
 const Footer = () => {
   const [siteSettings, setSiteSettings] = useState({ 
@@ -57,6 +58,27 @@ const Footer = () => {
   const quickLinks = navbarLinks.length > 0 
     ? navbarLinks.map(l => ({ label: l.label, url: l.url }))
     : defaultLinks;
+
+  // Render logo
+  const renderLogo = () => {
+    if (siteSettings.logo_url && siteSettings.logo_url.trim() !== '') {
+      return (
+        <img 
+          src={siteSettings.logo_url} 
+          alt={siteSettings.site_name} 
+          className="h-10 w-auto object-contain"
+        />
+      );
+    }
+    return (
+      <VigiLocLogo 
+        size={40} 
+        variant="footer" 
+        showText={true}
+        textColor="#ffffff"
+      />
+    );
+  };
 
   return (
     <footer className="bg-gray-900 text-white" data-testid="footer">
