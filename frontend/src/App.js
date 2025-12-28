@@ -42,6 +42,7 @@ import NavbarManager from "@/pages/admin/NavbarManager";
 import Reports from "@/pages/admin/Reports";
 import Services from "@/pages/admin/Services";
 import SocialReviews from "@/pages/admin/SocialReviews";
+import SEODashboard from "@/pages/admin/SEODashboard";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
