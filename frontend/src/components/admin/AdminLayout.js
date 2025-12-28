@@ -39,6 +39,7 @@ const AdminLayout = () => {
     { path: "/admin/visual-builder", icon: <Layout />, label: "Visual Builder ✨" },
     { path: "/admin/navbar", icon: <Menu />, label: "Menu Navegação" },
     { path: "/admin/theme-customizer", icon: <Palette />, label: "Tema" },
+    { path: "/admin/seo", icon: <Search />, label: "SEO & Integração 🔍" },
     { path: "/admin/reports", icon: <BarChart3 />, label: "Relatórios" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
   ];
