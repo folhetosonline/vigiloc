@@ -130,6 +130,17 @@ const SEOFilesManager = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("files");
   
+  // Update/Sync state
+  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+  const [syncOptions, setSyncOptions] = useState({
+    updateLlms: true,
+    updateSitemap: true,
+    updateStructuredData: true,
+    clearCache: false
+  });
+  const [syncing, setSyncing] = useState(false);
+  const [syncResults, setSyncResults] = useState(null);
+  
   // Editor state
   const [editingFile, setEditingFile] = useState(null);
   const [editContent, setEditContent] = useState("");
