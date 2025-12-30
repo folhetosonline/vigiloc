@@ -627,6 +627,9 @@ const Services = () => {
                   <Pencil className="w-4 h-4 mr-1" />
                   Editar
                 </Button>
+                <Button size="sm" variant="outline" onClick={() => handleDuplicate(service)} title="Duplicar">
+                  <Copy className="w-4 h-4" />
+                </Button>
                 <Button size="sm" variant="destructive" onClick={() => handleDelete(service.id)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
