@@ -1339,24 +1339,24 @@ class CRMTester:
                 self.passed_tests.append("GET WhatsApp Auto-Reply Settings")
                 
                 # Verify expected structure
-                expected_fields = ['enabled', 'welcome_message', 'business_hours_message', 'after_hours_message', 'keyword_responses']
+                expected_fields = ['enabled', 'welcome_message', 'business_hours_message', 'outside_hours_message', 'auto_replies']
                 for field in expected_fields:
                     if field in settings:
                         self.log(f"✅ {field} field found in settings")
                     else:
                         self.log(f"⚠️ {field} field not found (may use defaults)")
                 
-                # Check keyword responses structure
-                if 'keyword_responses' in settings and isinstance(settings['keyword_responses'], list):
-                    self.log(f"✅ Found {len(settings['keyword_responses'])} keyword responses")
+                # Check auto_replies structure
+                if 'auto_replies' in settings and isinstance(settings['auto_replies'], list):
+                    self.log(f"✅ Found {len(settings['auto_replies'])} auto replies")
                     # Should have default responses for: preço, horário, endereço
-                    keywords = [kr.get('keyword', '') for kr in settings['keyword_responses']]
-                    expected_keywords = ['preço', 'horário', 'endereço']
-                    for keyword in expected_keywords:
-                        if any(keyword.lower() in k.lower() for k in keywords):
-                            self.log(f"✅ Default keyword response found for: {keyword}")
+                    triggers = [ar.get('trigger', '') for ar in settings['auto_replies']]
+                    expected_triggers = ['preço', 'horário', 'endereço']
+                    for trigger in expected_triggers:
+                        if any(trigger.lower() in t.lower() for t in triggers):
+                            self.log(f"✅ Default auto reply found for: {trigger}")
                         else:
-                            self.log(f"⚠️ Default keyword response not found for: {keyword}")
+                            self.log(f"⚠️ Default auto reply not found for: {trigger}")
                 
             else:
                 self.log(f"❌ Failed to get WhatsApp auto-reply settings: {response.status_code} - {response.text}")
