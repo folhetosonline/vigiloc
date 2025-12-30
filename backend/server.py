@@ -4153,7 +4153,7 @@ async def get_whatsapp_auto_reply_settings():
         }
     return settings
 
-@api_router.put("/whatsapp-auto-reply-settings")
+@api_router.put("/admin/whatsapp-auto-reply-settings")
 async def update_whatsapp_auto_reply_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
     """Update WhatsApp auto-reply settings - Admin only"""
     settings_data['id'] = "whatsapp_auto_reply"
