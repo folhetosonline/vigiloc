@@ -249,9 +249,35 @@ const ContentBlockEditor = () => {
     switch (blockForm.type) {
       case "hero":
         return (
-          <>
+          <div className="space-y-4">
+            <HeroEditor
+              value={blockForm.content.hero_settings || {}}
+              onChange={(heroData) => setBlockForm({
+                ...blockForm,
+                content: { ...blockForm.content, hero_settings: heroData, ...heroData }
+              })}
+              showCarouselOption={true}
+            />
+          </div>
+        );
+      
+      case "video_background":
+        return (
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Título</label>
+              <Label>URL do Vídeo de Fundo</Label>
+              <Input
+                placeholder="https://exemplo.com/video.mp4"
+                value={blockForm.content.video_url || ""}
+                onChange={(e) => setBlockForm({
+                  ...blockForm,
+                  content: { ...blockForm.content, video_url: e.target.value }
+                })}
+              />
+              <p className="text-xs text-gray-500 mt-1">Formatos: MP4, WebM. Recomendado: 1920x1080</p>
+            </div>
+            <div>
+              <Label>Título</Label>
               <Input
                 value={blockForm.content.title || ""}
                 onChange={(e) => setBlockForm({
@@ -261,44 +287,19 @@ const ContentBlockEditor = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Subtítulo</label>
-              <Input
+              <Label>Subtítulo</Label>
+              <Textarea
                 value={blockForm.content.subtitle || ""}
                 onChange={(e) => setBlockForm({
                   ...blockForm,
                   content: { ...blockForm.content, subtitle: e.target.value }
                 })}
+                rows={2}
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">URL da Imagem de Fundo</label>
-              <div className="flex gap-2">
-                <Input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={async (e) => {
-                    const url = await handleUpload(e);
-                    if (url) {
-                      setBlockForm({
-                        ...blockForm,
-                        content: { ...blockForm.content, background_url: url }
-                      });
-                    }
-                  }}
-                  disabled={uploading}
-                />
-                {blockForm.content.background_url && (
-                  <img 
-                    src={blockForm.content.background_url} 
-                    alt="Preview" 
-                    className="w-16 h-16 object-cover rounded" 
-                  />
-                )}
-              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Texto do Botão</label>
+                <Label>Texto do Botão</Label>
                 <Input
                   value={blockForm.content.button_text || ""}
                   onChange={(e) => setBlockForm({
@@ -308,7 +309,7 @@ const ContentBlockEditor = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Link do Botão</label>
+                <Label>Link do Botão</Label>
                 <Input
                   value={blockForm.content.button_link || ""}
                   onChange={(e) => setBlockForm({
@@ -318,7 +319,61 @@ const ContentBlockEditor = () => {
                 />
               </div>
             </div>
-          </>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Cor do Overlay</Label>
+                <Input
+                  type="color"
+                  value={blockForm.content.overlay_color || "#000000"}
+                  onChange={(e) => setBlockForm({
+                    ...blockForm,
+                    content: { ...blockForm.content, overlay_color: e.target.value }
+                  })}
+                  className="h-10"
+                />
+              </div>
+              <div>
+                <Label>Opacidade ({blockForm.content.overlay_opacity || 50}%)</Label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={blockForm.content.overlay_opacity || 50}
+                  onChange={(e) => setBlockForm({
+                    ...blockForm,
+                    content: { ...blockForm.content, overlay_opacity: parseInt(e.target.value) }
+                  })}
+                  className="w-full"
+                />
+              </div>
+            </div>
+            {/* Preview */}
+            {blockForm.content.video_url && (
+              <div className="relative h-48 rounded-lg overflow-hidden">
+                <video
+                  src={blockForm.content.video_url}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+                <div 
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{ 
+                    backgroundColor: blockForm.content.overlay_color || '#000000',
+                    opacity: (blockForm.content.overlay_opacity || 50) / 100
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center text-white z-10">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold">{blockForm.content.title || "Título"}</h3>
+                    <p>{blockForm.content.subtitle || "Subtítulo"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         );
       
       case "text":
