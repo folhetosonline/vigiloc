@@ -555,9 +555,7 @@ const Home = () => {
       <ReviewsSection reviews={reviews} />
 
       {/* CTA */}
-          <CTASection siteSettings={siteSettings} />
-        </>
-      )}
+      <CTASection siteSettings={siteSettings} />
     </div>
   );
 };
