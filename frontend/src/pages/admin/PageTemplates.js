@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sparkles, Gift, Calendar, ShoppingBag, Shield, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Sparkles, Gift, Calendar, ShoppingBag, Shield, Eye, Rocket, Upload, Video, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { API } from "@/App";
 
-const PageTemplates = ({ onApplyTemplate }) => {
+const PageTemplates = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [applyOpen, setApplyOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [targetPage, setTargetPage] = useState("");
+  const [applying, setApplying] = useState(false);
 
   const templates = [
     {
@@ -19,6 +24,7 @@ const PageTemplates = ({ onApplyTemplate }) => {
       color: 'from-black to-gray-900',
       description: 'Template explosivo com ofertas imperdíveis',
       thumbnail: '🔥',
+      videoBackground: 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-futuristic-city-12681-large.mp4',
       components: [
         {
           id: 'hero-bf',
@@ -76,6 +82,7 @@ const PageTemplates = ({ onApplyTemplate }) => {
       color: 'from-red-600 to-green-600',
       description: 'Especial de Natal com clima festivo',
       thumbnail: '🎄',
+      videoBackground: 'https://assets.mixkit.co/videos/preview/mixkit-snow-falling-over-a-forest-1244-large.mp4',
       components: [
         {
           id: 'hero-natal',
@@ -120,6 +127,7 @@ const PageTemplates = ({ onApplyTemplate }) => {
       color: 'from-yellow-400 to-purple-600',
       description: 'Comece 2025 com segurança renovada',
       thumbnail: '🎆',
+      videoBackground: 'https://assets.mixkit.co/videos/preview/mixkit-fireworks-exploding-in-the-sky-4249-large.mp4',
       components: [
         {
           id: 'hero-ano-novo',
@@ -164,6 +172,7 @@ const PageTemplates = ({ onApplyTemplate }) => {
       color: 'from-blue-500 to-cyan-400',
       description: 'Lançamentos e novidades da temporada',
       thumbnail: '🚀',
+      videoBackground: 'https://assets.mixkit.co/videos/preview/mixkit-futuristic-technology-background-12681-large.mp4',
       components: [
         {
           id: 'hero-temporada',
@@ -207,6 +216,7 @@ const PageTemplates = ({ onApplyTemplate }) => {
       color: 'from-blue-600 to-teal-400',
       description: 'Proteção especial para casas de praia',
       thumbnail: '🏖️',
+      videoBackground: 'https://assets.mixkit.co/videos/preview/mixkit-waves-crashing-on-the-beach-1166-large.mp4',
       components: [
         {
           id: 'hero-litoral',
@@ -232,20 +242,10 @@ const PageTemplates = ({ onApplyTemplate }) => {
           }
         },
         {
-          id: 'monitoring-litoral',
-          type: 'text',
-          title: '📱 MONITORE DE QUALQUER LUGAR',
-          content: 'Esteja na cidade ou viajando, acompanhe sua casa de praia pelo celular. Receba alertas instantâneos.',
-          style: {
-            textAlign: 'center',
-            padding: '30px'
-          }
-        },
-        {
           id: 'cta-litoral',
           type: 'cta',
-          title: 'Durma Tranquilo Sabendo que Sua Casa Está Segura',
-          description: 'Pacotes especiais para casas de praia com instalação e suporte técnico',
+          title: 'Durma Tranquilo',
+          description: 'Pacotes especiais para casas de praia',
           buttonText: 'Solicitar Visita Técnica',
           style: {
             background: '#0891b2',
@@ -253,7 +253,50 @@ const PageTemplates = ({ onApplyTemplate }) => {
           }
         }
       ]
+    },
+    {
+      id: 'promocao-geral',
+      name: 'Promoção Especial',
+      icon: <Rocket className="w-8 h-8" />,
+      color: 'from-orange-500 to-pink-500',
+      description: 'Template genérico para promoções',
+      thumbnail: '💥',
+      videoBackground: '',
+      components: [
+        {
+          id: 'hero-promo',
+          type: 'hero',
+          title: '💥 MEGA PROMOÇÃO',
+          subtitle: 'Condições imperdíveis por tempo limitado!',
+          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200',
+          buttonText: 'Aproveitar Agora',
+          style: {
+            background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+            color: '#fff'
+          }
+        },
+        {
+          id: 'cta-promo',
+          type: 'cta',
+          title: 'Não Perca Esta Oportunidade',
+          description: 'Ofertas válidas enquanto durarem os estoques',
+          buttonText: 'Ver Ofertas',
+          style: {
+            background: '#ec4899',
+            color: '#fff'
+          }
+        }
+      ]
     }
+  ];
+
+  const pages = [
+    { value: 'home', label: 'Home' },
+    { value: 'produtos', label: 'Produtos' },
+    { value: 'servicos', label: 'Serviços' },
+    { value: 'contato', label: 'Contato' },
+    { value: 'sobre', label: 'Sobre' },
+    { value: 'totens', label: 'Totens' },
   ];
 
   const handlePreview = (template) => {
@@ -261,39 +304,96 @@ const PageTemplates = ({ onApplyTemplate }) => {
     setPreviewOpen(true);
   };
 
+  const handleApplyClick = (template) => {
+    setSelectedTemplate(template);
+    setApplyOpen(true);
+  };
+
   const handleApply = async () => {
-    if (!selectedTemplate) return;
+    if (!selectedTemplate || !targetPage) {
+      toast.error("Selecione uma página de destino");
+      return;
+    }
     
+    setApplying(true);
     try {
-      if (onApplyTemplate) {
-        onApplyTemplate(selectedTemplate.components);
-        toast.success(`Template "${selectedTemplate.name}" aplicado!`);
-        setPreviewOpen(false);
+      // Create content blocks from template
+      for (let i = 0; i < selectedTemplate.components.length; i++) {
+        const component = selectedTemplate.components[i];
+        await axios.post(`${API}/admin/content-blocks`, {
+          page_id: targetPage,
+          type: component.type === 'cta' ? 'banner' : component.type,
+          content: {
+            title: component.title,
+            subtitle: component.subtitle || component.description || component.content,
+            background_url: component.image,
+            button_text: component.buttonText,
+            button_link: component.buttonUrl || '#',
+            style: component.style
+          },
+          settings: component.style || {},
+          published: true,
+          order: i
+        });
       }
+      
+      toast.success(`Template "${selectedTemplate.name}" aplicado à página "${targetPage}"!`);
+      setApplyOpen(false);
+      setTargetPage("");
     } catch (error) {
+      console.error("Error applying template:", error);
       toast.error('Erro ao aplicar template');
+    } finally {
+      setApplying(false);
     }
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Templates Prontos</h2>
-        <p className="text-gray-600">Escolha um template profissional e personalize como quiser</p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Gift className="w-8 h-8 text-red-500" />
+            Templates de Sazonalidade
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Templates prontos para datas comemorativas e promoções especiais
+          </p>
+        </div>
       </div>
 
+      {/* Template Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {templates.map((template) => (
-          <Card key={template.id} className="overflow-hidden hover:shadow-xl transition-shadow">
-            <div className={`h-32 bg-gradient-to-r ${template.color} flex items-center justify-center text-6xl`}>
-              {template.thumbnail}
+          <Card key={template.id} className="overflow-hidden hover:shadow-xl transition-all group">
+            <div className={`h-40 bg-gradient-to-r ${template.color} flex items-center justify-center relative overflow-hidden`}>
+              {template.videoBackground ? (
+                <video 
+                  className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity"
+                  src={template.videoBackground}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : null}
+              <span className="text-7xl relative z-10">{template.thumbnail}</span>
+              {template.videoBackground && (
+                <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                  <Video className="w-3 h-3" /> Vídeo
+                </div>
+              )}
             </div>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                {template.icon}
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  {template.icon}
+                </div>
                 <h3 className="font-bold text-lg">{template.name}</h3>
               </div>
               <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+              <p className="text-xs text-gray-400 mb-4">{template.components.length} componentes</p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -306,13 +406,11 @@ const PageTemplates = ({ onApplyTemplate }) => {
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => {
-                    setSelectedTemplate(template);
-                    handleApply();
-                  }}
+                  onClick={() => handleApplyClick(template)}
                   className="flex-1"
                 >
-                  Usar Template
+                  <Upload className="w-4 h-4 mr-1" />
+                  Aplicar
                 </Button>
               </div>
             </CardContent>
@@ -322,57 +420,144 @@ const PageTemplates = ({ onApplyTemplate }) => {
 
       {/* Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Preview: {selectedTemplate?.name}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-2xl">{selectedTemplate?.thumbnail}</span>
+              Preview: {selectedTemplate?.name}
+            </DialogTitle>
           </DialogHeader>
           
           {selectedTemplate && (
             <div className="space-y-4">
+              {/* Video Preview if available */}
+              {selectedTemplate.videoBackground && (
+                <div className="relative h-48 rounded-lg overflow-hidden">
+                  <video 
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={selectedTemplate.videoBackground}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <Video className="w-12 h-12 mx-auto mb-2" />
+                      <p className="font-semibold">Vídeo de Background Incluído</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {selectedTemplate.components.map((component, index) => (
-                <div key={index} className="border rounded-lg p-4" style={component.style || {}}>
-                  {component.type === 'hero' && (
-                    <div className="text-center space-y-4">
-                      <h1 className="text-4xl font-bold">{component.title}</h1>
-                      <p className="text-xl">{component.subtitle}</p>
-                      <div className="bg-gray-200 h-48 rounded flex items-center justify-center">
-                        [Banner Image]
+                <div 
+                  key={index} 
+                  className="border rounded-lg overflow-hidden"
+                  style={component.style ? {
+                    background: component.style.background,
+                    color: component.style.color,
+                    textAlign: component.style.textAlign,
+                    padding: component.style.padding
+                  } : {}}
+                >
+                  <div className="p-4">
+                    {component.type === 'hero' && (
+                      <div className="text-center space-y-4">
+                        <h1 className="text-3xl font-bold">{component.title}</h1>
+                        <p className="text-lg opacity-90">{component.subtitle}</p>
+                        {component.image && (
+                          <img src={component.image} alt="" className="w-full h-48 object-cover rounded-lg" />
+                        )}
+                        <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                          {component.buttonText}
+                        </button>
                       </div>
-                      <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold">
-                        {component.buttonText}
-                      </button>
-                    </div>
-                  )}
-                  
-                  {component.type === 'text' && (
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-bold">{component.title}</h3>
-                      <p className="text-lg">{component.content}</p>
-                    </div>
-                  )}
-                  
-                  {component.type === 'cta' && (
-                    <div className="text-center space-y-3 p-6">
-                      <h3 className="text-2xl font-bold">{component.title}</h3>
-                      <p className="text-lg">{component.description}</p>
-                      <button className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold">
-                        {component.buttonText}
-                      </button>
-                    </div>
-                  )}
+                    )}
+                    
+                    {component.type === 'text' && (
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-bold">{component.title}</h3>
+                        <p className="text-lg">{component.content}</p>
+                      </div>
+                    )}
+                    
+                    {component.type === 'cta' && (
+                      <div className="text-center space-y-3 py-4">
+                        <h3 className="text-2xl font-bold">{component.title}</h3>
+                        <p className="text-lg opacity-90">{component.description}</p>
+                        <button className="px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700">
+                          {component.buttonText}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
               
-              <div className="flex justify-end gap-2 pt-4">
+              <DialogFooter>
                 <Button variant="outline" onClick={() => setPreviewOpen(false)}>
-                  Cancelar
+                  Fechar
                 </Button>
-                <Button onClick={handleApply}>
-                  Aplicar Template
+                <Button onClick={() => {
+                  setPreviewOpen(false);
+                  handleApplyClick(selectedTemplate);
+                }}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Aplicar Este Template
                 </Button>
-              </div>
+              </DialogFooter>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Apply Dialog */}
+      <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-2xl">{selectedTemplate?.thumbnail}</span>
+              Aplicar: {selectedTemplate?.name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Selecione a página onde deseja aplicar este template. Os componentes serão adicionados como blocos de conteúdo.
+            </p>
+            
+            <div className="space-y-2">
+              <Label>Página de Destino</Label>
+              <Select value={targetPage} onValueChange={setTargetPage}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione uma página..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {pages.map(page => (
+                    <SelectItem key={page.value} value={page.value}>
+                      {page.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm text-yellow-800">
+                ⚠️ Isso adicionará {selectedTemplate?.components.length} novos blocos de conteúdo à página selecionada.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApplyOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleApply} disabled={!targetPage || applying}>
+              {applying ? "Aplicando..." : "Aplicar Template"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
