@@ -16,7 +16,7 @@ BASE_URL = "https://visual-cms-4.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@vigiloc.com"
 ADMIN_PASSWORD = "admin123"
 
-class CRMTester:
+class VigiLocAdminTester:
     def __init__(self):
         self.session = requests.Session()
         self.auth_token = None
