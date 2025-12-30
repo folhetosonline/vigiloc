@@ -48,11 +48,26 @@ const ContentBlockEditor = () => {
 
   const fetchPage = async () => {
     try {
-      const response = await axios.get(`${API}/admin/pages`);
-      const foundPage = response.data.find(p => p.id === pageId);
-      setPage(foundPage);
+      // Fetch both system and custom pages
+      const response = await axios.get(`${API}/admin/all-pages`);
+      // Search in both system and custom pages
+      const systemPage = response.data.system?.find(p => p.id === pageId);
+      const customPage = response.data.custom?.find(p => p.id === pageId);
+      const foundPage = systemPage || customPage;
+      
+      if (foundPage) {
+        setPage({
+          ...foundPage,
+          title: foundPage.title || foundPage.name,
+          isSystem: !!systemPage
+        });
+      } else {
+        toast.error("Página não encontrada");
+        navigate("/admin/page-builder");
+      }
     } catch (error) {
       toast.error("Erro ao carregar página");
+      console.error(error);
     }
   };
 
