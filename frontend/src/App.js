@@ -126,6 +126,7 @@ function App() {
             <Route path="/produto/:id" element={<><Navbar /><ProductDetail /><Footer /><WhatsAppButton /></>} />
             <Route path="/totens" element={<><Navbar /><Totens /><Footer /><WhatsAppButton /></>} />
             <Route path="/contato" element={<><Navbar /><Contact /><Footer /><WhatsAppButton /></>} />
+            <Route path="/sobre" element={<><Navbar /><About /><Footer /><WhatsAppButton /></>} />
             <Route path="/carrinho" element={<><Navbar /><Cart /><Footer /><WhatsAppButton /></>} />
             <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /><WhatsAppButton /></>} />
             
