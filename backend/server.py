@@ -4077,6 +4077,96 @@ async def update_navbar_settings(settings_data: dict, current_user: User = Depen
     return {"message": "Configurações da navbar atualizadas com sucesso"}
 
 
+# ==================== CONTACT PAGE SETTINGS ====================
+
+@api_router.get("/contact-page-settings")
+async def get_contact_page_settings():
+    """Get contact page settings - Public"""
+    settings = await db.contact_page_settings.find_one({"id": "contact_page_settings"}, {"_id": 0})
+    if not settings:
+        return {
+            "hero_title": "Entre em Contato",
+            "hero_subtitle": "Estamos prontos para ajudar você",
+            "hero_background_image": "",
+            "phone": "",
+            "phone_secondary": "",
+            "email": "",
+            "email_secondary": "",
+            "whatsapp_number": "",
+            "whatsapp_message": "Olá! Gostaria de mais informações sobre os serviços da VigiLoc.",
+            "whatsapp_button_text": "Falar pelo WhatsApp",
+            "show_whatsapp_button": True,
+            "address_street": "",
+            "address_neighborhood": "",
+            "address_city": "",
+            "address_state": "",
+            "address_zip": "",
+            "address_country": "Brasil",
+            "working_hours_weekdays": "Segunda a Sexta: 08:00 - 18:00",
+            "working_hours_saturday": "Sábado: 08:00 - 12:00",
+            "working_hours_sunday": "Domingo: Fechado",
+            "google_maps_embed": "",
+            "show_map": True,
+            "facebook_url": "",
+            "instagram_url": "",
+            "youtube_url": "",
+            "linkedin_url": "",
+            "website_url": "",
+            "form_title": "Envie sua Mensagem",
+            "form_subtitle": "Preencha o formulário abaixo e entraremos em contato",
+            "form_success_message": "Mensagem enviada com sucesso! Entraremos em contato em breve.",
+            "show_contact_form": True
+        }
+    return settings
+
+@api_router.put("/contact-page-settings")
+async def update_contact_page_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update contact page settings - Admin only"""
+    settings_data['id'] = "contact_page_settings"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.contact_page_settings.update_one(
+        {"id": "contact_page_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Configurações da página de contato atualizadas com sucesso"}
+
+
+# ==================== WHATSAPP AUTO-REPLY SETTINGS ====================
+
+@api_router.get("/whatsapp-auto-reply-settings")
+async def get_whatsapp_auto_reply_settings():
+    """Get WhatsApp auto-reply settings - Public"""
+    settings = await db.whatsapp_auto_reply_settings.find_one({"id": "whatsapp_auto_reply"}, {"_id": 0})
+    if not settings:
+        return {
+            "enabled": False,
+            "welcome_message": "Olá! 👋 Bem-vindo à VigiLoc! Como posso ajudar você hoje?",
+            "business_hours_message": "Nosso horário de atendimento é de Segunda a Sexta, das 8h às 18h. Deixe sua mensagem que retornaremos o mais breve possível!",
+            "outside_hours_message": "Estamos fora do horário de atendimento. Retornaremos sua mensagem no próximo dia útil. Obrigado pela compreensão! 🙏",
+            "auto_replies": [
+                {"id": "1", "trigger": "preço", "response": "Para informações sobre preços e orçamentos, por favor acesse nosso site ou fale com um consultor."},
+                {"id": "2", "trigger": "horário", "response": "Nosso horário de atendimento é de Segunda a Sexta, das 8h às 18h, e Sábados das 8h às 12h."},
+                {"id": "3", "trigger": "endereço", "response": "Estamos localizados na Av. Paulista, 1000 - São Paulo/SP. CEP: 01310-100"}
+            ]
+        }
+    return settings
+
+@api_router.put("/whatsapp-auto-reply-settings")
+async def update_whatsapp_auto_reply_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
+    """Update WhatsApp auto-reply settings - Admin only"""
+    settings_data['id'] = "whatsapp_auto_reply"
+    settings_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.whatsapp_auto_reply_settings.update_one(
+        {"id": "whatsapp_auto_reply"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    return {"message": "Configurações de resposta automática do WhatsApp atualizadas com sucesso"}
+
+
 # ==================== NOTIFICATION/AUTOMATION ROUTES ====================
 
 @api_router.post("/admin/notifications/send-payment-reminders")
