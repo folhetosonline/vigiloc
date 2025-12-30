@@ -53,7 +53,9 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
       style={{ 
         minHeight: banner.height || '70vh',
         backgroundImage: banner.type === 'image' && banner.mediaUrl ? `url(${banner.mediaUrl})` : 
-                        banner.type === 'gradient' ? 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)' : 'none',
+                        banner.type === 'gradient' ? 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)' : 
+                        banner.type === 'video' && banner.poster ? `url(${banner.poster})` :
+                        'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundColor: banner.type === 'video' ? '#1F2937' : '#3B82F6'
