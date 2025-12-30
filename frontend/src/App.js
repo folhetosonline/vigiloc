@@ -163,6 +163,7 @@ function App() {
               <Route path="contact-page" element={<ContactPageManager />} />
               <Route path="banners" element={<AdminBanners />} />
               <Route path="templates" element={<PageTemplates />} />
+              <Route path="help" element={<HelpGuide />} />
               <Route path="coupons" element={<AdminCoupons />} />
               
               {/* CRM Routes */}
