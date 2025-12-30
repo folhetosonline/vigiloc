@@ -47,6 +47,7 @@ import SEODashboard from "@/pages/admin/SEODashboard";
 import SEOFilesManager from "@/pages/admin/SEOFilesManager";
 import LogoManager from "@/pages/admin/LogoManager";
 import ContactPageManager from "@/pages/admin/ContactPageManager";
+import PageTemplates from "@/pages/admin/PageTemplates";
 
 // CRM pages
 import CRMDashboard from "@/pages/admin/crm/CRMDashboard";
