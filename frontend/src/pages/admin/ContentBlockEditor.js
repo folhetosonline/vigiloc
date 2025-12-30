@@ -444,10 +444,26 @@ const ContentBlockEditor = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-500">Carregando página...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!page) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-500">Carregando...</p>
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Página não encontrada</p>
+          <Button onClick={() => navigate("/admin/page-builder")}>
+            Voltar ao Page Builder
+          </Button>
+        </div>
       </div>
     );
   }
