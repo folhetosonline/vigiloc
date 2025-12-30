@@ -5,13 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { 
   Plus, Save, Trash2, Eye, EyeOff, ArrowUp, ArrowDown, 
-  Image as ImageIcon, Type, LayoutGrid, Play, ShoppingBag 
+  Image as ImageIcon, Type, LayoutGrid, Play, ShoppingBag, Video, Layers
 } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
 import { toast } from "sonner";
+import HeroEditor from "@/components/admin/HeroEditor";
 
 const ContentBlockEditor = () => {
   const { pageId } = useParams();
