@@ -863,7 +863,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "SEO Files Manager System - TESTED AND WORKING"
+    - "Page Builder System - Content Block Editor for System Pages - NEEDS TESTING"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
