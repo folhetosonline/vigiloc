@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-CRM/ERP Backend API Testing Script
-Tests all CRM functionality in the specified order from the review request.
+VigiLoc CMS Admin Panel Backend API Testing Script
+Tests specific admin panel features as requested in the review.
 """
 
 import requests
