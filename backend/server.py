@@ -492,7 +492,7 @@ class SEOSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = "seo_settings"
     # Site basics
-    site_url: str = "https://visual-cms-4.preview.emergentagent.com"
+    site_url: str = os.environ.get('SITE_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://visual-cms-4.preview.emergentagent.com'))
     default_meta_title: str = "VigiLoc - Segurança Inteligente"
     default_meta_description: str = "Soluções de segurança inteligente"
     default_keywords: str = "segurança, câmeras, vigilância"
