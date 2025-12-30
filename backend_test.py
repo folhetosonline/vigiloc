@@ -1277,18 +1277,17 @@ class CRMTester:
                 "address_city": "São Paulo",
                 "address_state": "SP",
                 "address_zip": "01234-567",
-                "working_hours": "Segunda a Sexta: 08:00 - 18:00",
+                "working_hours_weekdays": "Segunda a Sexta: 08:00 - 18:00",
+                "working_hours_saturday": "Sábado: 08:00 - 12:00",
+                "working_hours_sunday": "Domingo: Fechado",
                 "facebook_url": "https://facebook.com/vigiloc.teste",
                 "instagram_url": "https://instagram.com/vigiloc.teste",
-                "linkedin_url": "https://linkedin.com/company/vigiloc.teste"
-                },
-                "form": {
-                    "enabled": True,
-                    "success_message": "Mensagem enviada com sucesso! - TESTE"
-                }
+                "youtube_url": "https://youtube.com/vigiloc.teste",
+                "show_whatsapp_button": True,
+                "whatsapp_message": "Olá! Gostaria de mais informações - TESTE"
             }
             
-            response = self.make_request("PUT", "/contact-page-settings", update_data)
+            response = self.make_request("PUT", "/admin/contact-page-settings", update_data)
             
             if response.status_code == 200:
                 self.log("✅ Contact page settings updated successfully")
