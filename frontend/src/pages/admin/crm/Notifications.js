@@ -77,9 +77,7 @@ const Notifications = () => {
   const saveAutoReplySettings = async () => {
     setSavingSettings(true);
     try {
-      await axios.put(`${API}/whatsapp-auto-reply-settings`, autoReplySettings, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
+      await axios.put(`${API}/whatsapp-auto-reply-settings`, autoReplySettings);
       toast.success("Configurações de resposta automática salvas!");
     } catch (error) {
       toast.error("Erro ao salvar configurações");
