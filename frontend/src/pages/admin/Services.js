@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { 
   Plus, Pencil, Trash2, Eye, Save, Upload, Video, Image as ImageIcon, 
-  Type, Move, Palette, ExternalLink, ChevronDown, Settings2
+  Type, Move, Palette, ExternalLink, ChevronDown, Settings2, Copy
 } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
