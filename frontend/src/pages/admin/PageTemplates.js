@@ -79,8 +79,8 @@ const PageTemplates = () => {
       ]
     },
     {
-      id: 'natal-2025',
-      name: 'Natal 2025',
+      id: 'natal-2026',
+      name: 'Natal 2026',
       icon: <Gift className="w-8 h-8" />,
       color: 'from-red-600 to-green-600',
       description: 'Especial de Natal com clima festivo',
@@ -90,7 +90,7 @@ const PageTemplates = () => {
         {
           id: 'hero-natal',
           type: 'hero',
-          title: '🎄 Natal Seguro & Feliz 2025',
+          title: '🎄 Natal Seguro & Feliz 2026',
           subtitle: 'Presentes que protegem: equipamentos de segurança com até 40% OFF',
           image: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=1200',
           buttonText: 'Ver Presentes',
