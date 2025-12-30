@@ -21,6 +21,7 @@ const ContentBlockEditor = () => {
   const [open, setOpen] = useState(false);
   const [editingBlock, setEditingBlock] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const [blockForm, setBlockForm] = useState({
     type: "hero",
@@ -41,10 +42,18 @@ const ContentBlockEditor = () => {
 
   useEffect(() => {
     if (pageId) {
-      fetchPage();
-      fetchBlocks();
+      loadPageData();
     }
   }, [pageId]);
+
+  const loadPageData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([fetchPage(), fetchBlocks()]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchPage = async () => {
     try {
