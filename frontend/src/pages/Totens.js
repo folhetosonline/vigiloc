@@ -8,6 +8,7 @@ import axios from "axios";
 import { API } from "@/App";
 import SEO from "@/components/SEO";
 import ProductFilter from "@/components/ProductFilter";
+import ContentBlockRenderer from "@/components/ContentBlockRenderer";
 
 const Totens = () => {
   const [products, setProducts] = useState([]);
