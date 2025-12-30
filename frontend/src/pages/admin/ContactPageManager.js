@@ -92,9 +92,7 @@ const ContactPageManager = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await axios.put(`${API}/contact-page-settings`, contactSettings, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
+      await axios.put(`${API}/contact-page-settings`, contactSettings);
       toast.success("Configurações da página de contato salvas!");
     } catch (error) {
       toast.error("Erro ao salvar configurações");
