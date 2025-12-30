@@ -1236,46 +1236,51 @@ class CRMTester:
                 self.test_data['original_contact_settings'] = settings
                 self.passed_tests.append("GET Contact Page Settings")
                 
-                # Verify expected structure (6 tabs: Hero, Contato, Endereço, Horários, Redes Sociais, Formulário)
-                expected_sections = ['hero', 'contact', 'address', 'hours', 'social', 'form']
-                for section in expected_sections:
-                    if section in settings:
-                        self.log(f"✅ {section} section found in settings")
+                # Verify expected fields are present
+                expected_fields = ['hero_title', 'hero_subtitle', 'phone', 'email', 'whatsapp_number']
+                for field in expected_fields:
+                    if field in settings:
+                        self.log(f"✅ {field} field found: {settings[field]}")
                     else:
-                        self.log(f"⚠️ {section} section not found (may use defaults)")
+                        self.log(f"⚠️ {field} field not found (may use defaults)")
+                
+                # Check for address fields
+                address_fields = ['address_street', 'address_city', 'address_state', 'address_zip']
+                for field in address_fields:
+                    if field in settings:
+                        self.log(f"✅ {field} field found")
+                    else:
+                        self.log(f"⚠️ {field} field not found")
+                
+                # Check for working hours and social media
+                other_fields = ['working_hours', 'facebook_url', 'instagram_url', 'linkedin_url']
+                for field in other_fields:
+                    if field in settings:
+                        self.log(f"✅ {field} field found")
+                    else:
+                        self.log(f"⚠️ {field} field not found")
                 
             else:
                 self.log(f"❌ Failed to get contact page settings: {response.status_code} - {response.text}")
                 self.failed_tests.append("GET Contact Page Settings")
                 return False
             
-            # 2. PUT /api/contact-page-settings (update settings - requires auth)
-            self.log("Testing PUT /api/contact-page-settings...")
+            # 2. PUT /api/admin/contact-page-settings (update settings - requires admin auth)
+            self.log("Testing PUT /api/admin/contact-page-settings...")
             update_data = {
-                "hero": {
-                    "title": "Entre em Contato - TESTE",
-                    "subtitle": "Estamos aqui para ajudar você - TESTE"
-                },
-                "contact": {
-                    "phone": "(11) 99999-8888",
-                    "email": "contato.teste@vigiloc.com",
-                    "whatsapp": "5511999998888"
-                },
-                "address": {
-                    "street": "Rua de Teste, 123",
-                    "city": "São Paulo",
-                    "state": "SP",
-                    "zip": "01234-567"
-                },
-                "hours": {
-                    "monday_friday": "08:00 - 18:00",
-                    "saturday": "08:00 - 12:00",
-                    "sunday": "Fechado"
-                },
-                "social": {
-                    "facebook": "https://facebook.com/vigiloc.teste",
-                    "instagram": "https://instagram.com/vigiloc.teste",
-                    "linkedin": "https://linkedin.com/company/vigiloc.teste"
+                "hero_title": "Contate a VigiLoc",
+                "hero_subtitle": "Estamos aqui para ajudar você com soluções de segurança",
+                "phone": "(11) 99999-8888",
+                "email": "contato.teste@vigiloc.com",
+                "whatsapp_number": "5511999998888",
+                "address_street": "Rua de Teste, 123",
+                "address_city": "São Paulo",
+                "address_state": "SP",
+                "address_zip": "01234-567",
+                "working_hours": "Segunda a Sexta: 08:00 - 18:00",
+                "facebook_url": "https://facebook.com/vigiloc.teste",
+                "instagram_url": "https://instagram.com/vigiloc.teste",
+                "linkedin_url": "https://linkedin.com/company/vigiloc.teste"
                 },
                 "form": {
                     "enabled": True,
