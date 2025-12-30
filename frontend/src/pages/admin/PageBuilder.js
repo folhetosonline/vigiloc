@@ -184,9 +184,14 @@ const PageBuilder = () => {
                   Preview
                 </Button>
                 {!page.isSystem && (
-                  <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => handleDuplicate(page)} title="Duplicar">
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
                 )}
               </div>
             </CardContent>
