@@ -3148,7 +3148,7 @@ async def toggle_social_review_featured(review_id: str, current_user: User = Dep
 
 # ==================== SEO & SITEMAP ROUTES ====================
 
-SITE_DOMAIN = "https://www.vigiloc.com.br"
+SITE_DOMAIN = os.environ.get('SITE_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://www.vigiloc.com.br'))
 
 @api_router.get("/sitemap.xml")
 async def get_dynamic_sitemap():
