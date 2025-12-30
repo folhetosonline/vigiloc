@@ -492,6 +492,19 @@ const PageTemplates = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
+              <Label>Escolha o provedor de IA</Label>
+              <Select value={aiProvider} onValueChange={setAiProvider}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gemini">🔵 Gemini (Google)</SelectItem>
+                  <SelectItem value="openai">🟢 GPT (OpenAI)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
               <Label>Descreva o template que você deseja criar</Label>
               <Textarea
                 value={aiPrompt}
@@ -507,7 +520,7 @@ const PageTemplates = () => {
             <div className="bg-violet-50 border border-violet-200 rounded-lg p-4">
               <p className="text-sm text-violet-800 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
-                A IA irá gerar um template personalizado baseado na sua descrição
+                A IA irá gerar um template personalizado baseado na sua descrição usando {aiProvider === 'gemini' ? 'Gemini' : 'GPT'}
               </p>
             </div>
           </div>
