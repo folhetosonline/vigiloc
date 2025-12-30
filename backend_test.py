@@ -1363,34 +1363,38 @@ class CRMTester:
                 self.failed_tests.append("GET WhatsApp Auto-Reply Settings")
                 return False
             
-            # 2. PUT /api/whatsapp-auto-reply-settings (update settings - requires auth)
-            self.log("Testing PUT /api/whatsapp-auto-reply-settings...")
+            # 2. PUT /api/admin/whatsapp-auto-reply-settings (update settings - requires auth)
+            self.log("Testing PUT /api/admin/whatsapp-auto-reply-settings...")
             update_data = {
                 "enabled": True,
                 "welcome_message": "Olá! Bem-vindo à VigiLoc! Como posso ajudá-lo hoje? - TESTE",
                 "business_hours_message": "Estamos online! Nossa equipe responderá em breve. - TESTE",
-                "after_hours_message": "No momento estamos offline. Horário de atendimento: Segunda a Sexta, 8h às 18h. - TESTE",
-                "keyword_responses": [
+                "outside_hours_message": "No momento estamos offline. Horário de atendimento: Segunda a Sexta, 8h às 18h. - TESTE",
+                "auto_replies": [
                     {
-                        "keyword": "preço",
+                        "id": "1",
+                        "trigger": "preço",
                         "response": "Nossos preços variam conforme o serviço. Entre em contato para um orçamento personalizado! - TESTE"
                     },
                     {
-                        "keyword": "horário",
+                        "id": "2", 
+                        "trigger": "horário",
                         "response": "Atendemos de Segunda a Sexta, das 8h às 18h, e Sábados das 8h às 12h. - TESTE"
                     },
                     {
-                        "keyword": "endereço",
+                        "id": "3",
+                        "trigger": "endereço",
                         "response": "Estamos localizados na Rua de Teste, 123 - São Paulo, SP. - TESTE"
                     },
                     {
-                        "keyword": "teste",
+                        "id": "4",
+                        "trigger": "teste",
                         "response": "Esta é uma resposta de teste adicionada via API! - TESTE"
                     }
                 ]
             }
             
-            response = self.make_request("PUT", "/whatsapp-auto-reply-settings", update_data)
+            response = self.make_request("PUT", "/admin/whatsapp-auto-reply-settings", update_data)
             
             if response.status_code == 200:
                 self.log("✅ WhatsApp auto-reply settings updated successfully")
