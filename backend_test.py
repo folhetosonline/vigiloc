@@ -2958,6 +2958,31 @@ class CRMTester:
         
         return all(test_results)
     
+    def run_new_features_from_review(self) -> bool:
+        """Run ONLY the NEW FEATURES from the review request"""
+        self.log("🎯 TESTING NEW FEATURES FROM REVIEW REQUEST")
+        self.log("=" * 60)
+        
+        # Authenticate first
+        if not self.authenticate():
+            return False
+        
+        # Run tests for the new features mentioned in the review
+        test_results = []
+        
+        # 1. Contact Page Settings API
+        self.log("\n🎯 NEW FEATURE - CONTACT PAGE SETTINGS:")
+        test_results.append(self.test_contact_page_settings())
+        
+        # 2. WhatsApp Auto-Reply Settings API
+        self.log("\n🎯 NEW FEATURE - WHATSAPP AUTO-REPLY SETTINGS:")
+        test_results.append(self.test_whatsapp_auto_reply_settings())
+        
+        # Print summary
+        self.print_summary()
+        
+        return all(test_results)
+
     def run_new_admin_features_only(self) -> bool:
         """Run ONLY the new admin features tests as requested in review"""
         self.log("🎯 TESTING NEW ADMIN FEATURES ONLY")
