@@ -4773,5 +4773,201 @@ async def submit_for_indexing(urls: List[str], current_user: User = Depends(get_
     }
 
 
+# ==================== DUPLICATION ENDPOINTS ====================
+
+@api_router.post("/admin/pages/{page_id}/duplicate")
+async def duplicate_page(page_id: str, current_user: User = Depends(get_current_admin)):
+    """Duplicate a custom page"""
+    # Find the original page
+    original = await db.custom_pages.find_one({"id": page_id}, {"_id": 0})
+    if not original:
+        raise HTTPException(status_code=404, detail="Page not found")
+    
+    # Create duplicate with new ID and modified slug/title
+    new_page = original.copy()
+    new_page['id'] = str(uuid.uuid4())
+    new_page['slug'] = f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}"
+    new_page['title'] = f"{original['title']} (Cópia)"
+    new_page['published'] = False
+    new_page['created_at'] = datetime.now(timezone.utc).isoformat()
+    new_page['updated_at'] = None
+    
+    await db.custom_pages.insert_one(new_page)
+    return {"message": "Página duplicada com sucesso", "new_page": new_page}
+
+
+@api_router.post("/admin/services/{service_id}/duplicate")
+async def duplicate_service(service_id: str, current_user: User = Depends(get_current_admin)):
+    """Duplicate a service"""
+    # Find the original service
+    original = await db.services.find_one({"id": service_id}, {"_id": 0})
+    if not original:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Create duplicate with new ID and modified slug/name
+    new_service = original.copy()
+    new_service['id'] = str(uuid.uuid4())
+    new_service['slug'] = f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}"
+    new_service['name'] = f"{original['name']} (Cópia)"
+    new_service['published'] = False
+    new_service['created_at'] = datetime.now(timezone.utc).isoformat()
+    new_service['updated_at'] = None
+    
+    await db.services.insert_one(new_service)
+    return {"message": "Serviço duplicado com sucesso", "new_service": new_service}
+
+
+@api_router.post("/admin/templates/{template_id}/duplicate")
+async def duplicate_template(template_id: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Save a duplicated template to database"""
+    # Templates can be stored in a templates collection
+    template_data = data.get('template', {})
+    
+    new_template = {
+        "id": str(uuid.uuid4()),
+        "name": template_data.get('name', 'Template Duplicado'),
+        "slug": f"template-{str(uuid.uuid4())[:8]}",
+        "description": template_data.get('description', ''),
+        "color": template_data.get('color', 'from-blue-500 to-purple-500'),
+        "thumbnail": template_data.get('thumbnail', '📄'),
+        "videoBackground": template_data.get('videoBackground', ''),
+        "components": template_data.get('components', []),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user.id
+    }
+    
+    await db.seasonal_templates.insert_one(new_template)
+    return {"message": "Template duplicado e salvo com sucesso", "new_template": new_template}
+
+
+@api_router.get("/admin/templates")
+async def get_saved_templates(current_user: User = Depends(get_current_admin)):
+    """Get all saved seasonal templates"""
+    templates = await db.seasonal_templates.find({}, {"_id": 0}).to_list(100)
+    return templates
+
+
+@api_router.delete("/admin/templates/{template_id}")
+async def delete_template(template_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete a saved template"""
+    result = await db.seasonal_templates.delete_one({"id": template_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Template not found")
+    return {"message": "Template deletado com sucesso"}
+
+
+# ==================== AI TEMPLATE GENERATION ====================
+
+@api_router.post("/admin/generate-template")
+async def generate_template_with_ai(data: dict, current_user: User = Depends(get_current_admin)):
+    """Generate a seasonal template using AI (Gemini or GPT)"""
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    
+    prompt = data.get('prompt', '')
+    business_type = data.get('business_type', 'segurança eletrônica')
+    provider = data.get('provider', 'gemini')  # 'gemini' or 'openai'
+    
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Prompt is required")
+    
+    api_key = os.environ.get('EMERGENT_LLM_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="LLM API key not configured")
+    
+    # Configure the chat based on provider choice
+    chat = LlmChat(
+        api_key=api_key,
+        session_id=f"template-gen-{uuid.uuid4()}",
+        system_message=f"""Você é um especialista em marketing digital e criação de landing pages para empresas de {business_type}.
+        
+Sua tarefa é gerar templates de páginas promocionais/sazonais baseados na descrição do usuário.
+
+SEMPRE responda em formato JSON válido com a seguinte estrutura:
+{{
+    "name": "Nome do template",
+    "description": "Descrição curta",
+    "emoji": "emoji representativo (ex: 🎄, 🔥, 💰)",
+    "color": "classe Tailwind de gradiente (ex: from-red-500 to-green-500)",
+    "hero_title": "Título principal chamativo",
+    "hero_subtitle": "Subtítulo persuasivo",
+    "hero_image": "URL de imagem do Unsplash relacionada",
+    "section_title": "Título da seção de conteúdo",
+    "section_content": "Conteúdo informativo e persuasivo",
+    "cta_title": "Título do call-to-action",
+    "cta_description": "Descrição do CTA",
+    "cta_button": "Texto do botão CTA",
+    "components": [
+        {{
+            "id": "hero-generated",
+            "type": "hero",
+            "title": "título",
+            "subtitle": "subtítulo",
+            "image": "url da imagem",
+            "buttonText": "texto do botão",
+            "style": {{"background": "gradiente CSS", "color": "#fff"}}
+        }},
+        {{
+            "id": "text-generated",
+            "type": "text",
+            "title": "título da seção",
+            "content": "conteúdo",
+            "style": {{"textAlign": "center", "padding": "40px"}}
+        }},
+        {{
+            "id": "cta-generated",
+            "type": "cta",
+            "title": "título CTA",
+            "description": "descrição",
+            "buttonText": "texto botão",
+            "style": {{"background": "cor", "color": "#fff"}}
+        }}
+    ]
+}}
+
+Seja criativo e use cores e mensagens apropriadas para o tema solicitado.
+Mantenha o foco em {business_type} - câmeras, alarmes, controle de acesso, totens, etc."""
+    )
+    
+    # Select model based on provider
+    if provider == 'openai':
+        chat.with_model("openai", "gpt-4o")
+    else:
+        chat.with_model("gemini", "gemini-2.5-flash")
+    
+    try:
+        user_message = UserMessage(text=f"Crie um template para: {prompt}")
+        response = await chat.send_message(user_message)
+        
+        # Try to parse JSON from response
+        import json
+        import re
+        
+        # Try to extract JSON from the response
+        json_match = re.search(r'\{[\s\S]*\}', response)
+        if json_match:
+            template_data = json.loads(json_match.group())
+            return template_data
+        else:
+            # Return a basic template if JSON parsing fails
+            return {
+                "name": f"Template: {prompt[:30]}",
+                "description": f"Template gerado por IA: {prompt}",
+                "emoji": "🤖",
+                "color": "from-violet-500 to-fuchsia-500",
+                "hero_title": prompt.upper()[:50],
+                "hero_subtitle": "Template criado especialmente para sua campanha",
+                "hero_image": "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200",
+                "section_title": "✨ Conteúdo Especial",
+                "section_content": response[:500] if response else "Conteúdo personalizado para sua promoção.",
+                "cta_title": "Entre em Contato",
+                "cta_description": "Fale com nossos especialistas",
+                "cta_button": "Falar Agora",
+                "components": []
+            }
+    except Exception as e:
+        logger.error(f"Error generating template with AI: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao gerar template: {str(e)}")
+
+
 # Include the router in the main app (after all routes are defined)
 app.include_router(api_router)
