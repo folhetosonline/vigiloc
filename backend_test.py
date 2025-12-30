@@ -1221,6 +1221,210 @@ class CRMTester:
             self.failed_tests.append("User Management APIs")
             return False
 
+    def test_contact_page_settings(self) -> bool:
+        """Test Contact Page Settings APIs - NEW FEATURE"""
+        self.log("\n=== TESTING CONTACT PAGE SETTINGS APIs ===")
+        
+        try:
+            # 1. GET /api/contact-page-settings (should return default settings)
+            self.log("Testing GET /api/contact-page-settings...")
+            response = self.make_request("GET", "/contact-page-settings")
+            
+            if response.status_code == 200:
+                settings = response.json()
+                self.log("✅ Contact page settings retrieved successfully")
+                self.test_data['original_contact_settings'] = settings
+                self.passed_tests.append("GET Contact Page Settings")
+                
+                # Verify expected structure (6 tabs: Hero, Contato, Endereço, Horários, Redes Sociais, Formulário)
+                expected_sections = ['hero', 'contact', 'address', 'hours', 'social', 'form']
+                for section in expected_sections:
+                    if section in settings:
+                        self.log(f"✅ {section} section found in settings")
+                    else:
+                        self.log(f"⚠️ {section} section not found (may use defaults)")
+                
+            else:
+                self.log(f"❌ Failed to get contact page settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET Contact Page Settings")
+                return False
+            
+            # 2. PUT /api/contact-page-settings (update settings - requires auth)
+            self.log("Testing PUT /api/contact-page-settings...")
+            update_data = {
+                "hero": {
+                    "title": "Entre em Contato - TESTE",
+                    "subtitle": "Estamos aqui para ajudar você - TESTE"
+                },
+                "contact": {
+                    "phone": "(11) 99999-8888",
+                    "email": "contato.teste@vigiloc.com",
+                    "whatsapp": "5511999998888"
+                },
+                "address": {
+                    "street": "Rua de Teste, 123",
+                    "city": "São Paulo",
+                    "state": "SP",
+                    "zip": "01234-567"
+                },
+                "hours": {
+                    "monday_friday": "08:00 - 18:00",
+                    "saturday": "08:00 - 12:00",
+                    "sunday": "Fechado"
+                },
+                "social": {
+                    "facebook": "https://facebook.com/vigiloc.teste",
+                    "instagram": "https://instagram.com/vigiloc.teste",
+                    "linkedin": "https://linkedin.com/company/vigiloc.teste"
+                },
+                "form": {
+                    "enabled": True,
+                    "success_message": "Mensagem enviada com sucesso! - TESTE"
+                }
+            }
+            
+            response = self.make_request("PUT", "/api/contact-page-settings", update_data)
+            
+            if response.status_code == 200:
+                self.log("✅ Contact page settings updated successfully")
+                self.passed_tests.append("UPDATE Contact Page Settings")
+            else:
+                self.log(f"❌ Failed to update contact page settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("UPDATE Contact Page Settings")
+            
+            # 3. GET /api/contact-page-settings (verify updates)
+            self.log("Testing GET /api/contact-page-settings (verify updates)...")
+            response = self.make_request("GET", "/contact-page-settings")
+            
+            if response.status_code == 200:
+                updated_settings = response.json()
+                self.log("✅ Contact page settings verification successful")
+                
+                # Verify updates were applied
+                if (updated_settings.get('hero', {}).get('title') == update_data['hero']['title'] and
+                    updated_settings.get('contact', {}).get('phone') == update_data['contact']['phone']):
+                    self.log("✅ Contact page settings updates verified")
+                    self.passed_tests.append("VERIFY Contact Page Settings Updates")
+                else:
+                    self.log("❌ Contact page settings updates not properly applied")
+                    self.failed_tests.append("VERIFY Contact Page Settings Updates")
+            else:
+                self.log(f"❌ Failed to verify contact page settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("VERIFY Contact Page Settings Updates")
+            
+            return len([t for t in self.failed_tests if "Contact Page" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ Contact Page Settings test error: {str(e)}", "ERROR")
+            self.failed_tests.append("Contact Page Settings APIs")
+            return False
+
+    def test_whatsapp_auto_reply_settings(self) -> bool:
+        """Test WhatsApp Auto-Reply Settings APIs - NEW FEATURE"""
+        self.log("\n=== TESTING WHATSAPP AUTO-REPLY SETTINGS APIs ===")
+        
+        try:
+            # 1. GET /api/whatsapp-auto-reply-settings (should return default settings)
+            self.log("Testing GET /api/whatsapp-auto-reply-settings...")
+            response = self.make_request("GET", "/whatsapp-auto-reply-settings")
+            
+            if response.status_code == 200:
+                settings = response.json()
+                self.log("✅ WhatsApp auto-reply settings retrieved successfully")
+                self.test_data['original_whatsapp_settings'] = settings
+                self.passed_tests.append("GET WhatsApp Auto-Reply Settings")
+                
+                # Verify expected structure
+                expected_fields = ['enabled', 'welcome_message', 'business_hours_message', 'after_hours_message', 'keyword_responses']
+                for field in expected_fields:
+                    if field in settings:
+                        self.log(f"✅ {field} field found in settings")
+                    else:
+                        self.log(f"⚠️ {field} field not found (may use defaults)")
+                
+                # Check keyword responses structure
+                if 'keyword_responses' in settings and isinstance(settings['keyword_responses'], list):
+                    self.log(f"✅ Found {len(settings['keyword_responses'])} keyword responses")
+                    # Should have default responses for: preço, horário, endereço
+                    keywords = [kr.get('keyword', '') for kr in settings['keyword_responses']]
+                    expected_keywords = ['preço', 'horário', 'endereço']
+                    for keyword in expected_keywords:
+                        if any(keyword.lower() in k.lower() for k in keywords):
+                            self.log(f"✅ Default keyword response found for: {keyword}")
+                        else:
+                            self.log(f"⚠️ Default keyword response not found for: {keyword}")
+                
+            else:
+                self.log(f"❌ Failed to get WhatsApp auto-reply settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("GET WhatsApp Auto-Reply Settings")
+                return False
+            
+            # 2. PUT /api/whatsapp-auto-reply-settings (update settings - requires auth)
+            self.log("Testing PUT /api/whatsapp-auto-reply-settings...")
+            update_data = {
+                "enabled": True,
+                "welcome_message": "Olá! Bem-vindo à VigiLoc! Como posso ajudá-lo hoje? - TESTE",
+                "business_hours_message": "Estamos online! Nossa equipe responderá em breve. - TESTE",
+                "after_hours_message": "No momento estamos offline. Horário de atendimento: Segunda a Sexta, 8h às 18h. - TESTE",
+                "keyword_responses": [
+                    {
+                        "keyword": "preço",
+                        "response": "Nossos preços variam conforme o serviço. Entre em contato para um orçamento personalizado! - TESTE"
+                    },
+                    {
+                        "keyword": "horário",
+                        "response": "Atendemos de Segunda a Sexta, das 8h às 18h, e Sábados das 8h às 12h. - TESTE"
+                    },
+                    {
+                        "keyword": "endereço",
+                        "response": "Estamos localizados na Rua de Teste, 123 - São Paulo, SP. - TESTE"
+                    },
+                    {
+                        "keyword": "teste",
+                        "response": "Esta é uma resposta de teste adicionada via API! - TESTE"
+                    }
+                ]
+            }
+            
+            response = self.make_request("PUT", "/api/whatsapp-auto-reply-settings", update_data)
+            
+            if response.status_code == 200:
+                self.log("✅ WhatsApp auto-reply settings updated successfully")
+                self.passed_tests.append("UPDATE WhatsApp Auto-Reply Settings")
+            else:
+                self.log(f"❌ Failed to update WhatsApp auto-reply settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("UPDATE WhatsApp Auto-Reply Settings")
+            
+            # 3. GET /api/whatsapp-auto-reply-settings (verify updates)
+            self.log("Testing GET /api/whatsapp-auto-reply-settings (verify updates)...")
+            response = self.make_request("GET", "/whatsapp-auto-reply-settings")
+            
+            if response.status_code == 200:
+                updated_settings = response.json()
+                self.log("✅ WhatsApp auto-reply settings verification successful")
+                
+                # Verify updates were applied
+                if (updated_settings.get('enabled') == update_data['enabled'] and
+                    "TESTE" in updated_settings.get('welcome_message', '') and
+                    len(updated_settings.get('keyword_responses', [])) == 4):
+                    self.log("✅ WhatsApp auto-reply settings updates verified")
+                    self.log(f"  • Enabled: {updated_settings.get('enabled')}")
+                    self.log(f"  • Keyword responses: {len(updated_settings.get('keyword_responses', []))}")
+                    self.passed_tests.append("VERIFY WhatsApp Auto-Reply Settings Updates")
+                else:
+                    self.log("❌ WhatsApp auto-reply settings updates not properly applied")
+                    self.failed_tests.append("VERIFY WhatsApp Auto-Reply Settings Updates")
+            else:
+                self.log(f"❌ Failed to verify WhatsApp auto-reply settings: {response.status_code} - {response.text}")
+                self.failed_tests.append("VERIFY WhatsApp Auto-Reply Settings Updates")
+            
+            return len([t for t in self.failed_tests if "WhatsApp" in t]) == 0
+            
+        except Exception as e:
+            self.log(f"❌ WhatsApp Auto-Reply Settings test error: {str(e)}", "ERROR")
+            self.failed_tests.append("WhatsApp Auto-Reply Settings APIs")
+            return False
+
     def test_new_admin_features(self) -> bool:
         """Test NEW ADMIN FEATURES as requested in review"""
         self.log("\n=== TESTING NEW ADMIN FEATURES ===")
