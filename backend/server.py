@@ -2709,6 +2709,15 @@ async def get_published_blocks(page_id: str):
     ).sort("order", 1).to_list(100)
     return blocks
 
+@api_router.get("/content-blocks/{page_id}")
+async def get_page_blocks_public(page_id: str):
+    """Get content blocks for a page - Public (returns published only)"""
+    blocks = await db.content_blocks.find(
+        {"page_id": page_id, "published": True}, 
+        {"_id": 0}
+    ).sort("order", 1).to_list(100)
+    return blocks
+
 @api_router.post("/admin/content-blocks")
 async def create_content_block(block_data: dict, current_user: User = Depends(get_current_admin)):
     """Create new content block"""
