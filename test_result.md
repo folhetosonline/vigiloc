@@ -117,6 +117,30 @@ user_problem_statement: |
   - Customer registration with phone, CPF, and address fields
 
 backend:
+  - task: "Contact Page Settings API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Contact Page Settings API working perfectly! All 3 test scenarios passed: 1) GET /api/contact-page-settings returns default settings with all required fields (hero_title, hero_subtitle, phone, email, whatsapp_number, address fields, working hours, social media URLs, form settings). 2) PUT /api/contact-page-settings successfully updates settings with admin authentication required. Test data includes hero section (title, subtitle), contact info (phone, email, WhatsApp), address details, working hours, social media links, and form configuration. 3) GET verification confirms all updates were saved correctly. Settings persist properly and are available for frontend consumption. Contact page configuration system fully functional."
+
+  - task: "WhatsApp Auto-Reply Settings API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: WhatsApp Auto-Reply Settings API working perfectly! All 3 test scenarios passed: 1) GET /api/whatsapp-auto-reply-settings returns default settings with enabled flag, welcome_message, business_hours_message, outside_hours_message, and auto_replies array with 3 default keyword responses (preço, horário, endereço). 2) PUT /api/whatsapp-auto-reply-settings successfully updates all settings with admin authentication required. Test includes enabling auto-reply, custom messages for different scenarios, and 4 keyword responses including a new 'teste' keyword. 3) GET verification confirms all updates saved correctly including enabled status and all 4 keyword responses. WhatsApp automation system fully functional and ready for integration."
+
   - task: "Services API Endpoints"
     implemented: true
     working: true
