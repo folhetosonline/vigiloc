@@ -36,12 +36,13 @@ const ContentBlockEditor = () => {
   });
 
   const blockTypes = [
-    { value: "hero", label: "Hero Section", icon: <ImageIcon className="w-4 h-4" /> },
-    { value: "card", label: "Cards", icon: <LayoutGrid className="w-4 h-4" /> },
-    { value: "text", label: "Texto", icon: <Type className="w-4 h-4" /> },
-    { value: "media", label: "Mídia", icon: <Play className="w-4 h-4" /> },
-    { value: "banner", label: "Banner", icon: <ImageIcon className="w-4 h-4" /> },
-    { value: "product_list", label: "Lista de Produtos", icon: <ShoppingBag className="w-4 h-4" /> }
+    { value: "hero", label: "Hero Section (Avançado)", icon: <Layers className="w-4 h-4" />, description: "Carrossel, Vídeo ou Imagem" },
+    { value: "card", label: "Cards", icon: <LayoutGrid className="w-4 h-4" />, description: "Grid de cartões" },
+    { value: "text", label: "Texto", icon: <Type className="w-4 h-4" />, description: "Bloco de texto HTML" },
+    { value: "media", label: "Mídia", icon: <Play className="w-4 h-4" />, description: "Galeria de imagens/vídeos" },
+    { value: "banner", label: "Banner", icon: <ImageIcon className="w-4 h-4" />, description: "Banner promocional" },
+    { value: "video_background", label: "Vídeo Background", icon: <Video className="w-4 h-4" />, description: "Seção com vídeo de fundo" },
+    { value: "product_list", label: "Lista de Produtos", icon: <ShoppingBag className="w-4 h-4" />, description: "Produtos/Serviços" }
   ];
 
   useEffect(() => {
