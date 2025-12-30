@@ -20,6 +20,7 @@ const PageTemplates = () => {
   const [applying, setApplying] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
+  const [aiProvider, setAiProvider] = useState("gemini");
   const [generatedTemplate, setGeneratedTemplate] = useState(null);
   const [customTemplates, setCustomTemplates] = useState([]);
 
