@@ -64,10 +64,16 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
         <video 
           className="absolute inset-0 w-full h-full object-cover"
           src={banner.mediaUrl}
+          poster={banner.poster || banner.image}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          onError={(e) => {
+            console.warn('Video failed to load, showing fallback');
+            e.target.style.display = 'none';
+          }}
         />
       )}
       
