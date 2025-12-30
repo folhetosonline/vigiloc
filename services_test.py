@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://pagebuilder-fix-1.preview.emergentagent.com/api"
+BASE_URL = "https://visual-cms-4.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@vigiloc.com"
 ADMIN_PASSWORD = "admin123"
 
