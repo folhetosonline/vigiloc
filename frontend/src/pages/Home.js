@@ -511,19 +511,22 @@ const Home = () => {
   const [siteSettings, setSiteSettings] = useState({});
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasCustomBlocks, setHasCustomBlocks] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [servicesRes, settingsRes, reviewsRes] = await Promise.all([
+        const [servicesRes, settingsRes, reviewsRes, blocksRes] = await Promise.all([
           axios.get(`${API}/services`),
           axios.get(`${API}/site-settings`),
-          axios.get(`${API}/social-reviews/featured`).catch(() => ({ data: [] }))
+          axios.get(`${API}/social-reviews/featured`).catch(() => ({ data: [] })),
+          axios.get(`${API}/content-blocks/home`).catch(() => ({ data: [] }))
         ]);
         
         setServices(servicesRes.data);
         setSiteSettings(settingsRes.data);
         setReviews(reviewsRes.data);
+        setHasCustomBlocks(blocksRes.data && blocksRes.data.length > 0);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -542,20 +545,42 @@ const Home = () => {
         keywords="portaria autônoma, armários inteligentes, mini mercados autônomos, lavanderia autônoma, segurança eletrônica, automação comercial, condomínios inteligentes, totens de monitoramento"
       />
       
-      {/* Hero with Video */}
-      <HeroSection siteSettings={siteSettings} />
+      {/* Custom Content Blocks from Page Builder - shown at top if available */}
+      <ContentBlockRenderer pageId="home" />
 
-      {/* Services Grid */}
-      <ServicesSection services={services} loading={loading} />
+      {/* Default Content - shown if no custom blocks or as fallback */}
+      {!hasCustomBlocks && (
+        <>
+          {/* Hero with Video */}
+          <HeroSection siteSettings={siteSettings} />
 
-      {/* Why Choose Us */}
-      <WhyChooseUsSection />
+          {/* Services Grid */}
+          <ServicesSection services={services} loading={loading} />
 
-      {/* Customer Reviews */}
-      <ReviewsSection reviews={reviews} />
+          {/* Why Choose Us */}
+          <WhyChooseUsSection />
 
-      {/* CTA */}
-      <CTASection siteSettings={siteSettings} />
+          {/* Customer Reviews */}
+          <ReviewsSection reviews={reviews} />
+
+          {/* CTA */}
+          <CTASection siteSettings={siteSettings} />
+        </>
+      )}
+      
+      {/* If there are custom blocks, still show services section after custom content */}
+      {hasCustomBlocks && (
+        <>
+          {/* Services Grid */}
+          <ServicesSection services={services} loading={loading} />
+
+          {/* Customer Reviews */}
+          <ReviewsSection reviews={reviews} />
+
+          {/* CTA */}
+          <CTASection siteSettings={siteSettings} />
+        </>
+      )}
     </div>
   );
 };
