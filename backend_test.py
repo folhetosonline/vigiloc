@@ -3328,6 +3328,12 @@ def main():
         success = tester.run_new_admin_features_only()
         sys.exit(0 if success else 1)
     
+    # Check if we should run only new features from review request
+    if len(sys.argv) > 1 and sys.argv[1] == "--new-features":
+        tester = CRMTester()
+        success = tester.run_new_features_from_review()
+        sys.exit(0 if success else 1)
+    
     # Check if we should run only customer account system test
     if len(sys.argv) > 1 and sys.argv[1] == "--customer-account":
         tester = CRMTester()
@@ -3348,21 +3354,20 @@ def main():
             success = False
         sys.exit(0 if success else 1)
     
-    # Run page builder system test as requested in review
+    # Default: Run new features from review request
     tester = CRMTester()
     if tester.authenticate():
-        success = tester.test_page_builder_system()
-        print(f"\n🎯 Page Builder System Test: {'✅ PASSED' if success else '❌ FAILED'}")
+        success = tester.run_new_features_from_review()
+        print(f"\n🎯 New Features Test: {'✅ PASSED' if success else '❌ FAILED'}")
         
         # Print summary
         if success:
-            print("\n✅ ALL PAGE BUILDER TESTS PASSED!")
-            print("- System pages (Home, Produtos, Totens, Contato, Sobre) are editable")
-            print("- Content blocks can be created, updated, and deleted")
-            print("- Admin and public endpoints work correctly")
-            print("- CRUD operations for content blocks are functional")
+            print("\n✅ ALL NEW FEATURES TESTS PASSED!")
+            print("- Contact Page Settings API working correctly")
+            print("- WhatsApp Auto-Reply Settings API working correctly")
+            print("- All CRUD operations functional")
         else:
-            print("\n❌ SOME PAGE BUILDER TESTS FAILED!")
+            print("\n❌ SOME NEW FEATURES TESTS FAILED!")
             print("Failed tests:", tester.failed_tests)
     else:
         success = False
