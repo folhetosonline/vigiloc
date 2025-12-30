@@ -1305,8 +1305,8 @@ class CRMTester:
                 self.log("✅ Contact page settings verification successful")
                 
                 # Verify updates were applied
-                if (updated_settings.get('hero', {}).get('title') == update_data['hero']['title'] and
-                    updated_settings.get('contact', {}).get('phone') == update_data['contact']['phone']):
+                if (updated_settings.get('hero_title') == update_data['hero_title'] and
+                    updated_settings.get('phone') == update_data['phone']):
                     self.log("✅ Contact page settings updates verified")
                     self.passed_tests.append("VERIFY Contact Page Settings Updates")
                 else:
