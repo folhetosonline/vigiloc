@@ -46,6 +46,7 @@ const AdminLayout = () => {
     { path: "/admin/seo/files", icon: <FileCode />, label: "Arquivos SEO 📂" },
     { path: "/admin/reports", icon: <BarChart3 />, label: "Relatórios" },
     { path: "/admin/settings", icon: <Settings />, label: "Configurações" },
+    { path: "/admin/help", icon: <HelpCircle />, label: "Ajuda 📚" },
   ];
 
   const crmMenuItems = [
