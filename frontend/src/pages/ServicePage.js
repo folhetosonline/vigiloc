@@ -58,7 +58,7 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
                         'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundColor: banner.type === 'video' ? '#1F2937' : '#3B82F6'
+        backgroundColor: '#1F2937'
       }}
     >
       {/* Video Background */}
