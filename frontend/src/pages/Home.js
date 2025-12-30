@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SEO from "@/components/SEO";
-import ContentBlockRenderer from "@/components/ContentBlockRenderer";
 
 // Hero Section with Video Background
 const HeroSection = ({ siteSettings }) => {
