@@ -891,7 +891,7 @@ metadata:
 test_plan:
   current_focus:
     - "Home Page Carousel/Banner - RESTORED"
-    - "Admin Contact Page Manager - NEW"
+    - "Admin Contact Page Manager - NEW" 
     - "Admin WhatsApp Auto-Reply Settings - NEW"
   stuck_tasks: []
   test_all: false
