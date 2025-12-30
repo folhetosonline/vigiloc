@@ -1386,7 +1386,7 @@ class CRMTester:
                 ]
             }
             
-            response = self.make_request("PUT", "/api/whatsapp-auto-reply-settings", update_data)
+            response = self.make_request("PUT", "/whatsapp-auto-reply-settings", update_data)
             
             if response.status_code == 200:
                 self.log("✅ WhatsApp auto-reply settings updated successfully")
