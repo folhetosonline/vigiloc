@@ -4119,7 +4119,7 @@ async def get_contact_page_settings():
         }
     return settings
 
-@api_router.put("/contact-page-settings")
+@api_router.put("/admin/contact-page-settings")
 async def update_contact_page_settings(settings_data: dict, current_user: User = Depends(get_current_admin)):
     """Update contact page settings - Admin only"""
     settings_data['id'] = "contact_page_settings"
