@@ -140,6 +140,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: WhatsApp Auto-Reply Settings API working perfectly! All 3 test scenarios passed: 1) GET /api/whatsapp-auto-reply-settings returns default settings with enabled flag, welcome_message, business_hours_message, outside_hours_message, and auto_replies array with 3 default keyword responses (preço, horário, endereço). 2) PUT /api/whatsapp-auto-reply-settings successfully updates all settings with admin authentication required. Test includes enabling auto-reply, custom messages for different scenarios, and 4 keyword responses including a new 'teste' keyword. 3) GET verification confirms all updates saved correctly including enabled status and all 4 keyword responses. WhatsApp automation system fully functional and ready for integration."
+      - working: true
+        agent: "testing"
+        comment: "✅ RE-TESTED: WhatsApp Auto-Reply Settings API confirmed working perfectly! All 3 test scenarios passed again: 1) GET /api/whatsapp-auto-reply-settings returns settings with enabled, welcome_message, business_hours_message, outside_hours_message, and auto_replies fields. 2) PUT /api/admin/whatsapp-auto-reply-settings successfully updates all settings with admin authentication. Test data includes enabled=true, custom messages with 'TESTE' markers, and 4 auto replies (preço, horário, endereço, teste). 3) GET verification confirms all updates saved correctly with enabled=true and 4 auto replies. API structure matches backend implementation perfectly. Ready for frontend integration."
 
   - task: "Services API Endpoints"
     implemented: true
