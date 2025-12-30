@@ -540,6 +540,17 @@ const Services = () => {
     }
   };
 
+  const handleDuplicate = async (service) => {
+    try {
+      const response = await axios.post(`${API}/admin/services/${service.id}/duplicate`, {}, { withCredentials: true });
+      toast.success('Serviço duplicado com sucesso!');
+      fetchServices();
+    } catch (error) {
+      console.error('Error duplicating service:', error);
+      toast.error('Erro ao duplicar serviço');
+    }
+  };
+
   const addFeature = () => {
     setFormData(prev => ({
       ...prev,
