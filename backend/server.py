@@ -4805,15 +4805,32 @@ async def duplicate_service(service_id: str, current_user: User = Depends(get_cu
         raise HTTPException(status_code=404, detail="Service not found")
     
     # Create duplicate with new ID and modified slug/name
-    new_service = original.copy()
-    new_service['id'] = str(uuid.uuid4())
-    new_service['slug'] = f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}"
-    new_service['name'] = f"{original['name']} (Cópia)"
-    new_service['published'] = False
-    new_service['created_at'] = datetime.now(timezone.utc).isoformat()
-    new_service['updated_at'] = None
+    new_id = str(uuid.uuid4())
+    new_service = {
+        "id": new_id,
+        "slug": f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}",
+        "name": f"{original['name']} (Cópia)",
+        "description": original.get('description', ''),
+        "short_description": original.get('short_description', ''),
+        "hero_image": original.get('hero_image', ''),
+        "hero_video": original.get('hero_video', ''),
+        "hero_poster": original.get('hero_poster', ''),
+        "hero_title": original.get('hero_title', ''),
+        "hero_subtitle": original.get('hero_subtitle', ''),
+        "icon": original.get('icon', ''),
+        "features": original.get('features', []),
+        "gallery": original.get('gallery', []),
+        "cta_text": original.get('cta_text', ''),
+        "cta_link": original.get('cta_link', ''),
+        "published": False,
+        "order": original.get('order', 0),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": None
+    }
     
     await db.services.insert_one(new_service)
+    # Return without _id
+    new_service.pop('_id', None)
     return {"message": "Serviço duplicado com sucesso", "new_service": new_service}
 
 
