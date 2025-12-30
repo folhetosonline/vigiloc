@@ -328,8 +328,9 @@ const PageTemplates = () => {
     try {
       const response = await axios.post(`${API}/admin/generate-template`, {
         prompt: aiPrompt,
-        business_type: "segurança eletrônica"
-      });
+        business_type: "segurança eletrônica",
+        provider: aiProvider
+      }, { withCredentials: true });
 
       if (response.data) {
         const newTemplate = {
@@ -370,11 +371,12 @@ const PageTemplates = () => {
 
         setCustomTemplates(prev => [...prev, newTemplate]);
         setGeneratedTemplate(newTemplate);
-        toast.success("Template gerado com sucesso!");
+        toast.success(`Template gerado com sucesso via ${aiProvider === 'gemini' ? 'Gemini' : 'GPT'}!`);
         setAiPrompt("");
       }
     } catch (error) {
       console.error("Error generating template:", error);
+      toast.error("Erro ao gerar template: " + (error.response?.data?.detail || error.message));
       // Fallback - criar template básico mesmo sem API
       const fallbackTemplate = {
         id: `ai-generated-${Date.now()}`,
@@ -405,7 +407,7 @@ const PageTemplates = () => {
         ]
       };
       setCustomTemplates(prev => [...prev, fallbackTemplate]);
-      toast.success("Template criado! (Modo offline)");
+      toast.info("Template criado em modo offline");
       setAiPrompt("");
     } finally {
       setGenerating(false);
