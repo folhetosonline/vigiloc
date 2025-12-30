@@ -753,6 +753,18 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED: Social Reviews system working perfectly! All requested features tested and functional: 1) ADMIN PAGE (/admin/reviews): Successfully accessible via 'Avaliações ⭐' menu item, page title 'Avaliações e Depoimentos' displayed correctly, all 4 statistics cards working (Total: 6, Publicadas: 6, Destacadas: 6, Média: 4.8), complete reviews table with all 6 sample reviews from different sources (Google, WhatsApp, Instagram, Facebook), all table headers present (Autor, Avaliação, Fonte, Status, Destaque, Ações). 2) CREATE NEW REVIEW: 'Nova Avaliação' button working, dialog opens correctly with all required form fields (Nome do Autor, Fonte, Avaliação stars, Texto da Avaliação, URL do Avatar, Data da Avaliação, Link Original), 'Publicar' and 'Destacar na Home' switches present and functional. 3) EDIT/DELETE: Edit button (pencil icon) found and functional, delete button (trash icon) present, edit dialog opens with pre-filled data. 4) SAMPLE DATA: 6 high-quality sample reviews present (Ana Beatriz, Paulo Santos, Fernanda Costa, Roberto Almeida, Marina Silva, Carlos Mendes) with proper ratings, source badges, and realistic review text. 5) HOMEPAGE INTEGRATION: Reviews section 'O que nossos clientes dizem' displays on homepage with customer reviews, star ratings, source icons, and avatars. System ready for production use!"
 
+  - task: "Page Builder System - Content Block Editor for System Pages"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/admin/ContentBlockEditor.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "FIXED: Page Builder now allows editing system pages (Home, Produtos, Totens, Contato, Sobre). Fixed endpoint from /api/admin/pages to /api/admin/all-pages. Integrated ContentBlockRenderer into all system pages (Home.js, Products.js, Totens.js, Contact.js). Created new About.js page with ContentBlockRenderer support. Added /sobre route. Content blocks created via Page Builder are now displayed on public pages. NEEDS COMPREHENSIVE TESTING."
+
   - task: "Page Builder System - Visual Builder"
     implemented: true
     working: false
