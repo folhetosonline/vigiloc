@@ -1283,7 +1283,7 @@ class CRMTester:
                 }
             }
             
-            response = self.make_request("PUT", "/api/contact-page-settings", update_data)
+            response = self.make_request("PUT", "/contact-page-settings", update_data)
             
             if response.status_code == 200:
                 self.log("✅ Contact page settings updated successfully")
