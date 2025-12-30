@@ -1414,10 +1414,10 @@ class CRMTester:
                 # Verify updates were applied
                 if (updated_settings.get('enabled') == update_data['enabled'] and
                     "TESTE" in updated_settings.get('welcome_message', '') and
-                    len(updated_settings.get('keyword_responses', [])) == 4):
+                    len(updated_settings.get('auto_replies', [])) == 4):
                     self.log("✅ WhatsApp auto-reply settings updates verified")
                     self.log(f"  • Enabled: {updated_settings.get('enabled')}")
-                    self.log(f"  • Keyword responses: {len(updated_settings.get('keyword_responses', []))}")
+                    self.log(f"  • Auto replies: {len(updated_settings.get('auto_replies', []))}")
                     self.passed_tests.append("VERIFY WhatsApp Auto-Reply Settings Updates")
                 else:
                     self.log("❌ WhatsApp auto-reply settings updates not properly applied")
