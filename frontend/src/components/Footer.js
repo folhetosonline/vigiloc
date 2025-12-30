@@ -180,7 +180,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400" data-testid="footer-copyright">
-          <p>&copy; 2025 VigiLoc. Todos os direitos reservados.</p>
+          <p>&copy; 2026 VigiLoc. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
