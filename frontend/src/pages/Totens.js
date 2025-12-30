@@ -90,6 +90,9 @@ const Totens = () => {
         keywords="totem vigilância, câmera 360, segurança rua, monitoramento bairro"
       />
       
+      {/* Custom Content Blocks from Page Builder */}
+      <ContentBlockRenderer pageId="totens" />
+      
       <div className="min-h-screen">
         {/* Hero Section */}
         <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-20">
