@@ -191,10 +191,39 @@ const ContentBlockEditor = () => {
   const renderBlockPreview = (block) => {
     switch (block.type) {
       case "hero":
+        const heroType = block.content.hero_settings?.type || block.content.type || 'image';
         return (
-          <div className="p-4 bg-gray-900 text-white rounded">
-            <h2 className="text-2xl font-bold">{block.content.title || "Título Hero"}</h2>
-            <p>{block.content.subtitle || "Subtítulo"}</p>
+          <div className="relative p-4 bg-gray-900 text-white rounded overflow-hidden" style={{ minHeight: '120px' }}>
+            {/* Show type badge */}
+            <div className="absolute top-2 right-2 bg-black/50 px-2 py-1 rounded text-xs flex items-center gap-1">
+              {heroType === 'carousel' && <><Layers className="w-3 h-3" /> Carrossel</>}
+              {heroType === 'video' && <><Video className="w-3 h-3" /> Vídeo</>}
+              {heroType === 'image' && <><ImageIcon className="w-3 h-3" /> Imagem</>}
+              {heroType === 'gradient' && <><span>🌈</span> Gradiente</>}
+            </div>
+            <h2 className="text-2xl font-bold">{block.content.title || block.content.hero_settings?.title || "Título Hero"}</h2>
+            <p>{block.content.subtitle || block.content.hero_settings?.subtitle || "Subtítulo"}</p>
+          </div>
+        );
+      case "video_background":
+        return (
+          <div className="relative h-32 bg-gray-800 rounded overflow-hidden">
+            {block.content.video_url && (
+              <video
+                src={block.content.video_url}
+                className="absolute inset-0 w-full h-full object-cover opacity-50"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center text-white">
+              <div className="text-center">
+                <Video className="w-8 h-8 mx-auto mb-2" />
+                <p className="font-semibold">{block.content.title || "Vídeo Background"}</p>
+              </div>
+            </div>
           </div>
         );
       case "card":
