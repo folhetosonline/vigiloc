@@ -4784,15 +4784,23 @@ async def duplicate_page(page_id: str, current_user: User = Depends(get_current_
         raise HTTPException(status_code=404, detail="Page not found")
     
     # Create duplicate with new ID and modified slug/title
-    new_page = original.copy()
-    new_page['id'] = str(uuid.uuid4())
-    new_page['slug'] = f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}"
-    new_page['title'] = f"{original['title']} (Cópia)"
-    new_page['published'] = False
-    new_page['created_at'] = datetime.now(timezone.utc).isoformat()
-    new_page['updated_at'] = None
+    new_id = str(uuid.uuid4())
+    new_page = {
+        "id": new_id,
+        "slug": f"{original['slug']}-copy-{str(uuid.uuid4())[:8]}",
+        "title": f"{original['title']} (Cópia)",
+        "meta_title": original.get('meta_title', ''),
+        "meta_description": original.get('meta_description', ''),
+        "blocks": original.get('blocks', []),
+        "published": False,
+        "isSystem": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": None
+    }
     
     await db.custom_pages.insert_one(new_page)
+    # Return without _id
+    new_page.pop('_id', None)
     return {"message": "Página duplicada com sucesso", "new_page": new_page}
 
 
