@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "@/App";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { toast } from "sonner";
+import ContentBlockRenderer from "@/components/ContentBlockRenderer";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,31 @@ const Contact = () => {
     message: ""
   });
   const [loading, setLoading] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({});
+  const [hasCustomContent, setHasCustomContent] = useState(false);
+
+  useEffect(() => {
+    fetchSiteSettings();
+    checkCustomContent();
+  }, []);
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error("Error fetching site settings:", error);
+    }
+  };
+
+  const checkCustomContent = async () => {
+    try {
+      const response = await axios.get(`${API}/content-blocks/contato`);
+      setHasCustomContent(response.data && response.data.length > 0);
+    } catch (error) {
+      setHasCustomContent(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,13 +63,21 @@ const Contact = () => {
     }
   };
 
+  // Render custom content blocks if available
   return (
-    <div className="contact-page py-16 bg-gray-50 min-h-screen" data-testid="contact-page">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Entre em Contato</h1>
-          <p className="text-lg text-gray-600">Estamos aqui para ajudar você com suas necessidades de segurança</p>
-        </div>
+    <div className="contact-page" data-testid="contact-page">
+      {/* Custom Content Blocks from Page Builder */}
+      <ContentBlockRenderer pageId="contato" />
+      
+      {/* Default Contact Page Content */}
+      <div className="py-16 bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {!hasCustomContent && (
+            <div className="text-center mb-12">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Entre em Contato</h1>
+              <p className="text-lg text-gray-600">Estamos aqui para ajudar você com suas necessidades de segurança</p>
+            </div>
+          )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Form */}
