@@ -65,6 +65,17 @@ const PageBuilder = () => {
     }
   };
 
+  const handleDuplicate = async (page) => {
+    try {
+      const response = await axios.post(`${API}/admin/pages/${page.id}/duplicate`, {}, { withCredentials: true });
+      toast.success("Página duplicada com sucesso!");
+      fetchPages();
+    } catch (error) {
+      console.error("Error duplicating page:", error);
+      toast.error("Erro ao duplicar página");
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       slug: "",
