@@ -158,6 +158,7 @@ function App() {
               <Route path="reviews" element={<SocialReviews />} />
               <Route path="content" element={<AdminContent />} />
               <Route path="contacts" element={<AdminContacts />} />
+              <Route path="contact-page" element={<ContactPageManager />} />
               <Route path="banners" element={<AdminBanners />} />
               <Route path="coupons" element={<AdminCoupons />} />
               
