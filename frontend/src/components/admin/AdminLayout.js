@@ -34,7 +34,8 @@ const AdminLayout = () => {
     { path: "/admin/reviews", icon: <Star />, label: "Avaliações ⭐" },
     { path: "/admin/orders", icon: <ShoppingCart />, label: "Pedidos" },
     { path: "/admin/banners", icon: <Image />, label: "Banners" },
-    { path: "/admin/contacts", icon: <MessageSquare />, label: "Contatos" },
+    { path: "/admin/contacts", icon: <MessageSquare />, label: "Mensagens" },
+    { path: "/admin/contact-page", icon: <Phone />, label: "Contato" },
     { path: "/admin/page-builder", icon: <Layout />, label: "Page Builder" },
     { path: "/admin/visual-builder", icon: <Layout />, label: "Visual Builder ✨" },
     { path: "/admin/navbar", icon: <Menu />, label: "Menu Navegação" },
@@ -53,7 +54,7 @@ const AdminLayout = () => {
     { path: "/admin/crm/equipment", icon: <BoxIcon />, label: "Equipamentos" },
     { path: "/admin/crm/payments", icon: <DollarSign />, label: "Pagamentos" },
     { path: "/admin/crm/tickets", icon: <Wrench />, label: "Chamados" },
-    { path: "/admin/crm/notifications", icon: <Bell />, label: "Notificações" },
+    { path: "/admin/crm/notifications", icon: <MessageCircle className="text-green-500" />, label: "Notificações 💬" },
     { path: "/admin/crm/settings", icon: <Settings />, label: "Configurações" },
   ];
 
