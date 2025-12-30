@@ -644,12 +644,12 @@ const HeroEditor = ({ value, onChange, showCarouselOption = true }) => {
               <div className="flex gap-2">
                 <input
                   type="color"
-                  value={hero.overlay_color.includes('rgba') ? '#000000' : hero.overlay_color}
+                  value={(hero.overlay_color || '').includes('rgba') ? '#000000' : (hero.overlay_color || '#000000')}
                   onChange={(e) => updateHero('overlay_color', e.target.value)}
                   className="w-12 h-10 rounded border cursor-pointer"
                 />
                 <Input
-                  value={hero.overlay_color}
+                  value={hero.overlay_color || 'rgba(0,0,0,0.4)'}
                   onChange={(e) => updateHero('overlay_color', e.target.value)}
                 />
               </div>
