@@ -161,9 +161,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Service Duplication API"
-    - "Page Duplication API"
-    - "AI Template Generation API"
+    - "Footer Links Management"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
