@@ -318,6 +318,10 @@ const Settings = () => {
             <Globe className="w-4 h-4 mr-2" />
             Footer
           </TabsTrigger>
+          <TabsTrigger value="footer-links">
+            <Link2 className="w-4 h-4 mr-2" />
+            Links Footer
+          </TabsTrigger>
           <TabsTrigger value="payments">
             <CreditCard className="w-4 h-4 mr-2" />
             Pagamentos
