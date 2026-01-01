@@ -1150,6 +1150,68 @@ const Settings = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Link Dialog */}
+      <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingLink !== null ? "Editar Link" : "Adicionar Link"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Nome do Link *</Label>
+              <Input
+                value={linkFormData.label}
+                onChange={(e) => setLinkFormData({ ...linkFormData, label: e.target.value })}
+                placeholder="Ex: Sobre Nós"
+              />
+            </div>
+            <div>
+              <Label>URL *</Label>
+              <Input
+                value={linkFormData.url}
+                onChange={(e) => setLinkFormData({ ...linkFormData, url: e.target.value })}
+                placeholder="Ex: /sobre ou https://..."
+              />
+              <p className="text-xs text-gray-500 mt-1">Use URLs relativas (ex: /contato) para links internos</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={linkFormData.newTab}
+                onCheckedChange={(checked) => setLinkFormData({ ...linkFormData, newTab: checked })}
+              />
+              <Label>Abrir em nova aba</Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLinkDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={addLink}>{editingLink !== null ? "Atualizar" : "Adicionar"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* New Section Dialog */}
+      <Dialog open={sectionDialogOpen} onOpenChange={setSectionDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nova Seção de Links</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Título da Seção *</Label>
+              <Input
+                value={newSectionTitle}
+                onChange={(e) => setNewSectionTitle(e.target.value)}
+                placeholder="Ex: Institucional"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSectionDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={addSection}>Criar Seção</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
