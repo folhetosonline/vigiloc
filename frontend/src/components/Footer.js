@@ -124,9 +124,20 @@ const Footer = () => {
             <ul className="space-y-2">
               {quickLinks.map((link, index) => (
                 <li key={index}>
-                  <Link to={link.url} className="text-gray-400 hover:text-blue-400 transition-colors">
-                    {link.label}
-                  </Link>
+                  {link.url?.startsWith('http') ? (
+                    <a 
+                      href={link.url}
+                      target={link.newTab ? "_blank" : undefined}
+                      rel={link.newTab ? "noopener noreferrer" : undefined}
+                      className="text-gray-400 hover:text-blue-400 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link to={link.url} className="text-gray-400 hover:text-blue-400 transition-colors">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
