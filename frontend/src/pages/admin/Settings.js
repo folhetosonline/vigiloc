@@ -43,9 +43,24 @@ const Settings = () => {
     address: "",
     facebook_url: "",
     instagram_url: "",
-    linkedin_url: ""
+    linkedin_url: "",
+    youtube_url: "",
+    twitter_url: "",
+    tiktok_url: "",
+    quick_links: [],
+    services_links: [],
+    custom_sections: [],
+    copyright_text: "",
+    copyright_year: "2026",
+    show_powered_by: false
   });
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [editingLink, setEditingLink] = useState(null);
+  const [linkSection, setLinkSection] = useState("quick_links");
+  const [linkFormData, setLinkFormData] = useState({ label: "", url: "", newTab: false });
+  const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
+  const [newSectionTitle, setNewSectionTitle] = useState("");
   
   const [formData, setFormData] = useState({
     name: "",
