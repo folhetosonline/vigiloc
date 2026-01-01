@@ -277,6 +277,96 @@ const Settings = () => {
     setEditingUser(null);
   };
 
+  // Footer Links Management Functions
+  const addLink = () => {
+    if (!linkFormData.label || !linkFormData.url) {
+      toast.error("Preencha o nome e URL do link");
+      return;
+    }
+    
+    const newLink = { ...linkFormData };
+    
+    if (linkSection.startsWith("custom_")) {
+      const sectionIndex = parseInt(linkSection.split("_")[1]);
+      const updatedSections = [...(footerSettings.custom_sections || [])];
+      if (!updatedSections[sectionIndex].links) {
+        updatedSections[sectionIndex].links = [];
+      }
+      if (editingLink !== null) {
+        updatedSections[sectionIndex].links[editingLink] = newLink;
+      } else {
+        updatedSections[sectionIndex].links.push(newLink);
+      }
+      setFooterSettings({ ...footerSettings, custom_sections: updatedSections });
+    } else {
+      const links = [...(footerSettings[linkSection] || [])];
+      if (editingLink !== null) {
+        links[editingLink] = newLink;
+      } else {
+        links.push(newLink);
+      }
+      setFooterSettings({ ...footerSettings, [linkSection]: links });
+    }
+    
+    setLinkDialogOpen(false);
+    setLinkFormData({ label: "", url: "", newTab: false });
+    setEditingLink(null);
+    toast.success(editingLink !== null ? "Link atualizado!" : "Link adicionado!");
+  };
+
+  const editLink = (section, index, link) => {
+    setLinkSection(section);
+    setEditingLink(index);
+    setLinkFormData({ ...link });
+    setLinkDialogOpen(true);
+  };
+
+  const deleteLink = (section, index) => {
+    if (!window.confirm("Tem certeza que deseja excluir este link?")) return;
+    
+    if (section.startsWith("custom_")) {
+      const sectionIndex = parseInt(section.split("_")[1]);
+      const updatedSections = [...footerSettings.custom_sections];
+      updatedSections[sectionIndex].links.splice(index, 1);
+      setFooterSettings({ ...footerSettings, custom_sections: updatedSections });
+    } else {
+      const links = [...footerSettings[section]];
+      links.splice(index, 1);
+      setFooterSettings({ ...footerSettings, [section]: links });
+    }
+    toast.success("Link removido!");
+  };
+
+  const moveLink = (section, index, direction) => {
+    const links = [...footerSettings[section]];
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= links.length) return;
+    
+    [links[index], links[newIndex]] = [links[newIndex], links[index]];
+    setFooterSettings({ ...footerSettings, [section]: links });
+  };
+
+  const addSection = () => {
+    if (!newSectionTitle.trim()) {
+      toast.error("Digite um título para a seção");
+      return;
+    }
+    const sections = [...(footerSettings.custom_sections || [])];
+    sections.push({ title: newSectionTitle, links: [] });
+    setFooterSettings({ ...footerSettings, custom_sections: sections });
+    setSectionDialogOpen(false);
+    setNewSectionTitle("");
+    toast.success("Seção criada!");
+  };
+
+  const deleteSection = (index) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta seção e todos os seus links?")) return;
+    const sections = [...footerSettings.custom_sections];
+    sections.splice(index, 1);
+    setFooterSettings({ ...footerSettings, custom_sections: sections });
+    toast.success("Seção removida!");
+  };
+
   const openPasswordDialog = (user) => {
     setSelectedUser(user);
     setPasswordDialogOpen(true);
