@@ -445,6 +445,20 @@ class FooterSettings(BaseModel):
     facebook_url: Optional[str] = None
     instagram_url: Optional[str] = None
     linkedin_url: Optional[str] = None
+    youtube_url: Optional[str] = None
+    twitter_url: Optional[str] = None
+    tiktok_url: Optional[str] = None
+    
+    # Custom links sections
+    quick_links: List[dict] = []  # [{label, url, newTab}]
+    services_links: List[dict] = []  # [{label, url, newTab}]
+    custom_sections: List[dict] = []  # [{title, links: [{label, url, newTab}]}]
+    
+    # Copyright settings
+    copyright_text: Optional[str] = None
+    copyright_year: str = "2026"
+    show_powered_by: bool = False
+    
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     font_size: str = "base"  # sm, base, lg
@@ -454,7 +468,6 @@ class FooterSettings(BaseModel):
     show_site_name: bool = True
     sticky: bool = True
     shadow: bool = True
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SystemPage(BaseModel):
     """Pages that are part of the system (not custom)"""
