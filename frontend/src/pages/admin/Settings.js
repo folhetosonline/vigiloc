@@ -706,6 +706,55 @@ const Settings = () => {
                         placeholder="https://linkedin.com/company/suaempresa"
                       />
                     </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">YouTube (URL completa)</label>
+                      <Input
+                        value={footerSettings.youtube_url || ""}
+                        onChange={(e) => setFooterSettings({...footerSettings, youtube_url: e.target.value})}
+                        placeholder="https://youtube.com/@seucanal"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Twitter/X (URL completa)</label>
+                      <Input
+                        value={footerSettings.twitter_url || ""}
+                        onChange={(e) => setFooterSettings({...footerSettings, twitter_url: e.target.value})}
+                        placeholder="https://twitter.com/seuperfil"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">TikTok (URL completa)</label>
+                      <Input
+                        value={footerSettings.tiktok_url || ""}
+                        onChange={(e) => setFooterSettings({...footerSettings, tiktok_url: e.target.value})}
+                        placeholder="https://tiktok.com/@seuperfil"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold mb-4">Copyright</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Texto de Copyright</label>
+                      <Input
+                        value={footerSettings.copyright_text || ""}
+                        onChange={(e) => setFooterSettings({...footerSettings, copyright_text: e.target.value})}
+                        placeholder="VigiLoc. Todos os direitos reservados."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Ano</label>
+                      <Input
+                        value={footerSettings.copyright_year || "2026"}
+                        onChange={(e) => setFooterSettings({...footerSettings, copyright_year: e.target.value})}
+                        placeholder="2026"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -715,6 +764,191 @@ const Settings = () => {
               </form>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Footer Links Tab */}
+        <TabsContent value="footer-links">
+          <div className="space-y-6">
+            {/* Quick Links Section */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Link2 className="w-5 h-5" />
+                      Links Rápidos
+                    </CardTitle>
+                    <CardDescription>Links principais exibidos no footer</CardDescription>
+                  </div>
+                  <Button onClick={() => { setLinkSection("quick_links"); setLinkFormData({ label: "", url: "", newTab: false }); setEditingLink(null); setLinkDialogOpen(true); }}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Link
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {footerSettings.quick_links?.length > 0 ? (
+                  <div className="space-y-2">
+                    {footerSettings.quick_links.map((link, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <GripVertical className="w-4 h-4 text-gray-400" />
+                          <div>
+                            <p className="font-medium">{link.label}</p>
+                            <p className="text-sm text-gray-500 flex items-center gap-1">
+                              {link.url}
+                              {link.newTab && <ExternalLink className="w-3 h-3" />}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => moveLink("quick_links", index, -1)} disabled={index === 0}>
+                            <MoveUp className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => moveLink("quick_links", index, 1)} disabled={index === footerSettings.quick_links.length - 1}>
+                            <MoveDown className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => editLink("quick_links", index, link)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => deleteLink("quick_links", index)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">Nenhum link configurado. Adicione links para exibir no footer.</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Services Links Section */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Link2 className="w-5 h-5" />
+                      Links de Serviços
+                    </CardTitle>
+                    <CardDescription>Links para páginas de serviços</CardDescription>
+                  </div>
+                  <Button onClick={() => { setLinkSection("services_links"); setLinkFormData({ label: "", url: "", newTab: false }); setEditingLink(null); setLinkDialogOpen(true); }}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Link
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {footerSettings.services_links?.length > 0 ? (
+                  <div className="space-y-2">
+                    {footerSettings.services_links.map((link, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <GripVertical className="w-4 h-4 text-gray-400" />
+                          <div>
+                            <p className="font-medium">{link.label}</p>
+                            <p className="text-sm text-gray-500 flex items-center gap-1">
+                              {link.url}
+                              {link.newTab && <ExternalLink className="w-3 h-3" />}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => moveLink("services_links", index, -1)} disabled={index === 0}>
+                            <MoveUp className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => moveLink("services_links", index, 1)} disabled={index === footerSettings.services_links.length - 1}>
+                            <MoveDown className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => editLink("services_links", index, link)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => deleteLink("services_links", index)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">Nenhum link de serviço configurado.</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Custom Sections */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Seções Personalizadas</CardTitle>
+                    <CardDescription>Crie seções de links adicionais no footer</CardDescription>
+                  </div>
+                  <Button onClick={() => { setNewSectionTitle(""); setSectionDialogOpen(true); }}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nova Seção
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {footerSettings.custom_sections?.length > 0 ? (
+                  <div className="space-y-4">
+                    {footerSettings.custom_sections.map((section, sectionIndex) => (
+                      <Card key={sectionIndex} className="border-dashed">
+                        <CardHeader className="py-3">
+                          <div className="flex justify-between items-center">
+                            <CardTitle className="text-base">{section.title}</CardTitle>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" onClick={() => { setLinkSection(`custom_${sectionIndex}`); setLinkFormData({ label: "", url: "", newTab: false }); setEditingLink(null); setLinkDialogOpen(true); }}>
+                                <Plus className="w-4 h-4 mr-1" />
+                                Link
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => deleteSection(sectionIndex)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="py-2">
+                          {section.links?.length > 0 ? (
+                            <div className="space-y-2">
+                              {section.links.map((link, linkIndex) => (
+                                <div key={linkIndex} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                  <div>
+                                    <p className="font-medium text-sm">{link.label}</p>
+                                    <p className="text-xs text-gray-500">{link.url}</p>
+                                  </div>
+                                  <div className="flex gap-1">
+                                    <Button size="sm" variant="ghost" onClick={() => editLink(`custom_${sectionIndex}`, linkIndex, link)}>
+                                      <Pencil className="w-3 h-3" />
+                                    </Button>
+                                    <Button size="sm" variant="ghost" className="text-red-500" onClick={() => deleteLink(`custom_${sectionIndex}`, linkIndex)}>
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-gray-500 text-sm text-center py-2">Nenhum link nesta seção</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">Nenhuma seção personalizada. Crie seções para organizar links adicionais.</p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Button onClick={handleSaveFooterSettings} className="w-full">
+              Salvar Todos os Links do Footer
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="payments">
