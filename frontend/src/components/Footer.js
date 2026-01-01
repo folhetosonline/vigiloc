@@ -206,21 +206,62 @@ const Footer = () => {
                 </a>
               )}
               {footerSettings.instagram_url && (
-                <a href={footerSettings.instagram_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="instagram-link" target="_blank" rel="noopener noreferrer">
+                <a href={footerSettings.instagram_url} className="text-gray-400 hover:text-pink-400 transition-colors" data-testid="instagram-link" target="_blank" rel="noopener noreferrer">
                   <Instagram className="h-6 w-6" />
                 </a>
               )}
               {footerSettings.linkedin_url && (
-                <a href={footerSettings.linkedin_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="linkedin-link" target="_blank" rel="noopener noreferrer">
+                <a href={footerSettings.linkedin_url} className="text-gray-400 hover:text-blue-500 transition-colors" data-testid="linkedin-link" target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-6 w-6" />
+                </a>
+              )}
+              {footerSettings.youtube_url && (
+                <a href={footerSettings.youtube_url} className="text-gray-400 hover:text-red-500 transition-colors" data-testid="youtube-link" target="_blank" rel="noopener noreferrer">
+                  <Youtube className="h-6 w-6" />
+                </a>
+              )}
+              {footerSettings.twitter_url && (
+                <a href={footerSettings.twitter_url} className="text-gray-400 hover:text-blue-400 transition-colors" data-testid="twitter-link" target="_blank" rel="noopener noreferrer">
+                  <Twitter className="h-6 w-6" />
                 </a>
               )}
             </div>
           </div>
         </div>
 
+        {/* Custom Sections */}
+        {footerSettings.custom_sections?.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 pt-8 border-t border-gray-800">
+            {footerSettings.custom_sections.map((section, sIndex) => (
+              <div key={sIndex}>
+                <h3 className="text-lg font-semibold mb-4">{section.title}</h3>
+                <ul className="space-y-2">
+                  {section.links?.map((link, lIndex) => (
+                    <li key={lIndex}>
+                      {link.url?.startsWith('http') ? (
+                        <a 
+                          href={link.url}
+                          target={link.newTab ? "_blank" : undefined}
+                          rel={link.newTab ? "noopener noreferrer" : undefined}
+                          className="text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link to={link.url} className="text-gray-400 hover:text-blue-400 transition-colors">
+                          {link.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400" data-testid="footer-copyright">
-          <p>&copy; 2026 VigiLoc. Todos os direitos reservados.</p>
+          <p>&copy; {footerSettings.copyright_year || "2026"} {footerSettings.copyright_text || "VigiLoc. Todos os direitos reservados."}</p>
         </div>
       </div>
     </footer>
