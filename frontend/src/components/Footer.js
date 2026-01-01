@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MessageCircle, Youtube, Twitter } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "@/App";
@@ -21,7 +21,15 @@ const Footer = () => {
     address: "",
     facebook_url: "",
     instagram_url: "",
-    linkedin_url: ""
+    linkedin_url: "",
+    youtube_url: "",
+    twitter_url: "",
+    tiktok_url: "",
+    quick_links: [],
+    services_links: [],
+    custom_sections: [],
+    copyright_text: "VigiLoc. Todos os direitos reservados.",
+    copyright_year: "2026"
   });
   const [navbarLinks, setNavbarLinks] = useState([]);
   const [categories, setCategories] = useState([]);
