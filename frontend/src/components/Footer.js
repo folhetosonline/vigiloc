@@ -63,9 +63,19 @@ const Footer = () => {
     { label: "Contato", url: "/contato" }
   ];
 
-  const quickLinks = navbarLinks.length > 0 
-    ? navbarLinks.map(l => ({ label: l.label, url: l.url }))
-    : defaultLinks;
+  // Use footer-configured quick_links first, then navbar links, then defaults
+  const quickLinks = footerSettings.quick_links?.length > 0 
+    ? footerSettings.quick_links
+    : navbarLinks.length > 0 
+      ? navbarLinks.map(l => ({ label: l.label, url: l.url }))
+      : defaultLinks;
+
+  // Use footer-configured services_links first, then categories
+  const servicesLinks = footerSettings.services_links?.length > 0
+    ? footerSettings.services_links
+    : categories.length > 0
+      ? categories.slice(0, 5).map(cat => ({ label: cat.name, url: `/totens?categoria=${cat.slug}` }))
+      : [];
 
   // Render logo
   const renderLogo = () => {
