@@ -136,15 +136,26 @@ const Footer = () => {
           <div data-testid="footer-products">
             <h3 className="text-lg font-semibold mb-4">Serviços</h3>
             <ul className="space-y-2">
-              {categories.length > 0 ? (
-                categories.slice(0, 5).map((cat, index) => (
+              {servicesLinks.length > 0 ? (
+                servicesLinks.map((link, index) => (
                   <li key={index}>
-                    <Link 
-                      to={`/totens?categoria=${cat.slug}`} 
-                      className="text-gray-400 hover:text-blue-400 transition-colors"
-                    >
-                      {cat.name}
-                    </Link>
+                    {link.url?.startsWith('http') ? (
+                      <a 
+                        href={link.url}
+                        target={link.newTab ? "_blank" : undefined}
+                        rel={link.newTab ? "noopener noreferrer" : undefined}
+                        className="text-gray-400 hover:text-blue-400 transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link 
+                        to={link.url} 
+                        className="text-gray-400 hover:text-blue-400 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))
               ) : (
