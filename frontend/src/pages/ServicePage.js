@@ -10,7 +10,28 @@ import { API } from "@/App";
 const ServiceHero = ({ banner, service, whatsappNumber }) => {
   const [videoError, setVideoError] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const videoRef = useState(null);
+  const [showPlayButton, setShowPlayButton] = useState(false);
+  const videoRef = useRef(null);
+
+  // Try to play video on load
+  useEffect(() => {
+    if (videoRef.current && videoLoaded) {
+      videoRef.current.play().catch(() => {
+        setShowPlayButton(true);
+      });
+    }
+  }, [videoLoaded]);
+
+  const handlePlayClick = () => {
+    if (videoRef.current) {
+      videoRef.current.play().then(() => {
+        setShowPlayButton(false);
+      }).catch(() => {
+        // Open video in new tab if still can't play
+        window.open(banner.mediaUrl, '_blank');
+      });
+    }
+  };
 
   if (!banner) {
     // Default hero without banner config
@@ -51,13 +72,14 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
     }
   };
 
-  // Determine background style
+  // Determine background style - use poster for video backgrounds
   const getBackgroundStyle = () => {
-    if (banner.type === 'video' && !videoError && banner.mediaUrl) {
-      // For video, use poster as fallback background
-      return banner.posterUrl || banner.poster || banner.image 
-        ? `url(${banner.posterUrl || banner.poster || banner.image})`
-        : 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)';
+    if (banner.type === 'video') {
+      const posterUrl = banner.posterUrl || banner.poster || banner.image;
+      if (posterUrl) {
+        return `url(${posterUrl})`;
+      }
+      return 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)';
     }
     if (banner.type === 'image' && banner.mediaUrl) {
       return `url(${banner.mediaUrl})`;
@@ -81,31 +103,44 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
     >
       {/* Video Background */}
       {banner.type === 'video' && banner.mediaUrl && !videoError && (
-        <video 
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          crossOrigin="anonymous"
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={(e) => {
-            console.warn('Video failed to load:', banner.mediaUrl);
-            setVideoError(true);
-          }}
-          onCanPlay={(e) => {
-            // Try to play when ready
-            e.target.play().catch(() => {
-              console.warn('Autoplay blocked');
-            });
-          }}
-        >
-          <source src={banner.mediaUrl} type="video/mp4" />
-          <source src={banner.mediaUrl} type="video/webm" />
-          Seu navegador não suporta vídeos.
-        </video>
+        <>
+          <video 
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={banner.posterUrl || banner.poster || banner.image}
+            onLoadedData={() => setVideoLoaded(true)}
+            onCanPlayThrough={() => {
+              if (videoRef.current) {
+                videoRef.current.play().catch(() => setShowPlayButton(true));
+              }
+            }}
+            onError={(e) => {
+              console.warn('Video failed to load:', banner.mediaUrl);
+              setVideoError(true);
+            }}
+          >
+            <source src={banner.mediaUrl} type="video/mp4" />
+            <source src={banner.mediaUrl} type="video/webm" />
+          </video>
+          
+          {/* Play button overlay for blocked autoplay */}
+          {showPlayButton && (
+            <button 
+              onClick={handlePlayClick}
+              className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors cursor-pointer"
+            >
+              <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform">
+                <svg className="w-10 h-10 text-blue-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </button>
+          )}
+        </>
       )}
       
       {/* Overlay */}
