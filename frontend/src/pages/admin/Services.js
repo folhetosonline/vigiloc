@@ -580,6 +580,57 @@ const Services = () => {
     );
   }
 
+  // Video Thumbnail Component with error handling
+  const VideoThumbnail = ({ src, poster, className }) => {
+    const [hasError, setHasError] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+      // Reset state when src changes
+      setHasError(false);
+      setIsLoaded(false);
+    }, [src]);
+
+    useEffect(() => {
+      // Try to play when component mounts
+      if (videoRef.current) {
+        videoRef.current.play().catch(() => {
+          console.log('Autoplay prevented');
+        });
+      }
+    }, [isLoaded]);
+
+    if (hasError) {
+      return (
+        <div className={`${className} bg-gray-800 flex items-center justify-center`}>
+          <div className="text-center text-white">
+            <Video className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <span className="text-xs opacity-50">Vídeo</span>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <video 
+        ref={videoRef}
+        className={className}
+        muted
+        loop
+        playsInline
+        autoPlay
+        preload="metadata"
+        poster={poster}
+        onLoadedData={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
+      >
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
+      </video>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -600,16 +651,12 @@ const Services = () => {
             {/* Video Thumbnail with Autoplay */}
             {service.headerBanner?.type === 'video' && service.headerBanner?.mediaUrl ? (
               <div className="h-40 relative overflow-hidden bg-gray-900">
-                <video 
+                <VideoThumbnail 
                   src={service.headerBanner.mediaUrl}
+                  poster={service.headerBanner.posterUrl || service.headerBanner.poster}
                   className="w-full h-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  poster={service.headerBanner.posterUrl || ''}
                 />
-                <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                <div className="absolute top-2 right-2 bg-red-500/80 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
                   <Video className="w-3 h-3" />
                   Vídeo
                 </div>
@@ -620,12 +667,10 @@ const Services = () => {
                 className="h-40 bg-cover bg-center relative"
                 style={{ backgroundImage: `url(${service.headerBanner.mediaUrl})` }}
               >
-                {service.headerBanner?.type === 'image' && (
-                  <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
-                    <ImageIcon className="w-3 h-3" />
-                    Imagem
-                  </div>
-                )}
+                <div className="absolute top-2 right-2 bg-blue-500/80 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                  <ImageIcon className="w-3 h-3" />
+                  Imagem
+                </div>
               </div>
             ) : (
               /* Gradient/Default Thumbnail */
