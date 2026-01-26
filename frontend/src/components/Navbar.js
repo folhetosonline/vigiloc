@@ -186,7 +186,7 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 data-testid={`mobile-nav-link-${link.label.toLowerCase()}`}
-                className={`block py-2 text-lg font-medium ${
+                className={`block py-2 text-lg font-medium cursor-default ${
                   isActive(link.path) ? "text-blue-600" : "text-gray-700"
                 }`}
                 onClick={() => setIsOpen(false)}
@@ -200,7 +200,7 @@ const Navbar = () => {
                 window.open("https://wa.me/5511999999999", "_blank");
                 setIsOpen(false);
               }}
-              className="w-full mt-4 btn-primary"
+              className="w-full mt-4 btn-primary cursor-default"
             >
               WhatsApp
             </Button>
