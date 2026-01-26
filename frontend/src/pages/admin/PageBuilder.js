@@ -87,6 +87,63 @@ const PageBuilder = () => {
     });
   };
 
+  // Video Thumbnail Component with error handling
+  const VideoThumbnail = ({ src, poster, className }) => {
+    const [hasError, setHasError] = useState(false);
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+      setHasError(false);
+      if (videoRef.current) {
+        videoRef.current.play().catch(() => {});
+      }
+    }, [src]);
+
+    if (hasError || !src) {
+      return (
+        <div className={`${className} bg-gray-800 flex items-center justify-center`}>
+          <Video className="w-6 h-6 text-white opacity-50" />
+        </div>
+      );
+    }
+
+    return (
+      <video 
+        ref={videoRef}
+        className={className}
+        muted
+        loop
+        playsInline
+        autoPlay
+        poster={poster}
+        onError={() => setHasError(true)}
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    );
+  };
+
+  // Get thumbnail info from page blocks
+  const getPageThumbnail = (page) => {
+    const blocks = page.blocks || [];
+    // Look for hero block first
+    const heroBlock = blocks.find(b => b.type === 'hero');
+    if (heroBlock) {
+      if (heroBlock.backgroundType === 'video' && heroBlock.video) {
+        return { type: 'video', src: heroBlock.video, poster: heroBlock.image };
+      }
+      if (heroBlock.image) {
+        return { type: 'image', src: heroBlock.image };
+      }
+    }
+    // Look for banner block
+    const bannerBlock = blocks.find(b => b.type === 'banner');
+    if (bannerBlock && bannerBlock.image) {
+      return { type: 'image', src: bannerBlock.image };
+    }
+    return null;
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
