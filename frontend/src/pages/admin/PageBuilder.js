@@ -256,6 +256,11 @@ const PageBuilder = () => {
                           Sistema
                         </Badge>
                       )}
+                      {page.slug === 'home' && (
+                        <Badge className="bg-purple-100 text-purple-800 text-xs">
+                          Principal
+                        </Badge>
+                      )}
                     </CardTitle>
                     <p className="text-sm text-gray-500 mt-1">/{page.slug}</p>
                   </div>
@@ -267,15 +272,30 @@ const PageBuilder = () => {
                 </div>
               </CardHeader>
               <CardContent className="pt-2">
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>
-                    <Pencil className="h-4 w-4 mr-1" />
-                    Editar Conteúdo
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => window.open(`/p/${page.slug}`, '_blank')}>
-                    <Eye className="h-4 w-4 mr-1" />
-                    Preview
-                  </Button>
+                <div className="flex flex-wrap gap-2">
+                  {page.slug === 'home' ? (
+                    <>
+                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => navigate('/admin/homepage-editor')}>
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Editor Completo
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => window.open('/', '_blank')}>
+                        <Eye className="h-4 w-4 mr-1" />
+                        Ver Site
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Editar Conteúdo
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => window.open(`/p/${page.slug}`, '_blank')}>
+                        <Eye className="h-4 w-4 mr-1" />
+                        Preview
+                      </Button>
+                    </>
+                  )}
                   {!page.isSystem && (
                     <>
                       <Button size="sm" variant="outline" onClick={() => handleDuplicate(page)} title="Duplicar">
