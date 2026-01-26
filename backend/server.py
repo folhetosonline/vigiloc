@@ -4786,6 +4786,84 @@ async def submit_for_indexing(urls: List[str], current_user: User = Depends(get_
     }
 
 
+# ==================== HOMEPAGE SETTINGS ====================
+
+@api_router.get("/homepage-settings")
+async def get_homepage_settings():
+    """Get homepage settings (public endpoint)"""
+    settings = await db.homepage_settings.find_one({"id": "homepage_settings"}, {"_id": 0})
+    if not settings:
+        # Return default settings
+        return {
+            "id": "homepage_settings",
+            "hero": {
+                "video_url": "https://customer-assets.emergentagent.com/job_smart-security-12/artifacts/2cbdrd0e_vigiloc.mp4",
+                "poster_url": "",
+                "badge_text": "🛡️ Líder em Automação e Segurança Eletrônica",
+                "title": "Transformando <span class='text-blue-400'>Espaços</span><br />em Ambientes <span class='text-blue-400'>Inteligentes</span>",
+                "subtitle": "Soluções completas em portaria autônoma, automação comercial e segurança eletrônica para condomínios e empresas. Tecnologia de ponta para o seu negócio.",
+                "cta_primary_text": "Fale com um Consultor",
+                "cta_primary_url": "",
+                "cta_secondary_text": "Conheça Nossos Serviços",
+                "cta_secondary_url": "/servicos",
+                "show_stats": True,
+                "stats": [
+                    {"value": "+500", "label": "Clientes Atendidos"},
+                    {"value": "24/7", "label": "Monitoramento"},
+                    {"value": "10+", "label": "Anos de Experiência"},
+                    {"value": "99%", "label": "Satisfação"}
+                ]
+            },
+            "services": {
+                "enabled": True,
+                "title": "Nossas Soluções",
+                "subtitle": "Tecnologia de ponta para transformar seu espaço em um ambiente inteligente e seguro",
+                "show_all_button": True,
+                "featured_ids": []
+            },
+            "features": {
+                "enabled": True,
+                "title": "Por que escolher a VigiLoc?",
+                "items": [
+                    {"icon": "Shield", "title": "Segurança Garantida", "description": "Sistemas certificados e testados para máxima proteção"},
+                    {"icon": "Clock", "title": "Suporte 24/7", "description": "Equipe técnica disponível a qualquer momento"},
+                    {"icon": "Users", "title": "Atendimento Personalizado", "description": "Soluções sob medida para cada cliente"},
+                    {"icon": "Award", "title": "Experiência Comprovada", "description": "Mais de 10 anos no mercado de segurança"}
+                ]
+            },
+            "cta_section": {
+                "enabled": True,
+                "title": "Pronto para Transformar seu Espaço?",
+                "subtitle": "Entre em contato conosco e descubra como podemos ajudar",
+                "button_text": "Solicitar Orçamento",
+                "button_url": "/contato"
+            }
+        }
+    return settings
+
+
+@api_router.get("/admin/homepage-settings")
+async def get_admin_homepage_settings(current_user: User = Depends(get_current_admin)):
+    """Get homepage settings for admin editing"""
+    return await get_homepage_settings()
+
+
+@api_router.put("/admin/homepage-settings")
+async def update_homepage_settings(data: dict, current_user: User = Depends(get_current_admin)):
+    """Update homepage settings"""
+    data["id"] = "homepage_settings"
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    data["updated_by"] = current_user.id
+    
+    await db.homepage_settings.update_one(
+        {"id": "homepage_settings"},
+        {"$set": data},
+        upsert=True
+    )
+    
+    return {"message": "Configurações da homepage atualizadas com sucesso", "settings": data}
+
+
 # ==================== DUPLICATION ENDPOINTS ====================
 
 @api_router.post("/admin/pages/{page_id}/duplicate")
