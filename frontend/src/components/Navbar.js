@@ -100,7 +100,7 @@ const Navbar = () => {
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     <button
-                      className={`flex items-center gap-1 text-lg font-medium transition-colors ${
+                      className={`flex items-center gap-1 text-lg font-medium transition-colors cursor-default ${
                         isActive(link.path)
                           ? "text-blue-600"
                           : "text-gray-700 hover:text-blue-600"
@@ -115,7 +115,7 @@ const Navbar = () => {
                       <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border py-2 min-w-[200px] z-50">
                         <Link
                           to={link.path}
-                          className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                          className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-default"
                         >
                           {link.label}
                         </Link>
@@ -124,7 +124,7 @@ const Navbar = () => {
                           <Link
                             key={sublink.id || subIndex}
                             to={sublink.url}
-                            className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                            className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-default"
                           >
                             {sublink.label}
                           </Link>
@@ -137,7 +137,7 @@ const Navbar = () => {
                   <Link
                     to={link.path}
                     data-testid={`nav-link-${link.label.toLowerCase()}`}
-                    className={`text-lg font-medium transition-colors ${
+                    className={`text-lg font-medium transition-colors cursor-default ${
                       isActive(link.path)
                         ? "text-blue-600 border-b-2 border-blue-600"
                         : "text-gray-700 hover:text-blue-600"
