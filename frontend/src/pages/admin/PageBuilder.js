@@ -292,7 +292,6 @@ const PageBuilder = () => {
           );
         })}
       </div>
-      </div>
 
       {pages.length === 0 && (
         <Card className="mt-8">
