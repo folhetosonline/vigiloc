@@ -208,52 +208,90 @@ const PageBuilder = () => {
 
       {/* Pages Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {pages.map((page) => (
-          <Card key={page.id} className={page.isSystem ? "border-blue-200 bg-blue-50" : !page.published ? "border-orange-200 bg-orange-50" : ""}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    {page.name || page.title}
-                    {page.isSystem && (
-                      <Badge className="bg-blue-100 text-blue-800 text-xs">
-                        Sistema
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <p className="text-sm text-gray-500 mt-1">{page.slug}</p>
+        {pages.map((page) => {
+          const thumbnail = getPageThumbnail(page);
+          return (
+            <Card key={page.id} className={`overflow-hidden ${page.isSystem ? "border-blue-200" : !page.published ? "border-orange-200" : ""}`}>
+              {/* Page Thumbnail */}
+              {thumbnail ? (
+                <div className="h-32 relative overflow-hidden bg-gray-100">
+                  {thumbnail.type === 'video' ? (
+                    <>
+                      <VideoThumbnail 
+                        src={thumbnail.src}
+                        poster={thumbnail.poster}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-red-500/80 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                        <Video className="w-3 h-3" />
+                        Vídeo
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <img src={thumbnail.src} alt="" className="w-full h-full object-cover" />
+                      <div className="absolute top-2 right-2 bg-blue-500/80 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                        <ImageIcon className="w-3 h-3" />
+                        Imagem
+                      </div>
+                    </>
+                  )}
                 </div>
-                {!page.isSystem && (
-                  <Badge className={page.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
-                    {page.published ? "🟢 Live" : "⚠️ Draft"}
-                  </Badge>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>
-                  <Pencil className="h-4 w-4 mr-1" />
-                  Editar Conteúdo
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => window.open(`/p/${page.slug}`, '_blank')}>
-                  <Eye className="h-4 w-4 mr-1" />
-                  Preview
-                </Button>
-                {!page.isSystem && (
-                  <>
-                    <Button size="sm" variant="outline" onClick={() => handleDuplicate(page)} title="Duplicar">
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              ) : (
+                <div className={`h-32 flex items-center justify-center ${page.isSystem ? "bg-blue-100" : "bg-gray-100"}`}>
+                  <div className="text-center">
+                    <FileText className={`w-8 h-8 mx-auto mb-1 ${page.isSystem ? "text-blue-400" : "text-gray-400"}`} />
+                    <span className="text-xs text-gray-500">{(page.blocks || []).length} blocos</span>
+                  </div>
+                </div>
+              )}
+              
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      {page.name || page.title}
+                      {page.isSystem && (
+                        <Badge className="bg-blue-100 text-blue-800 text-xs">
+                          Sistema
+                        </Badge>
+                      )}
+                    </CardTitle>
+                    <p className="text-sm text-gray-500 mt-1">/{page.slug}</p>
+                  </div>
+                  {!page.isSystem && (
+                    <Badge className={page.published ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}>
+                      {page.published ? "🟢 Live" : "⚠️ Draft"}
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => navigate(`/admin/page-editor/${page.id}`)}>
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Editar Conteúdo
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => window.open(`/p/${page.slug}`, '_blank')}>
+                    <Eye className="h-4 w-4 mr-1" />
+                    Preview
+                  </Button>
+                  {!page.isSystem && (
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => handleDuplicate(page)} title="Duplicar">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(page.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
       </div>
 
       {pages.length === 0 && (
