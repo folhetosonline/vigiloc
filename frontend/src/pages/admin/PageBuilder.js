@@ -273,7 +273,7 @@ const PageBuilder = () => {
               </CardHeader>
               <CardContent className="pt-2">
                 <div className="flex flex-wrap gap-2">
-                  {page.slug === 'home' ? (
+                  {(page.slug === '/' || page.slug === 'home' || page.name === 'Home') ? (
                     <>
                       <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => navigate('/admin/homepage-editor')}>
                         <Pencil className="h-4 w-4 mr-1" />
