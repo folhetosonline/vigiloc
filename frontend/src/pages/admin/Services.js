@@ -596,14 +596,39 @@ const Services = () => {
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((service) => (
-          <Card key={service.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            {service.headerBanner?.mediaUrl && (
+          <Card key={service.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
+            {/* Video Thumbnail with Autoplay */}
+            {service.headerBanner?.type === 'video' && service.headerBanner?.mediaUrl ? (
+              <div className="h-40 relative overflow-hidden bg-gray-900">
+                <video 
+                  src={service.headerBanner.mediaUrl}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster={service.headerBanner.posterUrl || ''}
+                />
+                <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                  <Video className="w-3 h-3" />
+                  Vídeo
+                </div>
+              </div>
+            ) : service.headerBanner?.mediaUrl ? (
+              /* Image Thumbnail */
               <div 
-                className="h-40 bg-cover bg-center"
+                className="h-40 bg-cover bg-center relative"
                 style={{ backgroundImage: `url(${service.headerBanner.mediaUrl})` }}
-              />
-            )}
-            {!service.headerBanner?.mediaUrl && (
+              >
+                {service.headerBanner?.type === 'image' && (
+                  <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                    <ImageIcon className="w-3 h-3" />
+                    Imagem
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Gradient/Default Thumbnail */
               <div className="h-40 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                 <span className="text-6xl">{service.icon || '🛡️'}</span>
               </div>
