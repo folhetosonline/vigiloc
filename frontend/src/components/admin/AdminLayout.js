@@ -37,7 +37,7 @@ const AdminLayout = () => {
     { path: "/admin/templates", icon: <Gift />, label: "Sazonalidade 🎄" },
     { path: "/admin/contacts", icon: <MessageSquare />, label: "Mensagens" },
     { path: "/admin/contact-page", icon: <Phone />, label: "Contato" },
-    { path: "/admin/page-builder", icon: <Layout />, label: "Page Builder" },
+    { path: "/admin/page-builder", icon: <Layout />, label: "Páginas" },
     { path: "/admin/visual-builder", icon: <Layout />, label: "Visual Builder ✨" },
     { path: "/admin/navbar", icon: <Menu />, label: "Menu Navegação" },
     { path: "/admin/logo", icon: <Sparkles />, label: "Logo 👁️" },
