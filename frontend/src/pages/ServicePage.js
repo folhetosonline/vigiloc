@@ -8,6 +8,10 @@ import { API } from "@/App";
 
 // Hero/Banner Renderer with video support
 const ServiceHero = ({ banner, service, whatsappNumber }) => {
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useState(null);
+
   if (!banner) {
     // Default hero without banner config
     return (
@@ -47,36 +51,61 @@ const ServiceHero = ({ banner, service, whatsappNumber }) => {
     }
   };
 
+  // Determine background style
+  const getBackgroundStyle = () => {
+    if (banner.type === 'video' && !videoError && banner.mediaUrl) {
+      // For video, use poster as fallback background
+      return banner.posterUrl || banner.poster || banner.image 
+        ? `url(${banner.posterUrl || banner.poster || banner.image})`
+        : 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)';
+    }
+    if (banner.type === 'image' && banner.mediaUrl) {
+      return `url(${banner.mediaUrl})`;
+    }
+    if (banner.type === 'gradient') {
+      return 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)';
+    }
+    return 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)';
+  };
+
   return (
     <div 
       className="relative flex items-center justify-center"
       style={{ 
         minHeight: banner.height || '70vh',
-        backgroundImage: banner.type === 'image' && banner.mediaUrl ? `url(${banner.mediaUrl})` : 
-                        banner.type === 'gradient' ? 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)' : 
-                        banner.type === 'video' && banner.poster ? `url(${banner.poster})` :
-                        'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
+        backgroundImage: getBackgroundStyle(),
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundColor: '#1F2937'
       }}
     >
       {/* Video Background */}
-      {banner.type === 'video' && banner.mediaUrl && (
+      {banner.type === 'video' && banner.mediaUrl && !videoError && (
         <video 
+          ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
-          src={banner.mediaUrl}
-          poster={banner.poster || banner.image}
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          crossOrigin="anonymous"
+          onLoadedData={() => setVideoLoaded(true)}
           onError={(e) => {
-            console.warn('Video failed to load, showing fallback');
-            e.target.style.display = 'none';
+            console.warn('Video failed to load:', banner.mediaUrl);
+            setVideoError(true);
           }}
-        />
+          onCanPlay={(e) => {
+            // Try to play when ready
+            e.target.play().catch(() => {
+              console.warn('Autoplay blocked');
+            });
+          }}
+        >
+          <source src={banner.mediaUrl} type="video/mp4" />
+          <source src={banner.mediaUrl} type="video/webm" />
+          Seu navegador não suporta vídeos.
+        </video>
       )}
       
       {/* Overlay */}
