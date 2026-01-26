@@ -572,14 +572,6 @@ const Services = () => {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
   // Video Thumbnail Component with error handling
   const VideoThumbnail = ({ src, poster, className }) => {
     const [hasError, setHasError] = useState(false);
@@ -630,6 +622,14 @@ const Services = () => {
       </video>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
