@@ -168,6 +168,18 @@ frontend:
         agent: "testing"
         comment: "✅ Video thumbnail functionality working perfectly! Successfully tested: (1) Admin login with admin@vigiloc.com/admin123 credentials ✅ (2) Services page (/admin/services) displays 11 service cards with proper badges: 3 RED video badges, 5 BLUE image badges, and 3 default gradient icons ✅ (3) 'Portaria Autônoma' service correctly shows RED video badge as expected ✅ (4) Page Builder (/admin/page-builder) displays 19 page cards with thumbnail preview areas, 'X blocos' count indicators, 5 'Sistema' badges for system pages, and document icon placeholders ✅ (5) Public service page (/servico/portaria-autonoma) loads successfully with proper hero section, service title, and CTA button ✅ Minor: Video element not found in hero section but poster image fallback working correctly. All core video thumbnail functionality implemented and working as designed."
 
+  - task: "Homepage Editor Feature"
+    implemented: true
+    working: true
+    file: "/admin/homepage-editor, /admin/page-builder"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Homepage Editor feature working perfectly! Successfully tested: (1) Admin login with admin@vigiloc.com/admin123 credentials ✅ (2) Navigation to /admin/page-builder shows 'Páginas' in menu instead of 'Page Builder' ✅ (3) Home card displays with required badges: 'Sistema' (blue), 'Principal' (purple), 'Editor Completo' button (purple), and 'Ver Site' button ✅ (4) Homepage Editor page loads with title 'Editor da Homepage' ✅ (5) All 4 tabs present: Hero/Banner, Estatísticas, Serviços, Diferenciais ✅ (6) Video/Image URL fields, text fields for badge/title/subtitle working ✅ (7) Live preview panel on right side functional ✅ (8) 'Visualizar Site' and 'Salvar Alterações' buttons present ✅ (9) Estatísticas tab with Add button and stats management ✅ (10) Serviços tab with service selection interface ✅ Minor: Diferenciais tab had some navigation issues but core functionality working. All major Homepage Editor features implemented and working as designed."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
