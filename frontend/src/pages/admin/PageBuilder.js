@@ -256,7 +256,7 @@ const PageBuilder = () => {
                           Sistema
                         </Badge>
                       )}
-                      {page.slug === 'home' && (
+                      {(page.slug === '/' || page.slug === 'home' || page.name === 'Home') && (
                         <Badge className="bg-purple-100 text-purple-800 text-xs">
                           Principal
                         </Badge>
