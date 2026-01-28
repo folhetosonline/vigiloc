@@ -525,12 +525,12 @@ const ProspectingIntel = () => {
                   </SelectContent>
                 </Select>
 
-                <Select value={prospectFilters.interesse} onValueChange={(v) => setProspectFilters({...prospectFilters, interesse: v})}>
+                <Select value={prospectFilters.interesse || "all"} onValueChange={(v) => setProspectFilters({...prospectFilters, interesse: v === "all" ? "" : v})}>
                   <SelectTrigger className="w-36">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {interesseOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
