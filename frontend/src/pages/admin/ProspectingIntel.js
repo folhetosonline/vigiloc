@@ -1321,12 +1321,12 @@ const ProspectingIntel = () => {
 
             <div>
               <Label>Tipo de Portaria (opcional)</Label>
-              <Select value={scrapeForm.tipo_portaria} onValueChange={(v) => setScrapeForm({...scrapeForm, tipo_portaria: v})}>
+              <Select value={scrapeForm.tipo_portaria || "all"} onValueChange={(v) => setScrapeForm({...scrapeForm, tipo_portaria: v === "all" ? "" : v})}>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Todos os tipos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   {Object.entries(tiposPortaria).map(([key, val]) => (
                     <SelectItem key={key} value={key}>{val.nome}</SelectItem>
                   ))}
