@@ -722,6 +722,7 @@ class ProspectingDataService:
         }
         
         await self.db.prospects.insert_one(prospect)
+        prospect.pop("_id", None)
         return prospect
     
     async def scrape_and_create_prospects(self, params: Dict) -> Dict:
