@@ -1,160 +1,165 @@
-<analysis>**original_problem_statement**: The user's initial project goal was to fix a non-functional page builder. Over the course of development, the scope has expanded to include a complete architectural refactor, dynamic navbars/footers, a review management system, advanced SEO/LLM features, an admin help guide, an animated logo, and more.
+<analysis>**original_problem_statement**: The user's initial project goal was to fix a non-functional page builder. The scope has since expanded dramatically to a full-featured CMS.
 
 The most recent user requests are:
-1.  Change the footer copyright year to 2026.
-2.  Update all seasonal template themes (e.g., Black Friday, Natal) to the year 2026.
-3.  Add a feature to generate new seasonal templates using AI (ChatGPT or Gemini).
-4.  Add a duplicate button/functionality for items in the Page Builder, Services, and Templates admin pages.
-5.  Fix a bug where the video background for the Portaria Autônoma service page wasn't working.
-6.  Fix a bug where saving settings on the new Contact Page Manager was failing.
-7.  Restore the original homepage hero banner, which was accidentally removed.
-8.  Create a new admin page to manage the content of the Contato page.
-9.  Enhance the Notificações admin page with WhatsApp automatic reply settings.
+1.  Create a Prospecção Intel (Intel Prospecting) admin page to identify and manage sales leads. This feature should use real-world data scraped with Python Playwright from sources like public security statistics (SSP-SP) and business directories, combined with IBGE demographic data. The tool should include maps, opportunity scoring, route creation, and CRM integration.
+2.  Make the mouse cursor static (default) when hovering over or clicking links in the main navbar.
+3.  Make the homepage statistics cards (e.g., +500 Clientes) fully manageable from the admin panel.
+4.  Rename the Page Builder admin section to Páginas (Pages).
+5.  Create a comprehensive, dedicated editor for the homepage content, accessible from the new Páginas section.
+6.  Fix an issue where video thumbnails in the admin and videos on the public site were not playing due to CORS restrictions, and apply the fix across Services and the Page Builder.
 
 **User's preferred language**: Portuguese
 
 **what currently exists?**
-The application is a comprehensive CMS with a React frontend and FastAPI backend. The critical Page Builder bug for system pages has been fixed, and all core pages (, , , etc.) are now editable with dynamic content blocks.
+The application is a sophisticated CMS with a React frontend and a FastAPI backend. Most public-facing pages, including the homepage, are now fully dynamic and managed through various admin panels.
 
-In this session, several new features were added in response to user feedback:
--   **Homepage Hero Fix**: The original video hero section on the homepage was restored.
--   **Dynamic Contact Page**: A new admin section () was created to allow full editing of the previously hardcoded  page. The public page now correctly renders this managed content.
--   **WhatsApp Auto-Replies**: The Notificações admin page was redesigned to include a comprehensive UI for configuring WhatsApp automatic replies (welcome messages, keyword-based responses), supported by new backend endpoints.
--   **Advanced Hero Blocks**: The Page Builder was upgraded with a new  component, allowing the creation of advanced hero sections with a choice between Carousel, Video, Image, or Gradient backgrounds.
--   **Seasonal Templates**: The existing (but hidden) seasonal templates page was improved and made accessible from the admin menu under Sazonalidade 🎄.
--   **Video Hero Fix**: The video background for the Portaria Autônoma service was fixed by implementing a  image fallback to handle cross-origin (/) video blocking issues.
+Key functionalities implemented in this session include:
+-   **Duplication Feature**: Backend and frontend logic to duplicate pages, services, and seasonal templates.
+-   **AI Template Generation**: A feature in the Sazonalidade admin page to generate new templates using either OpenAI or Gemini, leveraging the .
+-   **Homepage Editor**: A new, dedicated admin page () providing full control over the homepage's hero section (background, text, CTAs), statistics cards, featured services, and more, with a live preview.
+-   **Dynamic Homepage**: The public  page was completely rewritten to fetch all its content from the new homepage settings API, making it fully manageable by the admin.
+-   **Footer Link Manager**: A new UI within the admin Settings page to configure all footer content, including link columns and social media icons.
+-   **Video Playback & Thumbnail Fix**: Implemented a robust  component and updated the  to handle CORS-blocked videos gracefully. It now attempts to play the video and falls back to a poster image with a play button on failure.
+-   **Help Guide**: A new  page was created, providing a comprehensive guide for administrators, including instructions on how to configure the SendGrid API key.
+-   **UI/UX Improvements**: Renamed Page Builder to Páginas and made the navbar cursor static on hover as requested.
 
 **Last working item**:
--   **Last item agent was working**: Implementing a new batch of user requests, specifically modifying  to update seasonal themes to 2026 and add placeholders for AI generation and duplication functionality. The agent had just started work on adding a duplicate feature to .
+-   **Last item agent was working**: The agent had just started building the Prospecção Intel (Intel Prospecting) feature. The initial setup is complete:  has been installed, and the basic file structure for the backend (), frontend (), and API routing () has been created.
 -   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N
--   **Which testing method agent to use?**: Frontend testing agent to verify the new duplication features across all relevant pages and the AI generation flow. Manual screenshots for year changes.
+-   **Which testing method agent to use?**: both (Backend testing agent for scraping/API logic and Frontend testing agent for the dashboard UI).
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   There are no outstanding bugs. The current work is focused on implementing new features requested by the user.
+-   There are no outstanding bugs. The current work is focused on implementing the new Prospecção Intel feature.
 
 **In progress Task List**:
--   **Task 1: Complete the latest user requests (P0)**
+-   **Task 1: Complete Prospecção Intel feature (P0)**
 
     **Task Detail**:
     -   **Task 1**:
-        -   **Where to resume**: The agent was in the middle of implementing a duplicate feature in . The next steps are to complete the frontend logic for duplication in , , and , and critically, **create the corresponding backend endpoints to clone the documents in the database**. The agent must also call  to get a playbook for Gemini/GPT to implement the AI template generation feature.
-        -   **What will be achieved with this?**: Fulfills all of the user's latest requests, adding significant new functionality for content management efficiency.
+        -   **Where to resume**: Implement the core logic in . The next steps are to use Playwright to scrape real data from public security and business directory websites, integrate with the IBGE API, process the data to generate opportunity scores, and build the frontend dashboard in  to visualize this data with maps, charts, and filters.
+        -   **What will be achieved with this?**: A powerful, data-driven prospecting tool for the user's sales team, fulfilling a major new feature request.
         -   **Status**: IN PROGRESS
         -   **Should Test frontend/backend/both after fix?**: Both.
-        -   **Blocked on something**: No.
+        -   **Blocked on something**: No. The task is complex and will require significant implementation effort.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **(P0) AI Template Generation**: Implement the AI generation feature in the Sazonalidade (Templates) page. This requires calling  to get a playbook for **Gemini** or **GPT**.
-    -   **(P1) Direct Social Media Integration for Reviews**: Build an integration (likely using Google My Business API) to automatically import social media reviews.
-    -   **(P2) SEO Ranking Report**: Integrate a service like SEMrush or Ahrefs to display search engine ranking data in the SEO dashboard.
+    -   **(P1) Direct Social Media Integration for Reviews**: Integrate with an API like Google My Business to automatically import social media reviews.
+    -   **(P2) SEO Ranking Report**: Integrate a service like SEMrush or Ahrefs to display search engine ranking data.
 -   **Future Tasks**:
-    -   Complete the password recovery system (blocked on user providing a SendGrid API key).
+    -   Complete the password recovery system (blocked on the user providing a ).
     -   Integrate a real payment gateway (Stripe, Mercado Pago).
     -   Finalize and enable the Melhor Envio shipping integration.
     -   Develop the Reports tab in the admin panel with analytics.
-    -   Enhance the  with more advanced WIX-like features.
+    -   Enhance the visual page builder with more advanced WIX-like features.
 
 **Completed work in this session**
--   **Page Builder Fix**: Resolved the critical bug preventing editing of system pages (, , etc.).
--   **Dynamic System Pages**: Refactored , , , and created  to use  for dynamic content.
--   **New Feature: Contact Page Manager**: Built a full CRUD admin page () to manage the content of the public  page.
--   **New Feature: WhatsApp Auto-Replies**: Revamped the  admin page with UI and backend support for configuring automated WhatsApp responses.
--   **Enhancement: Advanced Hero Editor**: Integrated a powerful  into the Page Builder, offering Carousel, Video, Image, and Gradient background options.
--   **Enhancement: Seasonal Templates**: Made the  page accessible from the admin menu and updated it.
--   **Bug Fix: Service Page Video**: Fixed a non-playing video on a service page by adding a  image fallback to handle  issues.
--   **Bug Fix: Authentication**: Fixed saving issues on new admin pages by correcting the authentication method from  tokens to  cookies.
--   **Bug Fix: Homepage Hero**: Restored the original homepage hero banner after it was accidentally replaced.
+-   **Homepage Editor**: Built a complete, dedicated editor for the homepage content ().
+-   **Dynamic Homepage**: Rewrote  to be fully controlled by the new admin editor and backend API.
+-   **Footer Link Manager**: Implemented a new section in admin settings to manage all footer links and content.
+-   **Duplication Feature**: Added duplicate functionality for pages, services, and templates.
+-   **AI Template Generation**: Integrated OpenAI/Gemini for AI-powered seasonal template creation.
+-   **Video Playback/CORS Fix**: Implemented a robust video player with a poster fallback to handle cross-origin issues on both the admin thumbnails and the public site.
+-   **UI Renaming**: Renamed Page Builder to Páginas throughout the admin panel.
+-   **Help Guide**: Created a new  page with system documentation.
+-   **Deployment Fixes**: Removed hardcoded URLs from the backend in preparation for deployment.
+-   **Navbar Cursor Fix**: Set the navbar link cursor to static () as requested.
 
 **Earlier issues found/mentioned but not fixed**
 -   **Issue 1: Password recovery email not sent**
-    -   **Debug checklist**: The implementation in  is blocked because the  environment variable is missing. The agent must request the key from the user.
+    -   **Debug checklist**: The implementation in  is blocked because the  environment variable is missing. The new  page now instructs the user on how to add this key.
     -   **Why to solve this issue and what will be achieved with this?**: To enable self-service password reset for admin users.
     -   **Should Test frontend/backend/both after fix**: Backend.
-    -   **Is recurring issue?**: N
+    -   **Is recurring issue?**: Y
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: Admin password login failures.
--   **Recurrence count**: 3+
--   **Status**: RESOLVED (no recurrence in this session).
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Dynamic Content Rendering**: Extensive use of a  component to display CMS-managed content on previously static pages.
--   **API-Driven UI**: Building dedicated admin pages () that control the content of public-facing pages via new API endpoints.
--   **Video Content Handling**: Diagnosed and fixed cross-origin (/) video playback issues by implementing a  image fallback.
--   **Authentication Debugging**: Corrected API call authentication from a failing  token approach to the project's standard cookie-based () method.
--   **Complex Component Creation**: Developed a multi-tabbed, feature-rich  component for the Page Builder.
+-   **Web Scraping**: Introduced  to scrape data from external websites for the prospecting feature.
+-   **API-Driven Homepage**: The entire homepage is now dynamically rendered from a single API endpoint (), configured through a dedicated admin editor.
+-   **CORS Fallbacks**: Implemented robust client-side logic to handle cross-origin video loading errors by showing a poster image, improving user experience.
+-   **Modular Service (Backend)**: Created , a first step towards breaking down the monolithic  into feature-specific modules.
+-   **LLM Integration**: Used  to correctly implement multi-provider LLM functionality () for AI content generation.
 
 **key DB schema**
--   **contact_page_settings** (new, single document): 
--   **whatsapp_auto_reply_settings** (new, single document): 
+-   **homepage_settings** (new, single document): 
+-   **footer_settings** (updated, single document): 
+-   **prospects** (planned collection): To store scraped data for the Prospecção Intel feature.
 
 **changes in tech stack**
--   None.
+-   Added  for web scraping.
+-   Added  (via ) for LLM provider abstraction.
 
 **All files of reference**
--   : Recently overwritten to add new features; needs AI integration and backend for duplication.
--   : Where the duplicate page feature is being added.
--   : Needs a duplicate service feature added.
--   : Will need new endpoints to handle the duplicate logic for pages, services, and templates.
--   : Now fully dynamic, fetching data from the new contact settings API.
--   : The new admin UI for managing the contact page.
--   : The new UI for WhatsApp auto-replies.
--   : The new advanced hero block editor.
+-   **/app/backend/prospecting_service.py**: New file for the core logic of the prospecting feature.
+-   **/app/frontend/src/pages/admin/ProspectingIntel.js**: New frontend page for the prospecting dashboard.
+-   **/app/frontend/src/pages/admin/HomepageEditor.js**: New dedicated editor for homepage content.
+-   **/app/frontend/src/pages/Home.js**: Completely rewritten to be API-driven.
+-   **/app/backend/server.py**: Heavily modified with new endpoints for all recently added features.
+-   **/app/frontend/src/pages/admin/Settings.js**: Modified to include the new footer link manager.
+-   **/app/frontend/src/pages/admin/Services.js**: Modified to include video thumbnails and duplication.
+-   **/app/frontend/src/pages/admin/PageBuilder.js**: Modified with UI changes and link to the new homepage editor.
 
 **Areas that need refactoring**:
--    is extremely large and should be broken into modular  files.
--   The duplication logic should be implemented in a reusable way on the backend, rather than three separate endpoints if possible.
+-    remains extremely large. The new endpoints should be moved into their own  files (e.g., , ) and included in the main app to improve maintainability.
+-   The duplication logic in  for pages, services, and templates is highly repetitive and could be abstracted into a single, generic function.
 
 **key api endpoints**
--   : Updates the content for the public contact page.
--   : Fetches the content for the public contact page.
--   : Updates the WhatsApp auto-reply configuration.
--   : Fetches the WhatsApp auto-reply configuration.
+-   
+-   
+-   
+-    & 
+-    & 
+-    (New, to be implemented)
+-    (New, to be implemented)
 
 **Critical Info for New Agent**
--   Your immediate priority is to complete the user's latest requests: AI template generation and duplication functionality.
--   **For AI Template Generation**: You **MUST** call the  subagent to get a playbook for **Gemini** or **GPT**. Do not attempt to implement this without the playbook.
--   **For Duplication Feature**: You need to implement both frontend buttons and the corresponding backend logic. This involves creating new API endpoints (e.g., ) that will read a document from MongoDB and insert a new one with a modified name/slug. This backend part has not been started.
--   The user is highly engaged and provides immediate feedback. Be prepared to test visually and address any UI regressions promptly.
+-   The immediate and highest priority is to build the core functionality of the Prospecção Intel feature in  and .
+-   The user wants this feature to use **real data**, so you must implement web scraping with Playwright as planned. Do not use mocked data.
+-   Be mindful of the large size of  when making changes. While a full refactor isn't the current task, avoid adding more complexity than necessary.
+-   The password recovery feature remains blocked pending the  from the user.
 
 **documents and test reports created in this job**
--    has been updated multiple times.
--   Several test reports from the  are available in .
+-    was updated.
+-   Test reports from the testing agent are available in .
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  ****: (PENDING - IN PROGRESS) The user's latest set of feature requests which the agent is currently working on.
-2.  ****: (RESOLVED) User reported the broken video hero, which was then fixed.
-3.  ****: (RESOLVED) User requested an automated test run, which the agent completed successfully.
-4.  ****: (RESOLVED) User asked about missing features, which the agent verified were already present.
-5.  ****: (RESOLVED) User reported a bug with saving on the new Contact Manager page, which was fixed.
-6.  ****: (RESOLVED) User's strong negative feedback led to the agent restoring the homepage hero and adding several new admin features as requested.
-7.  ****: (Completed) User prompt to continue with a fix.
-8.  ****: (RESOLVED) User reported that the new Contact Manager wasn't updating the public page, which the agent then fixed.
-9.  ****: (Completed) Agent asked for video suggestions.
-10. ****: (RESOLVED) User's confirmation to proceed with the Page Builder fix.
+1.  ****: (IN PROGRESS) The user's detailed request for the new Intel Prospecting feature, which is the current focus.
+2.  ****: (Acknowledged) User's confirmation that the prospecting feature must use real, scraped data.
+3.  ****: (COMPLETED) User requested a static navbar cursor and editable homepage stat cards.
+4.  ****: (Addressed) User asked about deployment. The agent provided instructions for using the Emergent platform.
+5.  ****: (Addressed) User provided external credentials. The agent correctly refused and explained the secure deployment options.
+6.  ****: (COMPLETED) User requested UI renaming and the creation of a dedicated homepage editor.
+7.  ****: (COMPLETED) User reported the video thumbnail fix was incomplete, leading to a more robust implementation.
+8.  ****: (COMPLETED) User requested autoplaying video thumbnails.
+9.  ****: (COMPLETED) User requested the footer link management feature.
+10. ****: (COMPLETED) User approved the agent's plan and added the requirement for a Help guide.
 
 **Project Health Check:**
 -   **Broken**: None.
 -   **Mocked**:
-    -   **Email Sending (Password Recovery)**: Backend code exists but is non-functional as it lacks a .
+    -   **Password Recovery**: The backend logic exists but is non-functional without a user-provided .
 
 **3rd Party Integrations**
--   **Google OAuth**: Implemented for customer login.
--   **SendGrid**: Coded but non-functional (requires user-provided API key).
+-   **Google OAuth**: For customer login.
+-   **SendGrid**: Coded but inactive, requires user API key.
 -   **Melhor Envio (Shipping)**: Code exists but is disabled.
--   **(Upcoming) Gemini/GPT**: Required for the new AI template generation feature. Must be integrated using .
+-   **OpenAI GPT & Gemini**: Integrated for AI template generation via  (uses ).
+-   **Playwright**: Newly added for web scraping.
+-   **IBGE API**: Planned for the prospecting feature.
+-   **SSP-SP (São Paulo Public Security)**: Planned data source (via scraping) for the prospecting feature.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES, used multiple times to validate backend and frontend changes.
+-   **Testing agent used after significant changes**: YES. The agent ran backend and frontend tests after implementing the duplication, homepage editor, footer manager, and video thumbnail features.
 -   **Troubleshoot agent used after agent stuck in loop**: NO.
 -   **Test files created**: Yes, by the testing agent.
--   **Known regressions**: None at the end of the session.
+-   **Known regressions**: None.
 
 **Credentials to test flow:**
 -   **Admin URL**: 
@@ -162,5 +167,4 @@ In this session, several new features were added in response to user feedback:
 -   **Password**: 
 
 **What agent forgot to execute**
--   The agent did not call  before starting the AI template generation feature. This is a mandatory step.
--   The agent did not plan for or start implementing the necessary backend endpoints required for the duplicate functionality. The current implementation is frontend-only and incomplete.</analysis>
+-   Nothing critical was forgotten in this session. The agent successfully addressed previous oversights (like calling the integration subagent) and followed the new user requests closely. The suggested refactoring of  remains an opportunity for future improvement but was not an explicit task.</analysis>
