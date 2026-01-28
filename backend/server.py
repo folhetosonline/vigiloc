@@ -69,6 +69,12 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# Health check endpoint for Kubernetes/deployment
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for deployment monitoring"""
+    return {"status": "healthy", "service": "vigiloc-backend"}
+
 # ==================== MODELS ====================
 
 class User(BaseModel):
