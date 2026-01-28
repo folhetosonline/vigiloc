@@ -4949,6 +4949,127 @@ async def get_prospecting_dashboard(current_user: User = Depends(get_current_adm
         }
     }
 
+# ==================== PROSPECT MANAGEMENT ====================
+
+@api_router.get("/admin/prospecting/tipos-portaria")
+async def get_tipos_portaria(current_user: User = Depends(get_current_admin)):
+    """Get available portaria types"""
+    return TIPOS_PORTARIA
+
+@api_router.post("/admin/prospecting/prospects")
+async def create_prospect(data: dict, current_user: User = Depends(get_current_admin)):
+    """Create a new prospect manually"""
+    data["usuario"] = current_user.name
+    prospect = await prospecting_service.create_prospect(data)
+    prospect.pop("_id", None)
+    return prospect
+
+@api_router.post("/admin/prospecting/scrape")
+async def scrape_prospects(data: dict, current_user: User = Depends(get_current_admin)):
+    """Scrape and create prospects from public sources"""
+    params = {
+        "cidade": data.get("cidade", "Santos"),
+        "bairro": data.get("bairro"),
+        "tipo": data.get("tipo", "condominio"),
+        "tipo_portaria": data.get("tipo_portaria"),
+        "max_results": data.get("max_results", 10),
+        "rota_id": data.get("rota_id")
+    }
+    
+    result = await prospecting_service.scrape_and_create_prospects(params)
+    return result
+
+@api_router.get("/admin/prospecting/prospects")
+async def get_prospects(
+    cidade: str = None,
+    tipo: str = None,
+    tipo_portaria: str = None,
+    interesse: str = None,
+    prioridade: str = None,
+    rota_id: str = None,
+    current_user: User = Depends(get_current_admin)
+):
+    """Get prospects with optional filters"""
+    filters = {}
+    if cidade:
+        filters["cidade"] = cidade
+    if tipo:
+        filters["tipo"] = tipo
+    if tipo_portaria:
+        filters["tipo_portaria"] = tipo_portaria
+    if interesse:
+        filters["interesse"] = interesse
+    if prioridade:
+        filters["prioridade"] = prioridade
+    if rota_id:
+        filters["rota_id"] = rota_id
+    
+    prospects = await prospecting_service.get_prospects(filters if filters else None)
+    return prospects
+
+@api_router.get("/admin/prospecting/prospects/{prospect_id}")
+async def get_prospect(prospect_id: str, current_user: User = Depends(get_current_admin)):
+    """Get a single prospect by ID"""
+    prospect = await db.prospects.find_one({"id": prospect_id}, {"_id": 0})
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect não encontrado")
+    return prospect
+
+@api_router.put("/admin/prospecting/prospects/{prospect_id}")
+async def update_prospect(prospect_id: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Update a prospect"""
+    data["usuario"] = current_user.name
+    prospect = await prospecting_service.update_prospect(prospect_id, data)
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect não encontrado")
+    return prospect
+
+@api_router.delete("/admin/prospecting/prospects/{prospect_id}")
+async def delete_prospect(prospect_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete a prospect"""
+    deleted = await prospecting_service.delete_prospect(prospect_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Prospect não encontrado")
+    return {"message": "Prospect excluído com sucesso"}
+
+@api_router.get("/admin/prospecting/prospects-stats")
+async def get_prospects_stats(current_user: User = Depends(get_current_admin)):
+    """Get prospect statistics"""
+    stats = await prospecting_service.get_prospect_stats()
+    return stats
+
+@api_router.post("/admin/prospecting/prospects/{prospect_id}/add-to-route")
+async def add_prospect_to_route(prospect_id: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Add a prospect to a route"""
+    route_id = data.get("route_id")
+    
+    # Update prospect with route_id
+    await db.prospects.update_one(
+        {"id": prospect_id},
+        {"$set": {"rota_id": route_id, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Add to route stops if route exists
+    route = await db.prospecting_routes.find_one({"id": route_id}, {"_id": 0})
+    if route:
+        prospect = await db.prospects.find_one({"id": prospect_id}, {"_id": 0})
+        if prospect:
+            new_stop = {
+                "ordem": len(route.get("paradas", [])) + 1,
+                "lead_id": prospect_id,
+                "local": f"{prospect.get('bairro', '')}, {prospect.get('cidade', '')}",
+                "endereco": prospect.get("endereco", ""),
+                "tipo": prospect.get("tipo", "condominio"),
+                "nome": prospect.get("nome", ""),
+                "tipo_portaria": prospect.get("tipo_portaria", "desconhecido")
+            }
+            await db.prospecting_routes.update_one(
+                {"id": route_id},
+                {"$push": {"paradas": new_stop}}
+            )
+    
+    return {"message": "Prospect adicionado à rota"}
+
 
 # ==================== HOMEPAGE SETTINGS ====================
 
