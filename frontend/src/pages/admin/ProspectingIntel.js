@@ -503,12 +503,12 @@ const ProspectingIntel = () => {
               </div>
               
               <div className="flex gap-2 flex-wrap">
-                <Select value={prospectFilters.cidade} onValueChange={(v) => setProspectFilters({...prospectFilters, cidade: v})}>
+                <Select value={prospectFilters.cidade || "all"} onValueChange={(v) => setProspectFilters({...prospectFilters, cidade: v === "all" ? "" : v})}>
                   <SelectTrigger className="w-36">
                     <SelectValue placeholder="Cidade" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     {municipios.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                   </SelectContent>
                 </Select>
