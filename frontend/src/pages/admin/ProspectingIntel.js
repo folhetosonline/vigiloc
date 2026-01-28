@@ -513,12 +513,12 @@ const ProspectingIntel = () => {
                   </SelectContent>
                 </Select>
 
-                <Select value={prospectFilters.tipo_portaria} onValueChange={(v) => setProspectFilters({...prospectFilters, tipo_portaria: v})}>
+                <Select value={prospectFilters.tipo_portaria || "all"} onValueChange={(v) => setProspectFilters({...prospectFilters, tipo_portaria: v === "all" ? "" : v})}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Tipo Portaria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {Object.entries(tiposPortaria).map(([key, val]) => (
                       <SelectItem key={key} value={key}>{val.nome}</SelectItem>
                     ))}
