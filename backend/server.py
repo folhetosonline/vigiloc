@@ -75,6 +75,46 @@ async def health_check():
     """Health check endpoint for deployment monitoring"""
     return {"status": "healthy", "service": "vigiloc-backend"}
 
+# Setup endpoint - creates admin user (use once then remove or secure)
+@app.get("/api/setup-admin")
+async def setup_admin_user():
+    """One-time setup endpoint to create admin user in production"""
+    try:
+        from passlib.context import CryptContext
+        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        
+        # Check if admin exists
+        existing = await db.users.find_one({"email": "admin@vigiloc.com"})
+        
+        if existing:
+            # Update password to ensure it's correct
+            await db.users.update_one(
+                {"email": "admin@vigiloc.com"},
+                {"$set": {
+                    "password_hash": pwd_context.hash("admin123"),
+                    "is_admin": True,
+                    "role": "admin",
+                    "active": True
+                }}
+            )
+            return {"status": "success", "message": "Admin user updated", "email": "admin@vigiloc.com"}
+        else:
+            # Create new admin
+            admin_user = {
+                "id": str(uuid.uuid4()),
+                "email": "admin@vigiloc.com",
+                "name": "Administrador",
+                "password_hash": pwd_context.hash("admin123"),
+                "is_admin": True,
+                "role": "admin",
+                "active": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(admin_user)
+            return {"status": "success", "message": "Admin user created", "email": "admin@vigiloc.com"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 # ==================== MODELS ====================
 
 class User(BaseModel):
