@@ -263,8 +263,14 @@ class BusinessScraper:
     async def scrape_empresas(cidade: str, segmento: str = "comercio", max_results: int = 20) -> List[Dict]:
         """
         Scrape business listings from public directories
+        Falls back to simulated data if Playwright is not available
         """
         empresas = []
+        
+        # If Playwright is not available, return simulated data directly
+        if not PLAYWRIGHT_AVAILABLE or async_playwright is None:
+            print("[INFO] Playwright not available, using simulated data for empresas")
+            return BusinessScraper._generate_sample_empresas(cidade, segmento, max_results)
         
         try:
             async with async_playwright() as p:
