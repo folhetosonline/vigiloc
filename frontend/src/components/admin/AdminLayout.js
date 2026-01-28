@@ -50,6 +50,7 @@ const AdminLayout = () => {
   ];
 
   const crmMenuItems = [
+    { path: "/admin/prospecting", icon: <Target />, label: "Prospecção Intel 🎯" },
     { path: "/admin/crm", icon: <Building2 />, label: "CRM Dashboard" },
     { path: "/admin/crm/customers", icon: <Users />, label: "Clientes" },
     { path: "/admin/crm/contracts", icon: <ClipboardList />, label: "Contratos" },
