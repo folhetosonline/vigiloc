@@ -179,6 +179,7 @@ function App() {
               <Route path="crm/settings" element={<CRMSettings />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="navbar" element={<NavbarManager />} />
+              <Route path="prospecting" element={<ProspectingIntel />} />
               
               {/* Shopify-like Features */}
               <Route path="page-builder" element={<PageBuilder />} />
