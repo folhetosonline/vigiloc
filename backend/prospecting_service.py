@@ -11,7 +11,14 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 import httpx
-from playwright.async_api import async_playwright
+
+# Try to import Playwright - it may not be available in production
+try:
+    from playwright.async_api import async_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+    async_playwright = None
 
 # IBGE API endpoints
 IBGE_API = "https://servicodados.ibge.gov.br/api/v1"
