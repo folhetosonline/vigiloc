@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,16 +11,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { 
   Building2, Users, MapPin, TrendingUp, AlertTriangle, 
   Calendar as CalendarIcon, Route, Target, DollarSign,
   ChevronRight, RefreshCw, Loader2, Navigation, Clock,
   CheckCircle, XCircle, Building, Store, Home as HomeIcon,
-  BarChart3, PieChart, Map, Filter, Plus, Eye, Play
+  BarChart3, PieChart, Map, Filter, Plus, Eye, Play,
+  Layers, Thermometer, MapPinned, Compass
 } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
 import { toast } from "sonner";
+
+// Lazy load the map component to avoid SSR issues
+const ProspectingMap = lazy(() => import("../../components/ProspectingMap"));
 
 const ProspectingIntel = () => {
   const [loading, setLoading] = useState(true);
@@ -43,6 +48,12 @@ const ProspectingIntel = () => {
     valor_total: 0,
     notas: ""
   });
+  
+  // Map controls
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showClusters, setShowClusters] = useState(true);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [leadDetailOpen, setLeadDetailOpen] = useState(false);
 
   const municipios = [
     "Santos", "São Vicente", "Guarujá", "Praia Grande", 
@@ -55,6 +66,11 @@ const ProspectingIntel = () => {
     fetchRoutes();
     fetchSchedules();
   }, []);
+
+  // Auto-fetch leads when municipio changes
+  useEffect(() => {
+    fetchLeads(selectedMunicipio);
+  }, [selectedMunicipio]);
 
   const fetchDashboard = async () => {
     try {
@@ -101,6 +117,7 @@ const ProspectingIntel = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchDashboard();
+    await fetchLeads(selectedMunicipio);
     setRefreshing(false);
     toast.success("Dados atualizados!");
   };
@@ -149,6 +166,11 @@ const ProspectingIntel = () => {
     }
   };
 
+  const handleLeadClick = (lead) => {
+    setSelectedLead(lead);
+    setLeadDetailOpen(true);
+  };
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "alta": return "bg-red-500";
@@ -182,7 +204,7 @@ const ProspectingIntel = () => {
             Prospecção Intel
           </h1>
           <p className="text-gray-600 mt-1">
-            Inteligência de mercado para prospecção de clientes
+            Inteligência de mercado para prospecção de clientes • Dados reais IBGE + SSP-SP
           </p>
         </div>
         <div className="flex gap-3">
@@ -211,7 +233,21 @@ const ProspectingIntel = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">Condomínios Est.</p>
+                <p className="text-green-100 text-sm">População Total</p>
+                <p className="text-3xl font-bold">
+                  {(dashboard?.region_stats?.totals?.populacao / 1000000)?.toFixed(1) || 0}M
+                </p>
+              </div>
+              <Users className="w-10 h-10 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-100 text-sm">Condomínios Est.</p>
                 <p className="text-3xl font-bold">
                   {dashboard?.region_stats?.totals?.condominios_estimados?.toLocaleString() || 0}
                 </p>
@@ -221,11 +257,11 @@ const ProspectingIntel = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm">Empresas Est.</p>
+                <p className="text-orange-100 text-sm">Empresas Est.</p>
                 <p className="text-3xl font-bold">
                   {dashboard?.region_stats?.totals?.empresas_estimadas?.toLocaleString() || 0}
                 </p>
@@ -235,39 +271,206 @@ const ProspectingIntel = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm">Taxa Conversão</p>
+                <p className="text-emerald-100 text-sm">Taxa Conversão</p>
                 <p className="text-3xl font-bold">{dashboard?.metrics?.taxa_conversao || 0}%</p>
               </div>
               <TrendingUp className="w-10 h-10 opacity-50" />
             </div>
           </CardContent>
         </Card>
-
-        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-emerald-100 text-sm">Contratos</p>
-                <p className="text-3xl font-bold">{dashboard?.metrics?.contratos_fechados || 0}</p>
-              </div>
-              <CheckCircle className="w-10 h-10 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid grid-cols-5 w-full max-w-3xl">
-          <TabsTrigger value="overview">📊 Visão Geral</TabsTrigger>
-          <TabsTrigger value="zones">🗺️ Zonas</TabsTrigger>
-          <TabsTrigger value="leads">🎯 Leads</TabsTrigger>
-          <TabsTrigger value="routes">🛣️ Rotas</TabsTrigger>
-          <TabsTrigger value="schedule">📅 Agenda</TabsTrigger>
+      <Tabs defaultValue="map" className="space-y-6">
+        <TabsList className="grid grid-cols-6 w-full max-w-4xl">
+          <TabsTrigger value="map" data-testid="tab-map">🗺️ Mapa</TabsTrigger>
+          <TabsTrigger value="overview" data-testid="tab-overview">📊 Visão Geral</TabsTrigger>
+          <TabsTrigger value="zones" data-testid="tab-zones">📍 Zonas</TabsTrigger>
+          <TabsTrigger value="leads" data-testid="tab-leads">🎯 Leads</TabsTrigger>
+          <TabsTrigger value="routes" data-testid="tab-routes">🛣️ Rotas</TabsTrigger>
+          <TabsTrigger value="schedule" data-testid="tab-schedule">📅 Agenda</TabsTrigger>
         </TabsList>
+
+        {/* Map Tab - NEW */}
+        <TabsContent value="map">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Map Controls */}
+            <Card className="lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Layers className="w-5 h-5" />
+                  Controles do Mapa
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Município</Label>
+                  <Select value={selectedMunicipio} onValueChange={setSelectedMunicipio}>
+                    <SelectTrigger className="w-full mt-1" data-testid="map-municipio-select">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {municipios.map(m => (
+                        <SelectItem key={m} value={m}>{m}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Thermometer className="w-4 h-4 text-red-500" />
+                    <span className="text-sm">Heatmap Crime</span>
+                  </div>
+                  <Switch 
+                    checked={showHeatmap} 
+                    onCheckedChange={setShowHeatmap}
+                    data-testid="heatmap-toggle"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPinned className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm">Clusters</span>
+                  </div>
+                  <Switch 
+                    checked={showClusters} 
+                    onCheckedChange={setShowClusters}
+                    data-testid="clusters-toggle"
+                  />
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h4 className="font-medium mb-2">Legenda</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-red-500"></div>
+                      <span>Prioridade Alta</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
+                      <span>Prioridade Média</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                      <span>Prioridade Baixa</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h4 className="font-medium mb-2">Heatmap Crime</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-red-500 opacity-50"></div>
+                      <span>Alto (7.5+)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-orange-500 opacity-50"></div>
+                      <span>Médio-Alto (6-7.5)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-yellow-500 opacity-50"></div>
+                      <span>Médio (4-6)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-green-500 opacity-50"></div>
+                      <span>Baixo (&lt;4)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full" 
+                  onClick={handleGenerateRoute}
+                  disabled={generatingRoute || leads.length === 0}
+                  data-testid="generate-route-btn"
+                >
+                  {generatingRoute ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Gerando...</>
+                  ) : (
+                    <><Route className="w-4 h-4 mr-2" /> Gerar Rota Otimizada</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Map */}
+            <Card className="lg:col-span-3">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Map className="w-5 h-5" />
+                      Mapa de Oportunidades - {selectedMunicipio}
+                    </CardTitle>
+                    <CardDescription>
+                      {leads.length} zonas mapeadas • Clique nos marcadores para detalhes
+                    </CardDescription>
+                  </div>
+                  {loadingLeads && <Loader2 className="w-5 h-5 animate-spin text-blue-500" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={
+                  <div className="h-[500px] flex items-center justify-center bg-gray-100 rounded-lg">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                  </div>
+                }>
+                  <ProspectingMap
+                    leads={leads}
+                    selectedMunicipio={selectedMunicipio}
+                    showHeatmap={showHeatmap}
+                    showClusters={showClusters}
+                    route={selectedRoute}
+                    onLeadClick={handleLeadClick}
+                    height="500px"
+                  />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Stats Below Map */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Building2 className="w-8 h-8 mx-auto text-blue-500 mb-2" />
+                <p className="text-2xl font-bold">{leads.reduce((acc, l) => acc + l.potencial_condominios, 0)}</p>
+                <p className="text-sm text-gray-500">Condomínios em {selectedMunicipio}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Store className="w-8 h-8 mx-auto text-purple-500 mb-2" />
+                <p className="text-2xl font-bold">{leads.reduce((acc, l) => acc + l.potencial_empresas, 0)}</p>
+                <p className="text-sm text-gray-500">Empresas em {selectedMunicipio}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Target className="w-8 h-8 mx-auto text-green-500 mb-2" />
+                <p className="text-2xl font-bold">
+                  {leads.length > 0 ? Math.round(leads.reduce((acc, l) => acc + l.chance_fechamento, 0) / leads.length) : 0}%
+                </p>
+                <p className="text-sm text-gray-500">Média de Conversão</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <AlertTriangle className="w-8 h-8 mx-auto text-orange-500 mb-2" />
+                <p className="text-2xl font-bold">
+                  {leads.length > 0 ? (leads.reduce((acc, l) => acc + l.indice_criminalidade, 0) / leads.length).toFixed(1) : 0}
+                </p>
+                <p className="text-sm text-gray-500">Índice Crime Médio</p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         {/* Overview Tab */}
         <TabsContent value="overview">
@@ -380,17 +583,20 @@ const ProspectingIntel = () => {
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-2">Município</th>
+                        <th className="text-right py-2">População</th>
                         <th className="text-center py-2">Furto Res.</th>
                         <th className="text-center py-2">Roubo Res.</th>
                         <th className="text-center py-2">Furto Veíc.</th>
                         <th className="text-center py-2">Roubo Veíc.</th>
                         <th className="text-center py-2">Índice</th>
+                        <th className="text-center py-2">Oportunidade</th>
                       </tr>
                     </thead>
                     <tbody>
                       {dashboard?.region_stats?.municipios?.map((mun) => (
                         <tr key={mun.codigo_ibge} className="border-b hover:bg-gray-50">
                           <td className="py-2 font-medium">{mun.nome}</td>
+                          <td className="text-right py-2">{mun.populacao?.toLocaleString()}</td>
                           <td className="text-center py-2">{mun.dados_crime?.furto_residencia || 0}</td>
                           <td className="text-center py-2">{mun.dados_crime?.roubo_residencia || 0}</td>
                           <td className="text-center py-2">{mun.dados_crime?.furto_veiculo || 0}</td>
@@ -398,6 +604,11 @@ const ProspectingIntel = () => {
                           <td className="text-center py-2">
                             <Badge className={getCrimeColor(mun.dados_crime?.indice)}>
                               {mun.dados_crime?.indice}
+                            </Badge>
+                          </td>
+                          <td className="text-center py-2">
+                            <Badge variant="outline" className="font-bold">
+                              {mun.indice_oportunidade}/10
                             </Badge>
                           </td>
                         </tr>
@@ -424,8 +635,8 @@ const ProspectingIntel = () => {
                     Bairros e áreas com potencial de prospecção
                   </CardDescription>
                 </div>
-                <Select value={selectedMunicipio} onValueChange={(v) => { setSelectedMunicipio(v); fetchLeads(v); }}>
-                  <SelectTrigger className="w-48">
+                <Select value={selectedMunicipio} onValueChange={setSelectedMunicipio}>
+                  <SelectTrigger className="w-48" data-testid="zones-municipio-select">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -444,7 +655,7 @@ const ProspectingIntel = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {leads.map((lead) => (
-                    <Card key={lead.id} className="hover:shadow-lg transition-shadow">
+                    <Card key={lead.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleLeadClick(lead)}>
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div>
@@ -496,9 +707,6 @@ const ProspectingIntel = () => {
                 <div className="text-center py-12">
                   <Map className="w-12 h-12 mx-auto text-gray-400 mb-3" />
                   <p className="text-gray-500">Selecione um município para ver as zonas</p>
-                  <Button className="mt-4" onClick={() => fetchLeads(selectedMunicipio)}>
-                    Carregar Zonas
-                  </Button>
                 </div>
               )}
             </CardContent>
@@ -520,8 +728,8 @@ const ProspectingIntel = () => {
                   </CardDescription>
                 </div>
                 <div className="flex gap-3">
-                  <Select value={selectedMunicipio} onValueChange={(v) => { setSelectedMunicipio(v); fetchLeads(v); }}>
-                    <SelectTrigger className="w-48">
+                  <Select value={selectedMunicipio} onValueChange={setSelectedMunicipio}>
+                    <SelectTrigger className="w-48" data-testid="leads-municipio-select">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -530,7 +738,7 @@ const ProspectingIntel = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button onClick={handleGenerateRoute} disabled={generatingRoute || leads.length === 0}>
+                  <Button onClick={handleGenerateRoute} disabled={generatingRoute || leads.length === 0} data-testid="leads-generate-route-btn">
                     {generatingRoute ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Gerando...</>
                     ) : (
@@ -546,7 +754,7 @@ const ProspectingIntel = () => {
                   {leads
                     .sort((a, b) => b.chance_fechamento - a.chance_fechamento)
                     .map((lead, index) => (
-                      <div key={lead.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50">
+                      <div key={lead.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => handleLeadClick(lead)}>
                         <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                           {index + 1}
                         </span>
@@ -605,10 +813,10 @@ const ProspectingIntel = () => {
                       </CardTitle>
                       <CardDescription>
                         {selectedRoute.total_visitas} paradas • {selectedRoute.tempo_estimado} • 
-                        {selectedRoute.probabilidade_media.toFixed(1)}% média de conversão
+                        {selectedRoute.probabilidade_media?.toFixed(1)}% média de conversão
                       </CardDescription>
                     </div>
-                    <Button onClick={() => { setScheduleDialogOpen(true); }}>
+                    <Button onClick={() => { setScheduleDialogOpen(true); }} data-testid="schedule-visit-btn">
                       <CalendarIcon className="w-4 h-4 mr-2" />
                       Agendar Visita
                     </Button>
@@ -660,9 +868,9 @@ const ProspectingIntel = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant={route.status === "concluido" ? "default" : "secondary"}>
-                            {route.status}
+                            {route.status || "pendente"}
                           </Badge>
-                          <Button size="sm" variant="outline" onClick={() => setSelectedRoute(route)}>
+                          <Button size="sm" variant="outline" onClick={() => setSelectedRoute(route)} data-testid={`view-route-${route.id}`}>
                             <Eye className="w-4 h-4" />
                           </Button>
                         </div>
@@ -730,6 +938,7 @@ const ProspectingIntel = () => {
                             <Button 
                               size="sm" 
                               onClick={() => { setSelectedSchedule(schedule); setResultDialogOpen(true); }}
+                              data-testid={`register-result-${schedule.id}`}
                             >
                               <Play className="w-4 h-4 mr-1" />
                               Registrar
@@ -781,6 +990,68 @@ const ProspectingIntel = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Lead Detail Dialog */}
+      <Dialog open={leadDetailOpen} onOpenChange={setLeadDetailOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
+              {selectedLead?.zona}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedLead && (
+            <div className="space-y-4">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-500 mb-1">Endereço</p>
+                <p className="font-medium">{selectedLead.endereco_aproximado}</p>
+                <p className="text-sm text-gray-500">{selectedLead.municipio}</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 border rounded-lg text-center">
+                  <Building2 className="w-6 h-6 mx-auto text-blue-500 mb-1" />
+                  <p className="text-2xl font-bold">{selectedLead.potencial_condominios}</p>
+                  <p className="text-xs text-gray-500">Condomínios</p>
+                </div>
+                <div className="p-3 border rounded-lg text-center">
+                  <Store className="w-6 h-6 mx-auto text-purple-500 mb-1" />
+                  <p className="text-2xl font-bold">{selectedLead.potencial_empresas}</p>
+                  <p className="text-xs text-gray-500">Empresas</p>
+                </div>
+                <div className="p-3 border rounded-lg text-center">
+                  <AlertTriangle className={`w-6 h-6 mx-auto mb-1 ${getCrimeColor(selectedLead.indice_criminalidade)}`} />
+                  <p className="text-2xl font-bold">{selectedLead.indice_criminalidade}</p>
+                  <p className="text-xs text-gray-500">Índice Crime</p>
+                </div>
+                <div className="p-3 border rounded-lg text-center">
+                  <Target className="w-6 h-6 mx-auto text-green-500 mb-1" />
+                  <p className="text-2xl font-bold text-green-600">{selectedLead.chance_fechamento}%</p>
+                  <p className="text-xs text-gray-500">Chance</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-blue-500" />
+                  <span>Melhor Horário:</span>
+                </div>
+                <span className="font-bold">{selectedLead.melhor_horario}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Badge className={getPriorityColor(selectedLead.prioridade)}>
+                  Prioridade {selectedLead.prioridade?.toUpperCase()}
+                </Badge>
+                <Badge variant="outline">{selectedLead.tipo}</Badge>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLeadDetailOpen(false)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Schedule Dialog */}
       <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
         <DialogContent>
@@ -794,17 +1065,17 @@ const ProspectingIntel = () => {
                 mode="single"
                 selected={scheduleDate}
                 onSelect={setScheduleDate}
-                className="rounded-md border"
+                className="rounded-md border mt-2"
               />
             </div>
             <div>
               <Label>Município</Label>
-              <Input value={selectedMunicipio} disabled />
+              <Input value={selectedMunicipio} disabled className="mt-1" />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setScheduleDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreateSchedule}>Agendar</Button>
+            <Button onClick={handleCreateSchedule} data-testid="confirm-schedule-btn">Agendar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -819,7 +1090,7 @@ const ProspectingIntel = () => {
             <div>
               <Label>Status</Label>
               <Select value={resultData.status} onValueChange={(v) => setResultData({...resultData, status: v})}>
-                <SelectTrigger>
+                <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -835,6 +1106,7 @@ const ProspectingIntel = () => {
                 type="number" 
                 value={resultData.contratos_fechados}
                 onChange={(e) => setResultData({...resultData, contratos_fechados: parseInt(e.target.value) || 0})}
+                className="mt-1"
               />
             </div>
             <div>
@@ -843,6 +1115,7 @@ const ProspectingIntel = () => {
                 type="number"
                 value={resultData.valor_total}
                 onChange={(e) => setResultData({...resultData, valor_total: parseFloat(e.target.value) || 0})}
+                className="mt-1"
               />
             </div>
             <div>
@@ -851,12 +1124,13 @@ const ProspectingIntel = () => {
                 value={resultData.notas}
                 onChange={(e) => setResultData({...resultData, notas: e.target.value})}
                 placeholder="Anotações sobre a visita..."
+                className="mt-1"
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setResultDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleUpdateResult}>Salvar Resultado</Button>
+            <Button onClick={handleUpdateResult} data-testid="save-result-btn">Salvar Resultado</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
