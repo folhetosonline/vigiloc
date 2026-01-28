@@ -2426,6 +2426,34 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database with default admin user if not exists"""
+    try:
+        # Check if admin user exists
+        admin = await db.users.find_one({"email": "admin@vigiloc.com"})
+        if not admin:
+            # Create default admin user
+            from passlib.context import CryptContext
+            pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+            
+            admin_user = {
+                "id": str(uuid.uuid4()),
+                "email": "admin@vigiloc.com",
+                "name": "Administrador",
+                "password_hash": pwd_context.hash("admin123"),
+                "is_admin": True,
+                "role": "admin",
+                "active": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(admin_user)
+            logger.info("Default admin user created: admin@vigiloc.com")
+        else:
+            logger.info("Admin user already exists")
+    except Exception as e:
+        logger.error(f"Error creating admin user: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()# CRM/ERP Routes - Para adicionar ao server.py
