@@ -1308,12 +1308,12 @@ const ProspectingIntel = () => {
 
             <div>
               <Label>Bairro (opcional)</Label>
-              <Select value={scrapeForm.bairro} onValueChange={(v) => setScrapeForm({...scrapeForm, bairro: v})}>
+              <Select value={scrapeForm.bairro || "all"} onValueChange={(v) => setScrapeForm({...scrapeForm, bairro: v === "all" ? "" : v})}>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Todos os bairros" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   {(bairros[scrapeForm.cidade] || []).map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                 </SelectContent>
               </Select>
