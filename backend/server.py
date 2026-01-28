@@ -4788,7 +4788,7 @@ async def submit_for_indexing(urls: List[str], current_user: User = Depends(get_
 
 # ==================== PROSPECTING INTEL ====================
 
-from prospecting_service import ProspectingDataService, BAIXADA_SANTISTA
+from prospecting_service import ProspectingDataService, BAIXADA_SANTISTA, TIPOS_PORTARIA, BusinessScraper
 
 prospecting_service = ProspectingDataService(db)
 
