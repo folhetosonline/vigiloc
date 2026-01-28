@@ -114,8 +114,14 @@ class BusinessScraper:
         """
         Scrape condominium listings from public directories
         Uses multiple sources for comprehensive data
+        Falls back to simulated data if Playwright is not available
         """
         condominios = []
+        
+        # If Playwright is not available, return simulated data directly
+        if not PLAYWRIGHT_AVAILABLE or async_playwright is None:
+            print("[INFO] Playwright not available, using simulated data")
+            return BusinessScraper._generate_sample_condominios(cidade, bairro, max_results)
         
         try:
             async with async_playwright() as p:
