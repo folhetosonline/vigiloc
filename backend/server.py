@@ -2447,10 +2447,25 @@ async def export_orders(current_user: User = Depends(get_current_admin)):
 
 # Router will be included at the end after all routes are defined
 
+# CORS configuration - when credentials are enabled, we need specific origins
+cors_origins_env = os.environ.get('CORS_ORIGINS', '')
+if cors_origins_env == '*' or not cors_origins_env:
+    # Default origins for development and production
+    cors_origins = [
+        "http://localhost:3000",
+        "http://localhost:8001",
+        "https://prospecting-intel.preview.emergentagent.com",
+        "https://prospecting-intel.emergent.host",
+        "https://vigiloc.com.br",
+        "https://www.vigiloc.com.br"
+    ]
+else:
+    cors_origins = [origin.strip() for origin in cors_origins_env.split(',')]
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
