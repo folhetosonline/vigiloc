@@ -61,6 +61,7 @@ import CRMNotifications from "@/pages/admin/crm/Notifications";
 import CRMSettings from "@/pages/admin/crm/Settings";
 import AdminSettings from "@/pages/admin/Settings";
 import HomepageEditor from "@/pages/admin/HomepageEditor";
+import ProspectingIntel from "@/pages/admin/ProspectingIntel";
 
 // Components
 import Navbar from "@/components/Navbar";
