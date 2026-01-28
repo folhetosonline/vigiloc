@@ -4786,6 +4786,170 @@ async def submit_for_indexing(urls: List[str], current_user: User = Depends(get_
     }
 
 
+# ==================== PROSPECTING INTEL ====================
+
+from prospecting_service import ProspectingDataService, BAIXADA_SANTISTA
+
+prospecting_service = ProspectingDataService(db)
+
+@api_router.get("/admin/prospecting/stats")
+async def get_prospecting_stats(region: str = "baixada_santista", current_user: User = Depends(get_current_admin)):
+    """Get comprehensive prospecting statistics for a region"""
+    stats = await prospecting_service.get_region_stats(region)
+    return stats
+
+@api_router.get("/admin/prospecting/leads/{municipio}")
+async def get_leads_by_municipio(municipio: str, tipo: str = "all", current_user: User = Depends(get_current_admin)):
+    """Get potential leads for a municipality"""
+    leads = await prospecting_service.get_leads_by_zone(municipio, tipo)
+    return leads
+
+@api_router.get("/admin/prospecting/zones/{municipio}")
+async def get_zones(municipio: str, current_user: User = Depends(get_current_admin)):
+    """Get zones/neighborhoods for a municipality"""
+    zones = await prospecting_service.get_zones_for_municipio(municipio)
+    return zones
+
+@api_router.post("/admin/prospecting/generate-route")
+async def generate_prospecting_route(data: dict, current_user: User = Depends(get_current_admin)):
+    """Generate optimized route for visiting leads"""
+    municipio = data.get("municipio", "Santos")
+    max_visits = data.get("max_visits", 8)
+    
+    leads = await prospecting_service.get_leads_by_zone(municipio)
+    route = await prospecting_service.generate_route(leads, max_visits)
+    
+    # Save route to database
+    route["created_by"] = current_user.id
+    route["status"] = "pendente"
+    await db.prospecting_routes.insert_one(route)
+    route.pop("_id", None)
+    
+    return route
+
+@api_router.get("/admin/prospecting/routes")
+async def get_saved_routes(current_user: User = Depends(get_current_admin)):
+    """Get all saved prospecting routes"""
+    routes = await db.prospecting_routes.find({}, {"_id": 0}).sort("data_criacao", -1).to_list(50)
+    return routes
+
+@api_router.put("/admin/prospecting/routes/{route_id}")
+async def update_route(route_id: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Update route status and results"""
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    data["updated_by"] = current_user.id
+    
+    await db.prospecting_routes.update_one(
+        {"id": route_id},
+        {"$set": data}
+    )
+    return {"message": "Rota atualizada"}
+
+@api_router.get("/admin/prospecting/seasonality")
+async def get_seasonality(current_user: User = Depends(get_current_admin)):
+    """Get seasonality insights"""
+    return await prospecting_service.get_seasonality_data()
+
+@api_router.post("/admin/prospecting/schedule")
+async def create_schedule(data: dict, current_user: User = Depends(get_current_admin)):
+    """Create a prospecting schedule entry"""
+    schedule = {
+        "id": str(uuid.uuid4()),
+        "route_id": data.get("route_id"),
+        "data_agendada": data.get("data_agendada"),
+        "vendedor": data.get("vendedor", current_user.name),
+        "municipio": data.get("municipio"),
+        "status": "agendado",
+        "resultado": None,
+        "contratos_fechados": 0,
+        "valor_total": 0,
+        "notas": data.get("notas", ""),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user.id
+    }
+    
+    await db.prospecting_schedules.insert_one(schedule)
+    schedule.pop("_id", None)
+    return schedule
+
+@api_router.get("/admin/prospecting/schedules")
+async def get_schedules(current_user: User = Depends(get_current_admin)):
+    """Get all prospecting schedules"""
+    schedules = await db.prospecting_schedules.find({}, {"_id": 0}).sort("data_agendada", -1).to_list(100)
+    return schedules
+
+@api_router.put("/admin/prospecting/schedules/{schedule_id}")
+async def update_schedule(schedule_id: str, data: dict, current_user: User = Depends(get_current_admin)):
+    """Update schedule with results"""
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.prospecting_schedules.update_one(
+        {"id": schedule_id},
+        {"$set": data}
+    )
+    
+    # If closing contracts, also update CRM
+    if data.get("contratos_fechados", 0) > 0 and data.get("cliente_info"):
+        # Create lead in CRM
+        cliente = data["cliente_info"]
+        crm_lead = {
+            "id": str(uuid.uuid4()),
+            "nome": cliente.get("nome"),
+            "email": cliente.get("email"),
+            "telefone": cliente.get("telefone"),
+            "endereco": cliente.get("endereco"),
+            "origem": "prospeccao_intel",
+            "schedule_id": schedule_id,
+            "valor_estimado": data.get("valor_total", 0),
+            "status": "novo",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.crm_leads.insert_one(crm_lead)
+    
+    return {"message": "Agendamento atualizado"}
+
+@api_router.get("/admin/prospecting/dashboard")
+async def get_prospecting_dashboard(current_user: User = Depends(get_current_admin)):
+    """Get dashboard data for prospecting intel"""
+    
+    # Get stats
+    stats = await prospecting_service.get_region_stats("baixada_santista")
+    seasonality = await prospecting_service.get_seasonality_data()
+    
+    # Get recent routes
+    routes = await db.prospecting_routes.find({}, {"_id": 0}).sort("data_criacao", -1).to_list(5)
+    
+    # Get recent schedules with results
+    schedules = await db.prospecting_schedules.find(
+        {"status": {"$in": ["concluido", "parcial"]}},
+        {"_id": 0}
+    ).sort("data_agendada", -1).to_list(10)
+    
+    # Calculate success metrics
+    total_schedules = await db.prospecting_schedules.count_documents({})
+    successful = await db.prospecting_schedules.count_documents({"contratos_fechados": {"$gt": 0}})
+    
+    total_contracts = 0
+    total_revenue = 0
+    for s in schedules:
+        total_contracts += s.get("contratos_fechados", 0)
+        total_revenue += s.get("valor_total", 0)
+    
+    return {
+        "region_stats": stats,
+        "seasonality": seasonality,
+        "recent_routes": routes,
+        "recent_schedules": schedules,
+        "metrics": {
+            "total_visitas": total_schedules,
+            "visitas_sucesso": successful,
+            "taxa_conversao": round((successful / total_schedules * 100) if total_schedules > 0 else 0, 1),
+            "contratos_fechados": total_contracts,
+            "receita_gerada": total_revenue
+        }
+    }
+
+
 # ==================== HOMEPAGE SETTINGS ====================
 
 @api_router.get("/homepage-settings")
