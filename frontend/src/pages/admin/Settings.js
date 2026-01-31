@@ -428,6 +428,10 @@ const Settings = () => {
             <TrendingUp className="w-4 h-4 mr-2" />
             SEO
           </TabsTrigger>
+          <TabsTrigger value="favicon">
+            <Globe className="w-4 h-4 mr-2" />
+            Favicon
+          </TabsTrigger>
           <TabsTrigger value="users">
             <User className="w-4 h-4 mr-2" />
             Usuários
