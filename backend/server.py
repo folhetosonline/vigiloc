@@ -69,6 +69,35 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# CORS configuration - MUST be added IMMEDIATELY after app creation
+# When credentials are enabled, we need specific origins (not "*")
+cors_origins_env = os.environ.get('CORS_ORIGINS', '')
+if cors_origins_env == '*' or not cors_origins_env:
+    # Default origins for development and production
+    cors_origins = [
+        "http://localhost:3000",
+        "http://localhost:8001",
+        "https://prospecting-intel.preview.emergentagent.com",
+        "https://prospecting-intel.emergent.host",
+        "https://vigiloc.com.br",
+        "https://www.vigiloc.com.br",
+        "http://vigiloc.com.br",
+        "http://www.vigiloc.com.br"
+    ]
+else:
+    cors_origins = [origin.strip() for origin in cors_origins_env.split(',')]
+
+# Add CORS middleware FIRST - before any routes
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
+)
+
 # Health check endpoint for Kubernetes/deployment
 @app.get("/health")
 async def health_check():
