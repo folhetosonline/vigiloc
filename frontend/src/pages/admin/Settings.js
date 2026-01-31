@@ -108,6 +108,76 @@ const Settings = () => {
     }
   };
 
+  const fetchFaviconSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/favicon-settings`);
+      if (response.data) {
+        setFaviconSettings(response.data);
+      }
+    } catch (error) {
+      console.log("Favicon settings not found, using defaults");
+    }
+  };
+
+  const handleSaveFaviconSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`${API}/admin/favicon-settings`, faviconSettings);
+      toast.success("Configurações do favicon atualizadas!");
+      // Update the favicon in the browser
+      updateBrowserFavicon(faviconSettings.favicon_url);
+    } catch (error) {
+      toast.error("Erro ao salvar configurações do favicon");
+    }
+  };
+
+  const updateBrowserFavicon = (url) => {
+    if (!url) return;
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = url;
+    document.getElementsByTagName('head')[0].appendChild(link);
+  };
+
+  const handleFaviconUpload = async (e, type = 'main') => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error("Por favor, selecione uma imagem");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setUploadingFavicon(true);
+      const response = await axios.post(`${API}/admin/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const fileUrl = response.data.file_url;
+      
+      if (type === 'main') {
+        setFaviconSettings({...faviconSettings, favicon_url: fileUrl});
+      } else if (type === '16') {
+        setFaviconSettings({...faviconSettings, favicon_16: fileUrl});
+      } else if (type === '32') {
+        setFaviconSettings({...faviconSettings, favicon_32: fileUrl});
+      } else if (type === 'apple') {
+        setFaviconSettings({...faviconSettings, apple_touch_icon: fileUrl});
+      }
+      
+      toast.success("Favicon enviado! Clique em Salvar para aplicar");
+    } catch (error) {
+      toast.error("Erro ao fazer upload do favicon");
+    } finally {
+      setUploadingFavicon(false);
+    }
+  };
+
   const fetchFooterSettings = async () => {
     try {
       const response = await axios.get(`${API}/footer-settings`);
