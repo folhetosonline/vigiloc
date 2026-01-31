@@ -70,20 +70,12 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 # CORS configuration - MUST be added IMMEDIATELY after app creation
-# When credentials are enabled, we need specific origins (not "*")
-cors_origins_env = os.environ.get('CORS_ORIGINS', '')
-if cors_origins_env and cors_origins_env != '*':
-    cors_origins = [origin.strip() for origin in cors_origins_env.split(',')]
-else:
-    # Allow all origins when not specified (for deployment flexibility)
-    cors_origins = ["*"]
-
-# Add CORS middleware FIRST - before any routes
+# Allow all origins for maximum compatibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True if cors_origins != ["*"] else False,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
+    allow_origins=["*"],
+    allow_credentials=False,  # Must be False when using "*"
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=600,
