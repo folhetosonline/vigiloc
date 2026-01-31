@@ -2475,35 +2475,7 @@ async def export_orders(current_user: User = Depends(get_current_admin)):
     )
 
 # Router will be included at the end after all routes are defined
-
-# CORS configuration - MUST be added before routes
-# When credentials are enabled, we need specific origins (not "*")
-cors_origins_env = os.environ.get('CORS_ORIGINS', '')
-if cors_origins_env == '*' or not cors_origins_env:
-    # Default origins for development and production
-    cors_origins = [
-        "http://localhost:3000",
-        "http://localhost:8001",
-        "https://prospecting-intel.preview.emergentagent.com",
-        "https://prospecting-intel.emergent.host",
-        "https://vigiloc.com.br",
-        "https://www.vigiloc.com.br",
-        "http://vigiloc.com.br",
-        "http://www.vigiloc.com.br"
-    ]
-else:
-    cors_origins = [origin.strip() for origin in cors_origins_env.split(',')]
-
-# Add CORS middleware with explicit configuration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=600,  # Cache preflight requests for 10 minutes
-)
+# NOTE: CORS middleware is added at the top of the file, right after app creation
 
 # Serve uploaded files
 from fastapi.staticfiles import StaticFiles
