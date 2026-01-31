@@ -70,15 +70,26 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 # CORS configuration - MUST be added IMMEDIATELY after app creation
-# Allow all origins for maximum compatibility
+# Specific origins required because frontend uses withCredentials=true
+cors_origins = [
+    "http://localhost:3000",
+    "http://localhost:8001", 
+    "https://prospecting-intel.preview.emergentagent.com",
+    "https://prospecting-intel.emergent.host",
+    "https://vigiloc.com.br",
+    "https://www.vigiloc.com.br",
+    "http://vigiloc.com.br",
+    "http://www.vigiloc.com.br",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,  # Must be False when using "*"
+    allow_origins=cors_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
-    max_age=600,
+    max_age=86400,  # Cache preflight for 24 hours
 )
 
 # Health check endpoint for Kubernetes/deployment
