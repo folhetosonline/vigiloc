@@ -82,6 +82,16 @@ const Settings = () => {
     confirm_password: ""
   });
 
+  // Favicon settings
+  const [faviconSettings, setFaviconSettings] = useState({
+    favicon_url: "",
+    favicon_16: "",
+    favicon_32: "",
+    apple_touch_icon: "",
+    site_title: "VigiLoc - Segurança Eletrônica"
+  });
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
+
   useEffect(() => {
     fetchUsers();
     fetchSiteSettings();
