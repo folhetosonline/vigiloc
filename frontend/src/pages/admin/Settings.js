@@ -96,6 +96,7 @@ const Settings = () => {
     fetchUsers();
     fetchSiteSettings();
     fetchFooterSettings();
+    fetchFaviconSettings();
   }, []);
 
   const fetchSiteSettings = async () => {
