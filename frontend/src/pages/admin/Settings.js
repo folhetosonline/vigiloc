@@ -1142,6 +1142,168 @@ const Settings = () => {
           <SEOManager />
         </TabsContent>
 
+        <TabsContent value="favicon">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Globe className="mr-2 h-5 w-5" />
+                Configuração do Favicon
+              </CardTitle>
+              <CardDescription>
+                Configure o ícone que aparece na aba do navegador e favoritos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveFaviconSettings} className="space-y-6">
+                {/* Preview */}
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-sm text-gray-500">Preview</span>
+                    {faviconSettings.favicon_url ? (
+                      <img 
+                        src={faviconSettings.favicon_url} 
+                        alt="Favicon" 
+                        className="w-16 h-16 object-contain border rounded"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                        <Globe className="w-8 h-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">Como aparece no navegador:</p>
+                    <div className="flex items-center gap-2 mt-2 p-2 bg-white border rounded">
+                      {faviconSettings.favicon_url ? (
+                        <img src={faviconSettings.favicon_url} alt="" className="w-4 h-4" />
+                      ) : (
+                        <Globe className="w-4 h-4 text-gray-400" />
+                      )}
+                      <span className="text-sm">{faviconSettings.site_title || "VigiLoc"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Favicon */}
+                <div className="space-y-2">
+                  <Label>Favicon Principal (recomendado: 64x64 ou maior)</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={faviconSettings.favicon_url || ""} 
+                      onChange={(e) => setFaviconSettings({...faviconSettings, favicon_url: e.target.value})}
+                      placeholder="URL do favicon ou faça upload"
+                    />
+                    <label className="cursor-pointer">
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*,.ico"
+                        onChange={(e) => handleFaviconUpload(e, 'main')}
+                      />
+                      <Button type="button" variant="outline" disabled={uploadingFavicon} asChild>
+                        <span>
+                          <Upload className="w-4 h-4 mr-2" />
+                          {uploadingFavicon ? "Enviando..." : "Upload"}
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Site Title */}
+                <div className="space-y-2">
+                  <Label>Título do Site (aparece na aba do navegador)</Label>
+                  <Input 
+                    value={faviconSettings.site_title || ""} 
+                    onChange={(e) => setFaviconSettings({...faviconSettings, site_title: e.target.value})}
+                    placeholder="VigiLoc - Segurança Eletrônica"
+                  />
+                </div>
+
+                {/* Advanced Options */}
+                <div className="border-t pt-4">
+                  <h4 className="font-medium mb-4">Opções Avançadas (opcional)</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Favicon 16x16 */}
+                    <div className="space-y-2">
+                      <Label>Favicon 16x16</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value={faviconSettings.favicon_16 || ""} 
+                          onChange={(e) => setFaviconSettings({...faviconSettings, favicon_16: e.target.value})}
+                          placeholder="URL do favicon 16x16"
+                        />
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*,.ico"
+                            onChange={(e) => handleFaviconUpload(e, '16')}
+                          />
+                          <Button type="button" variant="outline" size="sm" asChild>
+                            <span><Upload className="w-4 h-4" /></span>
+                          </Button>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Favicon 32x32 */}
+                    <div className="space-y-2">
+                      <Label>Favicon 32x32</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value={faviconSettings.favicon_32 || ""} 
+                          onChange={(e) => setFaviconSettings({...faviconSettings, favicon_32: e.target.value})}
+                          placeholder="URL do favicon 32x32"
+                        />
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*,.ico"
+                            onChange={(e) => handleFaviconUpload(e, '32')}
+                          />
+                          <Button type="button" variant="outline" size="sm" asChild>
+                            <span><Upload className="w-4 h-4" /></span>
+                          </Button>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Apple Touch Icon */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Apple Touch Icon (180x180 - para dispositivos iOS)</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value={faviconSettings.apple_touch_icon || ""} 
+                          onChange={(e) => setFaviconSettings({...faviconSettings, apple_touch_icon: e.target.value})}
+                          placeholder="URL do ícone para iOS"
+                        />
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) => handleFaviconUpload(e, 'apple')}
+                          />
+                          <Button type="button" variant="outline" asChild>
+                            <span><Upload className="w-4 h-4 mr-2" /> Upload</span>
+                          </Button>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full">
+                  Salvar Configurações do Favicon
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="profile">
           <Card>
             <CardHeader>
