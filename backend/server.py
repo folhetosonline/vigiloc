@@ -74,7 +74,7 @@ api_router = APIRouter(prefix="/api")
 cors_origins = [
     "http://localhost:3000",
     "http://localhost:8001", 
-    "https://prospecting-intel.preview.emergentagent.com",
+    "https://www.vigiloc.com.br",
     "https://prospecting-intel.emergent.host",
     "https://vigiloc.com.br",
     "https://www.vigiloc.com.br",
@@ -574,7 +574,7 @@ class SEOSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = "seo_settings"
     # Site basics
-    site_url: str = os.environ.get('SITE_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://prospecting-intel.preview.emergentagent.com'))
+    site_url: str = os.environ.get('SITE_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://www.vigiloc.com.br'))
     default_meta_title: str = "VigiLoc - Segurança Inteligente"
     default_meta_description: str = "Soluções de segurança inteligente"
     default_keywords: str = "segurança, câmeras, vigilância"
@@ -4769,7 +4769,7 @@ async def generate_sitemap(current_user: User = Depends(get_current_admin)):
     """Generate sitemap.xml"""
     try:
         seo_settings = await db.seo_settings.find_one({"id": "seo_settings"}, {"_id": 0})
-        site_url = seo_settings.get('site_url', 'https://prospecting-intel.preview.emergentagent.com') if seo_settings else 'https://prospecting-intel.preview.emergentagent.com'
+        site_url = seo_settings.get('site_url', 'https://www.vigiloc.com.br') if seo_settings else 'https://www.vigiloc.com.br'
         
         # Get all published pages and products
         products = await db.products.find({"published": True}, {"_id": 0, "id": 1, "timestamp": 1}).to_list(1000)
