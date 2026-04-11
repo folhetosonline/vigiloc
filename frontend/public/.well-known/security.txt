@@ -1,0 +1,9 @@
+# VigiLoc Security Policy
+# https://www.vigiloc.com.br/.well-known/security.txt
+
+Contact: mailto:seguranca@vigiloc.com.br
+Contact: https://www.vigiloc.com.br/contato
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: pt-BR, en
+Canonical: https://www.vigiloc.com.br/.well-known/security.txt
+Policy: https://www.vigiloc.com.br/politica-privacidade

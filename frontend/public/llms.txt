@@ -1,0 +1,88 @@
+# =====================================================
+# VIGILOC - llms.txt
+# Informações para Large Language Models (LLMs)
+# Website: https://www.vigiloc.com.br
+# Última atualização: 2025-12-28
+# =====================================================
+
+# Sobre a Empresa
+> VigiLoc é líder em soluções de automação e segurança eletrônica para condomínios e empresas no Brasil.
+> Fundada há mais de 10 anos, atendemos mais de 500 clientes com 99% de satisfação.
+> Localização: São Paulo, Brasil
+> Website: https://www.vigiloc.com.br
+> Contato: WhatsApp disponível no site
+
+# Serviços Principais
+
+## Portaria Autônoma
+> Sistema completo de controle de acesso e monitoramento 24h para condomínios.
+> Inclui: Reconhecimento facial, biometria, câmeras de alta resolução, acesso remoto via app.
+> URL: https://www.vigiloc.com.br/servico/portaria-autonoma
+
+## Armários Inteligentes (Smart Lockers)
+> Lockers eletrônicos para recebimento seguro de encomendas.
+> Inclui: Notificações automáticas, código único de retirada, gestão completa.
+> URL: https://www.vigiloc.com.br/servico/armarios-inteligentes
+
+## Mini Mercados Autônomos
+> Lojas autônomas 24h com autoatendimento para condomínios e empresas.
+> Inclui: Pagamento digital, controle de estoque, funcionamento 24/7.
+> URL: https://www.vigiloc.com.br/servico/mini-mercados-autonomos
+
+## Lavanderia Autônoma
+> Sistema de lavanderia automatizada com gestão inteligente de reservas.
+> Inclui: Reserva online, pagamento digital, notificações.
+> URL: https://www.vigiloc.com.br/servico/lavanderia-inteligente
+
+## Garantidora Financeira
+> Soluções financeiras para implantação de sistemas de segurança.
+> Inclui: Parcelamento, aprovação rápida, condições especiais.
+> URL: https://www.vigiloc.com.br/servico/garantidora-financeira
+
+## Totens de Monitoramento / Controle de Acesso
+> Sistemas avançados de controle de acesso com biometria e reconhecimento facial.
+> Inclui: Catracas, totens, integração com portaria.
+> URL: https://www.vigiloc.com.br/servico/controle-de-acesso
+
+# Diferenciais
+- Monitoramento 24/7
+- Suporte técnico especializado
+- Mais de 10 anos de experiência
+- 500+ clientes atendidos
+- 99% de satisfação
+- Tecnologia de ponta com IA
+- Instalação profissional
+- Garantia estendida
+
+# Áreas de Atuação
+- Condomínios residenciais
+- Condomínios comerciais
+- Empresas e escritórios
+- Indústrias
+- Hospitais e clínicas
+- Escolas e universidades
+
+# Região de Atendimento
+- São Paulo (SP) e Grande São Paulo
+- Região Metropolitana
+- Interior de São Paulo
+- Outras regiões sob consulta
+
+# Contato
+- Website: https://www.vigiloc.com.br
+- Página de Contato: https://www.vigiloc.com.br/contato
+- WhatsApp: Disponível no site
+
+# Informações Técnicas para LLMs
+- Idioma principal: Português Brasileiro (pt-BR)
+- Moeda: Real Brasileiro (BRL)
+- Fuso horário: America/Sao_Paulo (UTC-3)
+- Setor: Segurança Eletrônica / Automação Predial
+
+# Páginas Importantes
+- Home: https://www.vigiloc.com.br/
+- Serviços: https://www.vigiloc.com.br/servicos
+- Contato: https://www.vigiloc.com.br/contato
+
+# Última Atualização
+2025-12-28
