@@ -1,0 +1,34 @@
+{
+  "short_name": "VigiLoc",
+  "name": "VigiLoc - Soluções em Automação e Segurança Eletrônica",
+  "description": "Líder em portaria autônoma, armários inteligentes, mini mercados autônomos e soluções de segurança eletrônica para condomínios e empresas.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1e40af",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["business", "security", "utilities"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
